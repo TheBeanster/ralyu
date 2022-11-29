@@ -19,15 +19,24 @@
     <Filter Include="Source Files\Utility">
       <UniqueIdentifier>{618e0a86-8821-49ad-8071-eb1a7c8b70b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CLI">
+      <UniqueIdentifier>{303558b4-98d9-4bb7-b2ba-81fac376f1fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ral_main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ral_cli.c">
+      <Filter>Source Files\CLI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_stdinclude.h">
       <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_cli.h">
+      <Filter>Source Files\CLI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -143,9 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ral_cli.c" />
     <ClCompile Include="ral_main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ral_cli.h" />
     <ClInclude Include="ral_stdinclude.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
