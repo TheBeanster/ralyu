@@ -144,11 +144,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ral_cli.c" />
+    <ClCompile Include="ral_file.c" />
     <ClCompile Include="ral_main.c" />
+    <ClCompile Include="ral_memory.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_cli.h" />
+    <ClInclude Include="ral_file.h" />
+    <ClInclude Include="ral_memory.h" />
     <ClInclude Include="ral_stdinclude.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.ral" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

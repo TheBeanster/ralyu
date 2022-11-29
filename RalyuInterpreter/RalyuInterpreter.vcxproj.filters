@@ -30,6 +30,12 @@
     <ClCompile Include="ral_cli.c">
       <Filter>Source Files\CLI</Filter>
     </ClCompile>
+    <ClCompile Include="ral_file.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_memory.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_stdinclude.h">
@@ -38,5 +44,16 @@
     <ClInclude Include="ral_cli.h">
       <Filter>Source Files\CLI</Filter>
     </ClInclude>
+    <ClInclude Include="ral_file.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_memory.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.ral">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
