@@ -197,6 +197,8 @@ typedef struct Ral_Statement
 
 	Ral_StatementType type;
 
+	struct Ral_SourceUnit* parentsource;
+
 	Ral_Token*	tokens;
 	int			numtokens;
 
@@ -205,7 +207,8 @@ typedef struct Ral_Statement
 Ral_Statement* Ral_CreateStatement(
 	const Ral_Token* const	begin,
 	const Ral_Token* const	end,
-	const Ral_StatementType type
+	const Ral_StatementType type,
+	const struct Ral_SourceUnit* const parentsource
 );
 
 void Ral_DestroyStatement(Ral_Statement* const statement);

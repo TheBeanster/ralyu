@@ -1,13 +1,15 @@
 #include "ral_lexer.h"
 
 #include "ral_memory.h"
+#include "ral_sourceunit.h"
 
 
 
 Ral_Statement* Ral_CreateStatement(
 	const Ral_Token* const	begin,
 	const Ral_Token* const	end,
-	const Ral_StatementType type
+	const Ral_StatementType type,
+	const Ral_SourceUnit* const parentsource
 )
 {
 	// Count the number of tokens in the statement
@@ -33,6 +35,7 @@ Ral_Statement* Ral_CreateStatement(
 	}
 
 	statement->type = type;
+	statement->parentsource = parentsource;
 
 	return statement;
 }

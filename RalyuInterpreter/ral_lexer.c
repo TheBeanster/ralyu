@@ -7,6 +7,7 @@
 #include "ral_list.h"
 
 #include "ral_sourceunit.h"
+#include "ral_logging.h"
 
 
 
@@ -313,7 +314,10 @@ onerror:
 
 
 
-static Ral_List* separate_source_statements(const Ral_List* const tokens)
+static Ral_List* separate_source_statements(
+	const Ral_List* const tokens,
+	const Ral_SourceUnit* const source
+)
 {
 	Ral_List* statements = Ral_ALLOC_TYPE(Ral_List);
 
@@ -367,7 +371,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			case Ral_KEYWORD_ELSE:
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_ELSE)
+					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_ELSE, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				break;
@@ -375,7 +379,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			case Ral_KEYWORD_END:
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_END)
+					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_END, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				break;
@@ -416,7 +420,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 				{
 					Ral_PushFrontList(
 						statements,
-						Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION)
+						Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION, source)
 					);
 					cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				}
@@ -428,7 +432,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 					{
 						Ral_PushFrontList(
 							statements,
-							Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION)
+							Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION, source)
 						);
 						cur_statementtype = Ral_STATEMENTTYPE_NULL;
 					}
@@ -447,7 +451,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			{
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_IF)
+					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_IF, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
@@ -458,7 +462,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			{
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_FOR)
+					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_FOR, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
@@ -469,7 +473,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			{
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_WHILE)
+					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_WHILE, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
@@ -479,7 +483,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			// If reading a goto statement then it will finish by the next token, since the next token should be an identifier
 			Ral_PushFrontList(
 				statements,
-				Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_GOTO)
+				Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_GOTO, source)
 			);
 			cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			break;
@@ -489,7 +493,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 			{
 				Ral_PushFrontList(
 					statements,
-					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_FUNCTION)
+					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_FUNCTION, source)
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
@@ -511,7 +515,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 				{
 					Ral_PushFrontList(
 						statements,
-						Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type)
+						Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type, source)
 					);
 					cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				}
@@ -524,7 +528,7 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 					{
 						Ral_PushFrontList(
 							statements,
-							Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type)
+							Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type, source)
 						);
 						cur_statementtype = Ral_STATEMENTTYPE_NULL;
 					}
@@ -539,6 +543,12 @@ static Ral_List* separate_source_statements(const Ral_List* const tokens)
 
 		iterator = iterator->next;
 	}
+
+	Ral_PushTokenSyntaxError(
+		statements->begin,
+		&((Ral_Statement*)statements->begin)->tokens[1],
+		"Oh no man!"
+	);
 
 	return statements;
 
@@ -576,7 +586,7 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		return Ral_FALSE;
 	}
 
-	Ral_List* statements = separate_source_statements(tokens);
+	Ral_List* statements = separate_source_statements(tokens, source);
 
 	if (!statements)
 	{
