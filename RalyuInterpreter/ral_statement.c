@@ -1,6 +1,8 @@
 #include "ral_lexer.h"
 
+#include <stdio.h>
 #include "ral_memory.h"
+
 #include "ral_sourceunit.h"
 
 
@@ -40,6 +42,10 @@ Ral_Statement* Ral_CreateStatement(
 	return statement;
 }
 
+
+
+
+
 void Ral_DestroyStatement(Ral_Statement* const statement)
 {
 	for (int i = 0; i < statement->numtokens; i++)
@@ -47,4 +53,33 @@ void Ral_DestroyStatement(Ral_Statement* const statement)
 		Ral_DestroyToken(&statement->tokens[i]);
 	}
 	Ral_FREE(statement);
+}
+
+
+
+
+
+void Ral_PrintStatement(const Ral_Statement* const statement)
+{
+	if (!statement) return;
+	if (!statement->tokens) return;
+
+	for (int i = 0; i < statement->numtokens; i++)
+	{
+		printf("%s ", statement->tokens[i].string);
+	}
+}
+
+
+
+void Ral_PrintStatementTokens(const Ral_Statement* const statement)
+{
+	Ral_PrintStatement(statement);
+	printf("\n%s\n    ", ral_statementtype_names[statement->type]);
+	for (int i = 0; i < statement->numtokens; i++)
+	{
+		Ral_PrintTokenValue(&statement->tokens[i]);
+		printf("\n    ");
+	}
+	putchar('\n');
 }

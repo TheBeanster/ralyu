@@ -27,3 +27,7 @@ char* Ral_CreateCutString(
 	const int			start,
 	const int			length
 );
+
+void Ral_PrintCondensedStringLiteral(
+	const char* const	string
+);

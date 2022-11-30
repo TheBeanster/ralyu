@@ -213,6 +213,10 @@ Ral_Statement* Ral_CreateStatement(
 
 void Ral_DestroyStatement(Ral_Statement* const statement);
 
+void Ral_PrintStatement(const Ral_Statement* const statement);
+
+void Ral_PrintStatementTokens(const Ral_Statement* const statement);
+
 
 
 Ral_Bool Ral_TokenizeSourceUnit(

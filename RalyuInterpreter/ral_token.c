@@ -96,7 +96,9 @@ void Ral_PrintTokenValue(const Ral_Token* const token)
 		break;
 
 	case Ral_TOKENTYPE_STRINGLITERAL:
-		printf("\"%s\"", token->stringliteral_value);
+		putchar('\"');
+		Ral_PrintCondensedStringLiteral(token->stringliteral_value);
+		putchar('\"');
 		break;
 
 	case Ral_TOKENTYPE_OPERATOR:

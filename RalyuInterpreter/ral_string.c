@@ -1,5 +1,6 @@
 #include "ral_string.h"
 
+#include <stdio.h>
 #include "ral_memory.h"
 
 
@@ -88,4 +89,36 @@ char* Ral_CreateCutString(
 
 	str[length] = '\0';
 	return str;
+}
+
+
+
+void Ral_PrintCondensedStringLiteral(const char* const string)
+{
+	char* c = string;
+	Ral_Bool prev_was_spacer = Ral_TRUE;
+	while (1)
+	{
+		switch (*c)
+		{
+		case '\0':
+			return;
+
+		case ' ':
+		case '\n':
+		case '\t':
+			if (!prev_was_spacer)
+			{
+				putchar(' ');
+				prev_was_spacer = Ral_TRUE;
+			}
+			break;
+
+		default:
+			putchar(*c);
+			prev_was_spacer = Ral_FALSE;
+			break;
+		}
+		c++;
+	}
 }

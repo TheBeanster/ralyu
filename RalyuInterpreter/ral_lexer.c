@@ -66,7 +66,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 
-	for (int i = 0; i < (int)source->length + 1; i++)
+	for (int i = 0; i < source->length + 1; i++)
 	{
 		char		cur_char = source->buffer[i];
 		chartype_t	cur_type = check_chartype(cur_char);
@@ -96,8 +96,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 			{
 				if (cur_type & CHARTYPE_POINT)
 				{
-					// Two decimal points in one number
-					goto onerror;
+					// Two decimal points in one number error
 				}
 			} else
 			{
@@ -210,25 +209,17 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 
-	// String literal has no closing double quotes
+	// Check if the current type is a string literal
 	if (curtoken_type & CHARTYPE_DOUBLEQUOTES)
 	{
-		// String doesn't have closing '"'
-		goto onerror;
+		// String doesn't have closing '"' error
+		curtoken_end = source->length; // Plus 1 to include closing "
+		PUSH_TOKEN;
 	}
 
 
 
 	return tokens;
-
-
-
-onerror:
-	Ral_ClearList(
-		tokens,
-		&Ral_DestroyToken
-	);
-	return NULL;
 }
 
 
@@ -602,14 +593,7 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 	Ral_Statement* iterator = statements->begin;
 	for (int i = 0; i < numstatements; i++)
 	{
-		printf("%s\n\t", ral_statementtype_names[iterator->type]);
-		for (int i = 0; i < iterator->numtokens; i++)
-		{
-			Ral_PrintTokenValue(&iterator->tokens[i]);
-			printf("\n\t");
-		}
-
-		putchar('\n');
+		Ral_PrintStatementTokens(iterator);
 
 		source->statements[i] = *iterator;
 		iterator = iterator->next;
