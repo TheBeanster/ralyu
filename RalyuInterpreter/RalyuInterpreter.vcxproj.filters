@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Source">
       <UniqueIdentifier>{9130e086-76df-403a-828f-83192e980d8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter\Logging">
+      <UniqueIdentifier>{007f7704-f91d-49dd-ab51-cc675b93135f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ral_main.c">
@@ -63,6 +66,9 @@
     <ClCompile Include="ral_statement.c">
       <Filter>Source Files\Interpreter\Lexer</Filter>
     </ClCompile>
+    <ClCompile Include="ral_logging.c">
+      <Filter>Source Files\Interpreter\Logging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_stdinclude.h">
@@ -88,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="ral_sourceunit.h">
       <Filter>Source Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_logging.h">
+      <Filter>Source Files\Interpreter\Logging</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -48,25 +48,25 @@ extern const char* ral_keywordid_names[];
 
 typedef enum
 {
-	Ral_OPERATOR_ASSIGN,					// =
-	Ral_OPERATOR_ASSIGNADDITION,			// +=
+	Ral_OPERATOR_ASSIGN,				// =
+	Ral_OPERATOR_ASSIGNADDITION,		// +=
 	Ral_OPERATOR_ASSIGNSUBTRACTION,		// -=
 	Ral_OPERATOR_ASSIGNMULTIPLICATION,	// *=
-	Ral_OPERATOR_ASSIGNDIVISION,			// /=
+	Ral_OPERATOR_ASSIGNDIVISION,		// /=
 
 	Ral_OPERATOR_NOT,					// !
 	Ral_OPERATOR_NEGATIVE,				// -
 
 	Ral_OPERATOR_EQUALITY,				// ==
-	Ral_OPERATOR_INEQUALITY,				// !=
+	Ral_OPERATOR_INEQUALITY,			// !=
 	Ral_OPERATOR_LESS,					// <
 	Ral_OPERATOR_GREATER,				// >
 	Ral_OPERATOR_LESSOREQUAL,			// <=
-	Ral_OPERATOR_GREATEROREQUAL,			// >=
+	Ral_OPERATOR_GREATEROREQUAL,		// >=
 
 	Ral_OPERATOR_ADDITION,				// +
 	Ral_OPERATOR_SUBTRACTION,			// -
-	Ral_OPERATOR_MULTIPLICATION,			// *
+	Ral_OPERATOR_MULTIPLICATION,		// *
 	Ral_OPERATOR_DIVISION,				// /
 	Ral_OPERATOR_MODULUS,				// %
 
@@ -80,8 +80,8 @@ extern const char* ral_operator_strings[];
 
 Ral_OperatorID Ral_CheckOperator(const char* const str);
 
-#define IS_ASSIGNMENT_OPERATOR(op) ((op >= 0 && op <= 4) ? Ral_TRUE : Ral_FALSE)
-#define IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 7) ? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_ASSIGNMENT_OPERATOR(op) ((op >= 0 && op <= 4) ? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 7) ? Ral_TRUE : Ral_FALSE)
 
 extern const char* ral_operatorid_names[];
 

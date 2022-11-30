@@ -625,7 +625,5 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 	}
 	Ral_FREE(statements);
 
-
-
 	return Ral_TRUE;
 }
