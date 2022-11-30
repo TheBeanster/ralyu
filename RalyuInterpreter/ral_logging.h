@@ -7,10 +7,17 @@
 
 
 
+int Ral_PrintLineOfPosition(
+	const Ral_SourceUnit* const source,
+	const int position
+);
+
+
+
 typedef enum
 {
 	Ral_ERRMSGTYPE_GENERAL,
-	Ral_ERRMSGTYPE_SYNTAXERROR,
+	Ral_ERRMSGTYPE_SYNTAXERROR_POSITION,
 	Ral_ERRMSGTYPE_SYNTAXERROR_TOKEN,
 } Ral_ErrorMessageType;
 
@@ -21,26 +28,31 @@ typedef struct Ral_ErrorMessage
 	Ral_LISTLINKS(Ral_ErrorMessage);
 
 	Ral_ErrorMessageType type;
+	
+	char* message;
 
+	int linenum;
 	Ral_SourceUnit* source;
 	int position;
-	int linenum;
+	int length; // The number of chars the error spans. -1 will make it point to a single char
 
-	Ral_Statement* statement;
-	Ral_Token* token;
-
-	char* message;
 } Ral_ErrorMessage;
 
 
 
 void Ral_PushErrorMessage(Ral_ErrorMessage* const errormessage);
 
-void Ral_PushTokenSyntaxError(
-	const Ral_Statement* const statement,
-	const Ral_Token* const token,
+void Ral_PushError_SyntaxErrorPosition(
+	const Ral_SourceUnit* const source,
+	const int position,
+	const int length,
+	const int linenum,
 	const char* const message
 );
+
+
+
+
 
 void Ral_PrintErrorMessage(
 	const Ral_ErrorMessage* const errormessage

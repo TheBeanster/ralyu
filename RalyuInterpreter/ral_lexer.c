@@ -97,6 +97,13 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 				if (cur_type & CHARTYPE_POINT)
 				{
 					// Two decimal points in one number error
+					Ral_PushError_SyntaxErrorPosition(
+						source,
+						i,
+						-1,
+						curlinenum,
+						"Two decimal points in one number"
+					);
 				}
 			} else
 			{
@@ -535,12 +542,6 @@ static Ral_List* separate_source_statements(
 		iterator = iterator->next;
 	}
 
-	Ral_PushTokenSyntaxError(
-		statements->begin,
-		&((Ral_Statement*)statements->begin)->tokens[1],
-		"Oh no man!"
-	);
-
 	return statements;
 
 
@@ -599,7 +600,6 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		iterator = iterator->next;
 	}
 
-
 	// Destroy the lists now that they've been copied to arrays
 	iterator = tokens->begin;
 	while (iterator)
@@ -618,6 +618,8 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		Ral_FREE(del);
 	}
 	Ral_FREE(statements);
+
+
 
 	return Ral_TRUE;
 }
