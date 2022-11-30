@@ -1,1 +1,7 @@
 print "Doos these works"
+
+for int i = 0, i < 10, i+=1 do
+	print "what"
+end
+
+func( add(10, 10) + 1 )

@@ -56,3 +56,12 @@ Ral_TextFile* Ral_LoadTextFile(const char* const filename)
 
 	return textfile;
 }
+
+
+
+void Ral_DestroyTextFile(Ral_TextFile* const textfile)
+{
+	Ral_FREE(textfile->filename);
+	Ral_FREE(textfile->buffer);
+	Ral_FREE(textfile);
+}

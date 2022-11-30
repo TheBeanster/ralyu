@@ -22,6 +22,12 @@
     <Filter Include="Source Files\CLI">
       <UniqueIdentifier>{303558b4-98d9-4bb7-b2ba-81fac376f1fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter\Lexer">
+      <UniqueIdentifier>{87b89f68-2321-4521-8a39-24d7e8e74222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source">
+      <UniqueIdentifier>{9130e086-76df-403a-828f-83192e980d8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ral_main.c">
@@ -36,6 +42,27 @@
     <ClCompile Include="ral_memory.c">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="ral_list.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_sourcekeys.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_token.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_string.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_lexer.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_sourceunit.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_statement.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_stdinclude.h">
@@ -49,6 +76,18 @@
     </ClInclude>
     <ClInclude Include="ral_memory.h">
       <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_lexer.h">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_list.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_string.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_sourceunit.h">
+      <Filter>Source Files\Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

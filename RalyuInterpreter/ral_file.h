@@ -18,3 +18,4 @@ Ral_TextFile* Ral_LoadTextFile(
 	const char* const filename
 );
 
+void Ral_DestroyTextFile(Ral_TextFile* const textfile);
