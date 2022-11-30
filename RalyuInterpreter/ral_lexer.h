@@ -202,6 +202,8 @@ typedef struct Ral_Statement
 	Ral_Token*	tokens;
 	int			numtokens;
 
+	Ral_List	errormessages;
+
 } Ral_Statement;
 
 Ral_Statement* Ral_CreateStatement(

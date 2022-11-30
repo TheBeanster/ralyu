@@ -220,6 +220,13 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 	if (curtoken_type & CHARTYPE_DOUBLEQUOTES)
 	{
 		// String doesn't have closing '"' error
+		Ral_PushError_SyntaxErrorPosition(
+			source,
+			curtoken_start,
+			-1,
+			curlinenum, // TODO On multi line tokens this will be to the linenum of the end of the file
+			"String doesn't have closing quotation marks"
+		);
 		curtoken_end = source->length; // Plus 1 to include closing "
 		PUSH_TOKEN;
 	}
@@ -233,7 +240,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 
-static Ral_Bool determine_token_types(const Ral_List* const tokens)
+static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_SourceUnit* const source)
 {
 	Ral_TokenType last_token_type = Ral_TOKENTYPE_NULL;
 
@@ -255,7 +262,13 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			if (iterator->operatorid < 0)
 			{
 				// Invalid operator
-				goto onerror;
+				Ral_PushError_SyntaxErrorPosition(
+					source,
+					iterator->position,
+					strlen(iterator->string),
+					iterator->linenum,
+					"Invalid operator"
+				);
 			} else
 			{
 				// Check if unary negative or subtraction
@@ -264,9 +277,8 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 					if (last_token_type == Ral_TOKENTYPE_OPERATOR)
 						iterator->operatorid = Ral_OPERATOR_NEGATIVE;
 				}
-
-				iterator->type = Ral_TOKENTYPE_OPERATOR;
 			}
+			iterator->type = Ral_TOKENTYPE_OPERATOR;
 			break;
 
 		case CHARTYPE_SEPARATOR:
@@ -274,9 +286,15 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			if (iterator->separatorid < 0)
 			{
 				// Invalid separator
-				goto onerror;
-			} else
-				iterator->type = Ral_TOKENTYPE_SEPARATOR;
+				Ral_PushError_SyntaxErrorPosition(
+					source,
+					iterator->position,
+					strlen(iterator->string),
+					iterator->linenum,
+					"Invalid separator"
+				);
+			}
+			iterator->type = Ral_TOKENTYPE_SEPARATOR;
 			break;
 
 		case CHARTYPE_NUMBER:
@@ -570,7 +588,7 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		return Ral_FALSE;
 	}
 
-	if (!determine_token_types(tokens))
+	if (!determine_token_types(tokens, source))
 	{
 		printf("Could not determine token types\n");
 		Ral_ClearList(tokens, &Ral_DestroyToken);

@@ -1,6 +1,6 @@
 print "HAHAHah"
 
-for int i = 0, i < 10, i+=1 do
+for int i = 0, i < 10, i++ do
 	blip(1)
 	1.0.0
 end
