@@ -11,6 +11,10 @@
 
 
 
+// These shouldn't be bitsmasks, they likely just make the code slower
+// TODO Change these to normal numbers
+// The reason they are bitmasks is to make checking for multiple types faster,
+// but the switch statement in separate_tokens() probably removes this benefit
 typedef enum
 {
 	CHARTYPE_NULL			= (1U << 0),
@@ -43,35 +47,55 @@ static chartype_t check_chartype(const char c)
 
 
 
-
+// Only used in separate_tokens(), here to reduce duplicate code
 #define PUSH_TOKEN																								\
 	Ral_PushFrontList(																							\
 		tokens,																									\
 		(Ral_Listnode*)Ral_CreateToken(source->buffer, curtoken_start, curtoken_end, curlinenum, curtoken_type)	\
 	)																											\
 
+
+/// @brief Reads through a sourceunit character by character and divides it into separate tokens.
+/// The types of these tokens must be determined later in the determine_token_types() function.
+/// @param source Pointer to a sourceunit. Make sure the 'statements' array in it is empty.
+/// @return A pointer to the list of tokens. Even though it shouldn't be able to return NULL, 
+/// do check that just in case that might change later.
 static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 {
 	Ral_List* tokens = Ral_ALLOC_TYPE(Ral_List);
 
 	int			curlinenum = 1;
 
+	// Reading tokens works by checking where a token starts and where it ends, character by character,
+	// by checking what the type of the current token is and how that token type would end.
+	// For example, a text token ends when a char that isn't a letter, underscore or number apears, such as an operator char.
+	// It will then push that token to the 'tokens' list, set the tokenchange flag and start reading the new token.
+	
+	// Where the current token being read starts in the source buffer.
 	int			curtoken_start = 0;
+	// Where the current token being read ends in the source buffer.
 	int			curtoken_end = 0;
-	chartype_t	curtoken_type = CHARTYPE_SPACER;
 
+	// The type of the current token being read. 
+	// This determines how it will check for token endings.
+	chartype_t	curtoken_type = CHARTYPE_SPACER; // Starts as spacer since that will check for new tokens every char.
+	
 	Ral_Bool tokenchange = Ral_FALSE;
 
+	// When reading a numberliteral, check if a decimal point has been found.
+	// If this is true and you find another decimal point, that will be an error.
 	Ral_Bool numberliteral_decimal = Ral_FALSE;
 
 
 
 	for (int i = 0; i < source->length + 1; i++)
 	{
-		char		cur_char = source->buffer[i];
-		chartype_t	cur_type = check_chartype(cur_char);
+		// Looping over ever char in the sourcecode one by one
 
-		if (cur_type & CHARTYPE_ENDLINE) curlinenum++;
+		char		cur_char = source->buffer[i];
+		chartype_t	cur_chartype = check_chartype(cur_char);
+
+		if (cur_chartype & CHARTYPE_ENDLINE) curlinenum++;
 
 		tokenchange = Ral_FALSE;
 
@@ -80,7 +104,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		switch (curtoken_type)
 		{
 		case CHARTYPE_ALPHA:
-			if (!(cur_type & (CHARTYPE_ALPHA | CHARTYPE_NUMBER)))
+			if (!(cur_chartype & (CHARTYPE_ALPHA | CHARTYPE_NUMBER))) // Example of useless bitmask optimization
 			{
 				// Text token ends
 				curtoken_end = i;
@@ -94,7 +118,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		case CHARTYPE_NUMBER:
 			if (numberliteral_decimal)
 			{
-				if (cur_type & CHARTYPE_POINT)
+				if (cur_chartype & CHARTYPE_POINT)
 				{
 					// Two decimal points in one number error
 					Ral_PushError_SyntaxErrorPosition(
@@ -107,11 +131,11 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 				}
 			} else
 			{
-				if (cur_type & CHARTYPE_POINT)
+				if (cur_chartype & CHARTYPE_POINT)
 					numberliteral_decimal = Ral_TRUE;
 			}
 
-			if (!(cur_type & (CHARTYPE_NUMBER | CHARTYPE_POINT)))
+			if (!(cur_chartype & (CHARTYPE_NUMBER | CHARTYPE_POINT)))
 			{
 				// Number token ends
 				curtoken_end = i;
@@ -137,7 +161,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 		case CHARTYPE_OPERATOR:
-			if (cur_type & CHARTYPE_OPERATOR)
+			if (cur_chartype & CHARTYPE_OPERATOR)
 			{
 
 			} else
@@ -162,7 +186,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 		case CHARTYPE_DOUBLEQUOTES:
 			// String literals end when another double quote is found
-			if (cur_type & CHARTYPE_DOUBLEQUOTES)
+			if (cur_chartype & CHARTYPE_DOUBLEQUOTES)
 			{
 				curtoken_end = i + 1; // Plus 1 to include closing "
 				PUSH_TOKEN;
@@ -174,9 +198,10 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 		case CHARTYPE_COMMENT:
 			// Comments end with endlines
-			if (cur_type & CHARTYPE_ENDLINE)
+			if (cur_chartype & CHARTYPE_ENDLINE)
 			{
-				curtoken_end = i + 1;
+				curtoken_end = i;
+				// Don't push it to the list
 				tokenchange = Ral_TRUE;
 			}
 			break;
@@ -186,7 +211,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 			// Default is error, it can be considered spacer
 		default:
 		case CHARTYPE_SPACER:
-			if (cur_type & CHARTYPE_SPACER)
+			if (cur_chartype & CHARTYPE_SPACER)
 			{
 				// Only blank characters so far
 			} else
@@ -200,15 +225,19 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 		if (tokenchange)
 		{
+			// After a token end, this will determine what the new token is.
+
 			if ((curtoken_type & CHARTYPE_DOUBLEQUOTES) || (curtoken_type & CHARTYPE_COMMENT))
 			{
-				// If ending a string or comment
+				// Special cases for string and comment since they both stop at specific characters.
+				// A double quotation mark for strings and endline for comments.
+				// Set the curtoken_type as a spacer so the next type will be read properly.
 				curtoken_type = CHARTYPE_SPACER;
 			} else
 			{
+				// Set the new tokens start position as the current iterator position.
 				curtoken_start = i;
-
-				curtoken_type = cur_type;
+				curtoken_type = cur_chartype;
 			}
 		}
 
@@ -227,7 +256,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 			curlinenum, // TODO On multi line tokens this will be to the linenum of the end of the file
 			"String doesn't have closing quotation marks"
 		);
-		curtoken_end = source->length; // Plus 1 to include closing "
+		curtoken_end = source->length;
 		PUSH_TOKEN;
 	}
 
@@ -240,9 +269,18 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 
+
+
+/// @brief Goes through a list of tokens and determines more info about them. Such as what operator an operator token is,
+/// or if a text token is a keyword or an identifier.
+/// @param tokens The list of tokens to analyze.
+/// @param source Source is here for error messages.
+/// @return TRUE if there were no errors or FALSE if some was found.
 static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_SourceUnit* const source)
 {
-	Ral_TokenType last_token_type = Ral_TOKENTYPE_NULL;
+	Ral_Bool retvalue = Ral_TRUE;
+
+	Ral_TokenType prev_token_type = Ral_TOKENTYPE_NULL;
 
 	Ral_Token* iterator = (Ral_Token*)tokens->begin;
 	while (iterator)
@@ -251,7 +289,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 		{
 		case CHARTYPE_ALPHA:
 			iterator->keywordid = Ral_CheckKeyword(iterator->string);
-			if (iterator->keywordid == Ral_NOT_KEYWORD)
+			if (iterator->keywordid < 0) // NOT_KEYWORD is -1
 				iterator->type = Ral_TOKENTYPE_IDENTIFIER;
 			else
 				iterator->type = Ral_TOKENTYPE_KEYWORD;
@@ -259,7 +297,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 
 		case CHARTYPE_OPERATOR:
 			iterator->operatorid = Ral_CheckOperator(iterator->string);
-			if (iterator->operatorid < 0)
+			if (iterator->operatorid < 0) // NOT_OPERATOR is -1
 			{
 				// Invalid operator
 				Ral_PushError_SyntaxErrorPosition(
@@ -269,12 +307,14 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 					iterator->linenum,
 					"Invalid operator"
 				);
+				retvalue = Ral_FALSE;
 			} else
 			{
 				// Check if unary negative or subtraction
 				if (iterator->operatorid == Ral_OPERATOR_SUBTRACTION)
 				{
-					if (last_token_type == Ral_TOKENTYPE_OPERATOR)
+					// If the previous token also was an operator then treat this minus sign as a unary negative.
+					if (prev_token_type == Ral_TOKENTYPE_OPERATOR)
 						iterator->operatorid = Ral_OPERATOR_NEGATIVE;
 				}
 			}
@@ -283,7 +323,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 
 		case CHARTYPE_SEPARATOR:
 			iterator->separatorid = Ral_CheckSeparator(iterator->string[0]);
-			if (iterator->separatorid < 0)
+			if (iterator->separatorid < 0) // NOT_SEPARATOR is -1
 			{
 				// Invalid separator
 				Ral_PushError_SyntaxErrorPosition(
@@ -293,6 +333,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 					iterator->linenum,
 					"Invalid separator"
 				);
+				retvalue = Ral_FALSE;
 			}
 			iterator->type = Ral_TOKENTYPE_SEPARATOR;
 			break;
@@ -308,20 +349,25 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens, const Ral_So
 			break;
 
 		default:
+			// If this happens, something really bad must've happened
+			Ral_PushError_SyntaxErrorPosition(
+				source,
+				iterator->position,
+				strlen(iterator->string),
+				iterator->linenum,
+				"A token was read as an invalid type! This is a critical error in the lexer! At line " Ral_STRINGIFY(__LINE__) " in ral_lexer.c"
+			);
+			return Ral_FALSE;
 			break;
 		}
 
-		last_token_type = iterator->type;
+		prev_token_type = iterator->type;
 		iterator = (Ral_Token*)iterator->next;
 	}
 
 
 
-	return Ral_TRUE;
-
-onerror:
-
-	return Ral_FALSE;
+	return retvalue;
 }
 
 
@@ -329,6 +375,8 @@ onerror:
 
 
 
+
+// TODO Add comments
 
 static Ral_List* separate_source_statements(
 	const Ral_List* const tokens,
@@ -569,8 +617,6 @@ onerror:
 	Ral_FREE(statements);
 	return NULL;
 }
-
-
 
 
 

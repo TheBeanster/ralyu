@@ -26,3 +26,6 @@ typedef enum
 } Ral_Bool;
 
 #define Ral_ARRAYLEN(arr) (sizeof(arr) / sizeof(*arr))
+
+#define Ral_STRINGIFY2(str) #str
+#define Ral_STRINGIFY(str) Ral_STRINGIFY2(str)

@@ -14,7 +14,11 @@ int main(int argc, char** argv)
 {
 	printf(" --- Ralyu interpreter ---\n");
 
-	RalCLI_ReadArgs(argc, argv);
+	//RalCLI_ReadArgs(argc, argv);
+
+
+
+	// This is all temporary code just to load some test ralyu code, it is bad and horrible
 
 	Ral_TextFile* sourcefile = Ral_LoadTextFile(argv[1]);
 	if (!sourcefile)
