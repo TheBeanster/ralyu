@@ -114,6 +114,8 @@ void Ral_PrintErrorMessage(const Ral_ErrorMessage* const errormessage)
 
 void Ral_PrintAllErrorMessages()
 {
+	if (ral_errormessages.itemcount == 0) return; // No errors
+
 	// TODO Sort error messages by line number
 	printf("ERRORS DETECTED : %i\n", ral_errormessages.itemcount);
 	Ral_ErrorMessage* iterator = ral_errormessages.begin;
