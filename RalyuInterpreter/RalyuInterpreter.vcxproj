@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="ral_cli.c" />
     <ClCompile Include="ral_execute.c" />
+    <ClCompile Include="ral_expression_read.c" />
     <ClCompile Include="ral_file.c" />
     <ClCompile Include="ral_lexer.c" />
     <ClCompile Include="ral_list.c" />
@@ -160,10 +161,12 @@
   <ItemGroup>
     <ClInclude Include="ral_cli.h" />
     <ClInclude Include="ral_execute.h" />
+    <ClInclude Include="ral_expression.h" />
     <ClInclude Include="ral_file.h" />
     <ClInclude Include="ral_list.h" />
     <ClInclude Include="ral_logging.h" />
     <ClInclude Include="ral_memory.h" />
+    <ClInclude Include="ral_object.h" />
     <ClInclude Include="ral_sourceunit.h" />
     <ClInclude Include="ral_stdinclude.h" />
     <ClInclude Include="ral_string.h" />
@@ -171,6 +174,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="test.ral" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="planning_expression_thang.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

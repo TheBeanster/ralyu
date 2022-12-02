@@ -34,6 +34,12 @@
     <Filter Include="Source Files\Logging">
       <UniqueIdentifier>{007f7704-f91d-49dd-ab51-cc675b93135f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter\Expression">
+      <UniqueIdentifier>{e419fd07-d67a-4eab-80e3-282a9ca84a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interpreter\Object">
+      <UniqueIdentifier>{172e65dc-892f-42d1-a288-d7655bc8e543}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ral_main.c">
@@ -75,6 +81,9 @@
     <ClCompile Include="ral_execute.c">
       <Filter>Source Files\Interpreter\Execute</Filter>
     </ClCompile>
+    <ClCompile Include="ral_expression_read.c">
+      <Filter>Source Files\Interpreter\Expression</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_stdinclude.h">
@@ -107,10 +116,21 @@
     <ClInclude Include="ral_execute.h">
       <Filter>Source Files\Interpreter\Execute</Filter>
     </ClInclude>
+    <ClInclude Include="ral_expression.h">
+      <Filter>Source Files\Interpreter\Expression</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_object.h">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.ral">
       <Filter>Source Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="planning_expression_thang.txt">
+      <Filter>Source Files\Interpreter\Expression</Filter>
+    </Text>
   </ItemGroup>
 </Project>

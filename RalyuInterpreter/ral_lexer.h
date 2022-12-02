@@ -137,9 +137,6 @@ typedef struct Ral_Token
 	Ral_SeparatorID	separatorid;
 	double			numberliteral_value;
 	char*			stringliteral_value;
-
-	//Ral_Object*		expr_value;
-
 } Ral_Token;
 
 Ral_Token* Ral_CreateToken(

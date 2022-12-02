@@ -1,0 +1,33 @@
+
+
+Read expressions from a statement and turn it into a tree structure
+
+Reading an expression:
+First read everything that is not inside function calls
+
+In this example:
+a = 2 * 4 + func1(5, func2(1 + b) + 3 * 3) + 3 * 3) - 500
+that would be:
+2 * 4 + func1 - 500
+Now turn this into a tree using the old system
+            -
+       +         500
+     *   func1
+    2 4
+
+Before evaluating the value of this expression tree, all function calls must have already been made.
+Evaluating an expression tree should be as simple as possible. Function calls must be made before it.
+When evaluating, all nodes that are function calls must already have the value returned by the function.
+
+You could evaluate the whole expression like this
+Eval subexpr0
+Call func2
+Eval subexpr1
+Eval subexpr2
+Call func1
+Eval subexpr3
+How in the hell are you supposed to do this??!? ^^^
+OH I FIGURED OUT A SOLUTION
+
+A function call node has a pointer to a function call struct, that struct has a list of all paramater expressions,
+when going through a tree, it will be possible to evaluate expressions and perform function calls.

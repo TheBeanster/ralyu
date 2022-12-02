@@ -2,6 +2,15 @@
 
 #include "ral_stdinclude.h"
 
+#include "ral_lexer.h"
+#include "ral_sourceunit.h"
 
 
-void Ral_ExecuteSource();
+
+typedef struct
+{
+	int current_statementid;
+	Ral_Statement* current_statement;
+} Ral_State;
+
+void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit);
