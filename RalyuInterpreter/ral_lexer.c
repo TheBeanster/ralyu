@@ -17,16 +17,16 @@
 // but the switch statement in separate_tokens() probably removes this benefit
 typedef enum
 {
-	CHARTYPE_NULL			= (1U << 0),
-	CHARTYPE_ALPHA			= (1U << 1), // Letter or underscore
-	CHARTYPE_NUMBER			= (1U << 2),
-	CHARTYPE_POINT			= (1U << 3),
-	CHARTYPE_OPERATOR		= (1U << 4),
-	CHARTYPE_SEPARATOR		= (1U << 5),
-	CHARTYPE_SPACER			= (1U << 6), // Space or tab
-	CHARTYPE_ENDLINE		= (1U << 7),
-	CHARTYPE_DOUBLEQUOTES	= (1U << 8), // Double quotation marks for strings
-	CHARTYPE_COMMENT		= (1U << 9), // Comments start with # and end with an endline
+	CHARTYPE_NULL			= 0,
+	CHARTYPE_ALPHA			= 1, // Letter or underscore
+	CHARTYPE_NUMBER			= 2,
+	CHARTYPE_POINT			= 3,
+	CHARTYPE_OPERATOR		= 4,
+	CHARTYPE_SEPARATOR		= 5,
+	CHARTYPE_SPACER			= 6, // Space or tab
+	CHARTYPE_ENDLINE		= 7,
+	CHARTYPE_DOUBLEQUOTES	= 8, // Double quotation marks for strings
+	CHARTYPE_COMMENT		= 9, // Comments start with # and end with an endline
 } chartype_t;
 
 
@@ -95,7 +95,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		char		cur_char = source->buffer[i];
 		chartype_t	cur_chartype = check_chartype(cur_char);
 
-		if (cur_chartype & CHARTYPE_ENDLINE) curlinenum++;
+		if (cur_chartype == CHARTYPE_ENDLINE) curlinenum++;
 
 		tokenchange = Ral_FALSE;
 
@@ -104,9 +104,9 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		switch (curtoken_type)
 		{
 		case CHARTYPE_ALPHA:
-			if (!(cur_chartype & (CHARTYPE_ALPHA | CHARTYPE_NUMBER))) // Example of useless bitmask optimization
+			if (!(cur_chartype == CHARTYPE_ALPHA || cur_chartype == CHARTYPE_NUMBER))
 			{
-				// Text token ends
+				// Text token ends when a character that isn't alpha or number appears
 				curtoken_end = i;
 				PUSH_TOKEN;
 				tokenchange = Ral_TRUE;
@@ -118,7 +118,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		case CHARTYPE_NUMBER:
 			if (numberliteral_decimal)
 			{
-				if (cur_chartype & CHARTYPE_POINT)
+				if (cur_chartype == CHARTYPE_POINT)
 				{
 					// Two decimal points in one number error
 					Ral_PushError_SyntaxErrorPosition(
@@ -131,12 +131,24 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 				}
 			} else
 			{
-				if (cur_chartype & CHARTYPE_POINT)
+				if (cur_chartype == CHARTYPE_POINT)
 					numberliteral_decimal = Ral_TRUE;
 			}
 
-			if (!(cur_chartype & (CHARTYPE_NUMBER | CHARTYPE_POINT)))
+			if (!(cur_chartype == CHARTYPE_NUMBER || cur_chartype == CHARTYPE_POINT))
 			{
+				if (cur_chartype == CHARTYPE_ALPHA)
+				{
+					// A letter or underscore directly after number
+					Ral_PushError_SyntaxErrorPosition(
+						source,
+						i,
+						-1,
+						curlinenum,
+						"A letter or underscore directly after number"
+					);
+				}
+
 				// Number token ends
 				curtoken_end = i;
 				PUSH_TOKEN;
@@ -161,7 +173,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 		case CHARTYPE_OPERATOR:
-			if (cur_chartype & CHARTYPE_OPERATOR)
+			if (cur_chartype == CHARTYPE_OPERATOR)
 			{
 
 			} else
@@ -186,7 +198,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 		case CHARTYPE_DOUBLEQUOTES:
 			// String literals end when another double quote is found
-			if (cur_chartype & CHARTYPE_DOUBLEQUOTES)
+			if (cur_chartype == CHARTYPE_DOUBLEQUOTES)
 			{
 				curtoken_end = i + 1; // Plus 1 to include closing "
 				PUSH_TOKEN;
@@ -198,7 +210,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 		case CHARTYPE_COMMENT:
 			// Comments end with endlines
-			if (cur_chartype & CHARTYPE_ENDLINE)
+			if (cur_chartype == CHARTYPE_ENDLINE)
 			{
 				curtoken_end = i;
 				// Don't push it to the list
@@ -208,10 +220,12 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 
-			// Default is error, it can be considered spacer
+			// Default is error, it should be considered spacer
 		default:
+			// TODO Add warning about invalid characters
+		case CHARTYPE_ENDLINE:
 		case CHARTYPE_SPACER:
-			if (cur_chartype & CHARTYPE_SPACER)
+			if (cur_chartype == CHARTYPE_SPACER)
 			{
 				// Only blank characters so far
 			} else
@@ -227,7 +241,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 		{
 			// After a token end, this will determine what the new token is.
 
-			if ((curtoken_type & CHARTYPE_DOUBLEQUOTES) || (curtoken_type & CHARTYPE_COMMENT))
+			if ((curtoken_type == CHARTYPE_DOUBLEQUOTES) || (curtoken_type == CHARTYPE_COMMENT))
 			{
 				// Special cases for string and comment since they both stop at specific characters.
 				// A double quotation mark for strings and endline for comments.
@@ -246,7 +260,7 @@ static Ral_List* separate_tokens(const Ral_SourceUnit* const source)
 
 
 	// Check if the current type is a string literal
-	if (curtoken_type & CHARTYPE_DOUBLEQUOTES)
+	if (curtoken_type == CHARTYPE_DOUBLEQUOTES)
 	{
 		// String doesn't have closing '"' error
 		Ral_PushError_SyntaxErrorPosition(
