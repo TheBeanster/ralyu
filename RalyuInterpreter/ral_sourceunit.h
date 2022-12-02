@@ -2,6 +2,7 @@
 
 #include "ral_stdinclude.h"
 #include "ral_file.h"
+#include "ral_list.h"
 
 #include "ral_lexer.h"
 
@@ -16,6 +17,8 @@ typedef struct
 
 	Ral_Statement*	statements;
 	int				numstatements;
+
+	Ral_List		errormessages;
 } Ral_SourceUnit;
 
 

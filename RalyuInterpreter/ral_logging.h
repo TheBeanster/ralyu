@@ -40,10 +40,10 @@ typedef struct Ral_ErrorMessage
 
 
 
-void Ral_PushErrorMessage(Ral_ErrorMessage* const errormessage);
+void Ral_PushErrorMessage(Ral_SourceUnit* const sourceunit, Ral_ErrorMessage* const errormessage);
 
 void Ral_PushError_SyntaxErrorPosition(
-	const Ral_SourceUnit* const source,
+	Ral_SourceUnit* const source,
 	const int position,
 	const int length,
 	const int linenum,
@@ -58,4 +58,4 @@ void Ral_PrintErrorMessage(
 	const Ral_ErrorMessage* const errormessage
 );
 
-void Ral_PrintAllErrorMessages();
+void Ral_PrintAllErrorMessages(Ral_SourceUnit* const sourceunit);

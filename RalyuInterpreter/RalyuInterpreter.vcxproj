@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ral_cli.c" />
+    <ClCompile Include="ral_execute.c" />
     <ClCompile Include="ral_file.c" />
     <ClCompile Include="ral_lexer.c" />
     <ClCompile Include="ral_list.c" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_cli.h" />
+    <ClInclude Include="ral_execute.h" />
     <ClInclude Include="ral_file.h" />
     <ClInclude Include="ral_list.h" />
     <ClInclude Include="ral_logging.h" />

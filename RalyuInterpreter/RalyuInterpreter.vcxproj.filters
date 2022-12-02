@@ -28,7 +28,10 @@
     <Filter Include="Source Files\Source">
       <UniqueIdentifier>{9130e086-76df-403a-828f-83192e980d8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Interpreter\Logging">
+    <Filter Include="Source Files\Interpreter\Execute">
+      <UniqueIdentifier>{1a664d93-6665-4431-89b8-505bceedcb73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logging">
       <UniqueIdentifier>{007f7704-f91d-49dd-ab51-cc675b93135f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -67,7 +70,10 @@
       <Filter>Source Files\Interpreter\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="ral_logging.c">
-      <Filter>Source Files\Interpreter\Logging</Filter>
+      <Filter>Source Files\Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_execute.c">
+      <Filter>Source Files\Interpreter\Execute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,7 +102,10 @@
       <Filter>Source Files\Source</Filter>
     </ClInclude>
     <ClInclude Include="ral_logging.h">
-      <Filter>Source Files\Interpreter\Logging</Filter>
+      <Filter>Source Files\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_execute.h">
+      <Filter>Source Files\Interpreter\Execute</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

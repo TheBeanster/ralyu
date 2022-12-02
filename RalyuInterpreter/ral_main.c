@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
 
 
-	Ral_PrintAllErrorMessages();
+	Ral_PrintAllErrorMessages(mainsource);
 	
 
 

@@ -42,18 +42,16 @@ int Ral_PrintLineOfPosition(const Ral_SourceUnit* const source, const int positi
 
 
 
-Ral_List ral_errormessages = { 0 };
 
 
-
-void Ral_PushErrorMessage(Ral_ErrorMessage* const errormessage)
+void Ral_PushErrorMessage(Ral_SourceUnit* const sourceunit, Ral_ErrorMessage* const errormessage)
 {
-	Ral_PushFrontList(&ral_errormessages, errormessage);
+	Ral_PushFrontList(&sourceunit->errormessages, errormessage);
 }
 
 
 
-void Ral_PushError_SyntaxErrorPosition(const Ral_SourceUnit* const source, const int position, const int length, const int linenum, const char* const message)
+void Ral_PushError_SyntaxErrorPosition(Ral_SourceUnit* const source, const int position, const int length, const int linenum, const char* const message)
 {
 	Ral_ErrorMessage* err = Ral_ALLOC_TYPE(Ral_ErrorMessage);
 	err->source = source;
@@ -62,7 +60,7 @@ void Ral_PushError_SyntaxErrorPosition(const Ral_SourceUnit* const source, const
 	err->linenum = linenum;
 	err->message = message;
 	err->type = Ral_ERRMSGTYPE_SYNTAXERROR_POSITION;
-	Ral_PushErrorMessage(err);
+	Ral_PushErrorMessage(source, err);
 }
 
 
@@ -112,18 +110,18 @@ void Ral_PrintErrorMessage(const Ral_ErrorMessage* const errormessage)
 
 
 
-void Ral_PrintAllErrorMessages()
+void Ral_PrintAllErrorMessages(Ral_SourceUnit* const sourceunit)
 {
-	if (ral_errormessages.itemcount == 0) return; // No errors
+	if (sourceunit->errormessages.itemcount == 0) return; // No errors
 
 	// TODO Sort error messages by line number
-	printf("ERRORS DETECTED : %i\n", ral_errormessages.itemcount);
-	Ral_ErrorMessage* iterator = ral_errormessages.begin;
+	printf("ERRORS DETECTED : %i\n", sourceunit->errormessages.itemcount);
+	Ral_ErrorMessage* iterator = sourceunit->errormessages.begin;
 	while (iterator)
 	{
 		Ral_PrintErrorMessage(iterator);
 
 		iterator = iterator->next;
 	}
-	Ral_ClearList(&ral_errormessages, NULL);
+	Ral_ClearList(&sourceunit->errormessages, NULL);
 }
