@@ -8,14 +8,6 @@
 
 
 
-typedef struct Ral_ExprFunctionCall
-{
-	Ral_LISTLINKS(Ral_ExprFunctionCall);
-
-	// List of expressions
-	Ral_List paramater_expressions;
-} Ral_ExprFunctionCall;
-
 typedef struct Ral_ExprNode
 {
 	struct Ral_ExprNode* parent;
@@ -24,8 +16,6 @@ typedef struct Ral_ExprNode
 
 	const Ral_Token* corresp_token;
 
-	Ral_ExprFunctionCall* functioncall;
-
 	Ral_Object* expr_value;
 } Ral_ExprNode;
 
@@ -33,25 +23,21 @@ typedef struct Ral_ExprNode
 
 typedef struct Ral_Expression
 {
-	Ral_LISTLINKS(Ral_Expression);
-
-	// List of every function call in the expression
-	Ral_List functioncalls;
-
-	Ral_ExprNode* topnode;
+	Ral_List subexpressions;
 } Ral_Expression;
 
 
 
-Ral_Expression* Ral_BuildExpressionTree(
+Ral_Expression* Ral_CreateExpression(
 	const Ral_Statement* const statement,
-	const int being,
+	const int begin,
 	const int end
 );
 
+Ral_Object* Ral_EvaluateExpression(
+	Ral_Expression* const expression
+);
 
-
-typedef struct
-{
-	Ral_ExprNode* node;
-} Ral_ExpressionEvalState;
+void Ral_DestroyExpression(
+	Ral_Expression* const expression
+);
