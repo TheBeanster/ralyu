@@ -7,6 +7,7 @@
 #include "ral_sourceunit.h"
 #include "ral_lexer.h"
 #include "ral_logging.h"
+#include "ral_execute.h"
 
 
 
@@ -37,14 +38,25 @@ int main(int argc, char** argv)
 	if (!Ral_TokenizeSourceUnit(mainsource))
 	{
 		// Couldn't tokenize sourceunit
+		Ral_PrintAllErrorMessages(mainsource);
 		return 0;
 	}
 
 
 
-	Ral_PrintAllErrorMessages(mainsource);
+	// Print what the tokenizer got
+	for (int i = 0; i < mainsource->numstatements; i++)
+	{
+		Ral_PrintStatementTokens(&mainsource->statements[i]);
+	}
+
+
+
+	Ral_ExecuteSource(mainsource);
 	
 
+
+	Ral_DestroySourceUnit(mainsource);
 
 	Ral_DestroyTextFile(mainsource->file);
 	Ral_FREE(mainsource);

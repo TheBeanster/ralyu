@@ -31,9 +31,3 @@ typedef struct Ral_Object
 	char* name;
 } Ral_Object;
 
-
-
-typedef struct Ral_Object_Int
-{
-	
-};

@@ -8,6 +8,14 @@
 
 
 
+typedef struct Ral_ExprFunctionCall
+{
+	Ral_LISTLINKS(Ral_ExprFunctionCall);
+
+	// List of expressions
+	Ral_List paramater_expressions;
+} Ral_ExprFunctionCall;
+
 typedef struct Ral_ExprNode
 {
 	struct Ral_ExprNode* parent;
@@ -21,13 +29,7 @@ typedef struct Ral_ExprNode
 	Ral_Object* expr_value;
 } Ral_ExprNode;
 
-typedef struct Ral_ExprFunctionCall
-{
-	Ral_LISTLINKS(Ral_ExprFunctionCall);
 
-	// List of expressions
-	Ral_List paramater_expressions;
-} Ral_ExprFunctionCall;
 
 typedef struct Ral_Expression
 {

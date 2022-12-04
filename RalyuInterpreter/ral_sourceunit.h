@@ -27,3 +27,6 @@ Ral_SourceUnit* Ral_CreateSourceUnit(
 	const Ral_TextFile* const textfile
 );
 
+void Ral_DestroySourceUnit(
+	Ral_SourceUnit* const sourceunit
+);

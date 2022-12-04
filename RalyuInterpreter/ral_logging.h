@@ -42,12 +42,24 @@ typedef struct Ral_ErrorMessage
 
 void Ral_PushErrorMessage(Ral_SourceUnit* const sourceunit, Ral_ErrorMessage* const errormessage);
 
+/// @brief 
+/// @param source Which source unit the error occured in.
+/// @param position 
+/// @param length The number of chars to mark as the area of the error, or -1 to point to one char.
+/// @param linenum 
+/// @param message Must be a string literal since it won't be freed!
 void Ral_PushError_SyntaxErrorPosition(
 	Ral_SourceUnit* const source,
 	const int position,
 	const int length,
 	const int linenum,
 	const char* const message
+);
+
+/// @brief Won't unlink from lists, only deallocates!
+/// @param errormessage 
+void Ral_DestroyErrorMessage(
+	Ral_ErrorMessage* const errormessage
 );
 
 

@@ -66,6 +66,16 @@ void Ral_PushError_SyntaxErrorPosition(Ral_SourceUnit* const source, const int p
 
 
 
+void Ral_DestroyErrorMessage(
+	Ral_ErrorMessage* const errormessage
+)
+{
+	Ral_FREE(errormessage); // Wow look at this function this is crazy
+}
+
+
+
+
 
 void Ral_PrintErrorMessage(const Ral_ErrorMessage* const errormessage)
 {

@@ -672,11 +672,11 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 	Ral_Statement* iterator = statements->begin;
 	for (int i = 0; i < numstatements; i++)
 	{
-		Ral_PrintStatementTokens(iterator);
-
 		source->statements[i] = *iterator;
 		iterator = iterator->next;
 	}
+
+
 
 	// Destroy the lists now that they've been copied to arrays
 	iterator = tokens->begin;
@@ -687,7 +687,6 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		Ral_FREE(del);
 	}
 	Ral_FREE(tokens);
-
 	iterator = statements->begin;
 	while (iterator)
 	{
@@ -696,6 +695,14 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		Ral_FREE(del);
 	}
 	Ral_FREE(statements);
+
+
+
+	if (source->errormessages.itemcount > 0)
+	{
+		// If any errors were found, don't run
+		return Ral_FALSE;
+	}
 
 
 
