@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "ral_string.h"
-#include "ral_memory.h"
+#include "ralu_string.h"
+#include "ralu_memory.h"
 
 
 

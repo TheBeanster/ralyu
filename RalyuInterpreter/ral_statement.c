@@ -1,7 +1,7 @@
 #include "ral_lexer.h"
 
 #include <stdio.h>
-#include "ral_memory.h"
+#include "ralu_memory.h"
 
 #include "ral_sourceunit.h"
 

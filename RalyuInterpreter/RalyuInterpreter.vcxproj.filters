@@ -48,23 +48,11 @@
     <ClCompile Include="ral_cli.c">
       <Filter>Source Files\CLI</Filter>
     </ClCompile>
-    <ClCompile Include="ral_file.c">
-      <Filter>Source Files\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_memory.c">
-      <Filter>Source Files\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_list.c">
-      <Filter>Source Files\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="ral_sourcekeys.c">
       <Filter>Source Files\Interpreter\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="ral_token.c">
       <Filter>Source Files\Interpreter\Lexer</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_string.c">
-      <Filter>Source Files\Utility</Filter>
     </ClCompile>
     <ClCompile Include="ral_lexer.c">
       <Filter>Source Files\Interpreter\Lexer</Filter>
@@ -84,28 +72,25 @@
     <ClCompile Include="ral_expression_read.c">
       <Filter>Source Files\Interpreter\Expression</Filter>
     </ClCompile>
+    <ClCompile Include="ralu_file.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ralu_list.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ralu_memory.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ralu_string.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ral_stdinclude.h">
-      <Filter>Source Files\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="ral_cli.h">
       <Filter>Source Files\CLI</Filter>
     </ClInclude>
-    <ClInclude Include="ral_file.h">
-      <Filter>Source Files\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="ral_memory.h">
-      <Filter>Source Files\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="ral_lexer.h">
       <Filter>Source Files\Interpreter\Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="ral_list.h">
-      <Filter>Source Files\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="ral_string.h">
-      <Filter>Source Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="ral_sourceunit.h">
       <Filter>Source Files\Source</Filter>
@@ -121,6 +106,21 @@
     </ClInclude>
     <ClInclude Include="ral_object.h">
       <Filter>Source Files\Interpreter\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_file.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_list.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_memory.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_stdinclude.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_string.h">
+      <Filter>Source Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

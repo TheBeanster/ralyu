@@ -146,30 +146,30 @@
     <ClCompile Include="ral_cli.c" />
     <ClCompile Include="ral_execute.c" />
     <ClCompile Include="ral_expression_read.c" />
-    <ClCompile Include="ral_file.c" />
+    <ClCompile Include="ralu_file.c" />
     <ClCompile Include="ral_lexer.c" />
-    <ClCompile Include="ral_list.c" />
+    <ClCompile Include="ralu_list.c" />
     <ClCompile Include="ral_logging.c" />
     <ClCompile Include="ral_main.c" />
-    <ClCompile Include="ral_memory.c" />
+    <ClCompile Include="ralu_memory.c" />
     <ClCompile Include="ral_sourcekeys.c" />
     <ClCompile Include="ral_sourceunit.c" />
     <ClCompile Include="ral_statement.c" />
-    <ClCompile Include="ral_string.c" />
+    <ClCompile Include="ralu_string.c" />
     <ClCompile Include="ral_token.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_cli.h" />
     <ClInclude Include="ral_execute.h" />
     <ClInclude Include="ral_expression.h" />
-    <ClInclude Include="ral_file.h" />
-    <ClInclude Include="ral_list.h" />
+    <ClInclude Include="ralu_file.h" />
+    <ClInclude Include="ralu_list.h" />
     <ClInclude Include="ral_logging.h" />
-    <ClInclude Include="ral_memory.h" />
+    <ClInclude Include="ralu_memory.h" />
     <ClInclude Include="ral_object.h" />
     <ClInclude Include="ral_sourceunit.h" />
-    <ClInclude Include="ral_stdinclude.h" />
-    <ClInclude Include="ral_string.h" />
+    <ClInclude Include="ralu_stdinclude.h" />
+    <ClInclude Include="ralu_string.h" />
     <ClInclude Include="ral_lexer.h" />
   </ItemGroup>
   <ItemGroup>
