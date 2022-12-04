@@ -56,7 +56,8 @@ int main(int argc, char** argv)
 	
 
 
-	Ral_DestroySourceUnit(mainsource);
+	// Crashes
+	//Ral_DestroySourceUnit(mainsource);
 
 	Ral_DestroyTextFile(mainsource->file);
 	Ral_FREE(mainsource);
