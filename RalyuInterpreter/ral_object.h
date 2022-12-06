@@ -19,6 +19,8 @@ typedef struct Ral_Type
 	Ral_TypeTag tag;
 } Ral_Type;
 
+extern const Ral_Type ral_base_types[];
+
 
 
 
@@ -31,3 +33,22 @@ typedef struct Ral_Object
 	char* name;
 } Ral_Object;
 
+typedef int Ral_Integer;
+typedef struct
+{
+	Ral_Object base;
+	Ral_Integer value;
+} Ral_Object_Int;
+
+typedef double Ral_Float;
+typedef struct
+{
+	Ral_Object base;
+	Ral_Float value;
+} Ral_Object_Int;
+
+
+
+Ral_Object* Ral_CreateObject(
+	const Ral_Type* const type
+);

@@ -195,6 +195,7 @@ typedef struct Ral_Statement
 	Ral_StatementType type;
 
 	struct Ral_SourceUnit* parentsource;
+	int			index;
 
 	Ral_Token*	tokens;
 	int			numtokens;

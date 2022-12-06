@@ -57,3 +57,9 @@ Evaluating expressions means going through every function call and then evaluati
 Every function call precedes zero or more expression evals.
 If calling functions automatically entail evaluating expression trees for their arguments then this could be made far simpler.
 On the stack, it will simply be a list of calls and then evaling an expression.
+
+
+
+NOPE
+
+They will use recursion

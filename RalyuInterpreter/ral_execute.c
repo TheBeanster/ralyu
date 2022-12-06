@@ -7,23 +7,34 @@
 
 
 
+Ral_State* Ral_CreateState(const Ral_SourceUnit* const mainsource)
+{
+	Ral_State* state = Ral_ALLOC_TYPE(Ral_State);
+	state->mainsource = mainsource;
+
+	return state;
+}
+
+
+
+
+
 void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit)
 {
 	RalCLI_DEBUGLOG("Executing sourceunit");
 
+	if (!sourceunit) return;
+	if (sourceunit->numstatements <= 0) return;
+	if (!sourceunit->statements) return;
+
+	Ral_Statement* current_statement = &sourceunit->statements[0];
 	Ral_State* state = Ral_CreateState(sourceunit);
 	if (!state) return;
 
-	Ral_Bool continue_executing = Ral_TRUE;
-	while (continue_executing)
+	while (current_statement)
 	{
 		// Execute the current statement
-		
-		Ral_ExecuteStatement(state, &state->current_sourceunit->statements[state->current_statementid]);
-		
-		// Find what the next statement executed should be
-		// Go to next statement
-		Ral_GotoNextStatement(state);
+		current_statement = Ral_ExecuteStatement(state, current_statement);
 	}
 
 	Ral_FREE(state);
@@ -31,7 +42,7 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit)
 
 
 
-Ral_Bool Ral_ExecuteStatement(
+Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
 	const Ral_Statement* const statement
 )
@@ -47,6 +58,10 @@ Ral_Bool Ral_ExecuteStatement(
 	case Ral_STATEMENTTYPE_EXPRESSION: {}
 		Ral_Expression* expr = Ral_CreateExpression(statement, 0, statement->numtokens);
 		
+		Ral_Object* expr_result = Ral_EvaluateExpression(state, expr);
+		if (!expr_result)
+			return NULL;
+
 		Ral_DestroyExpression(expr);
 		break;
 
@@ -54,13 +69,5 @@ Ral_Bool Ral_ExecuteStatement(
 		break;
 	}
 
-	return Ral_TRUE;
-}
-
-
-
-Ral_Bool Ral_GotoNextStatement(Ral_State* const state)
-{
-	Ral_Bool ret = Ral_FALSE;
-	return Ral_SetStateExecutionPosition(state, state->current_sourceunit, state->current_statementid + 1);
+	return NULL;
 }

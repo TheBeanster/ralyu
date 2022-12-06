@@ -673,6 +673,7 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 	for (int i = 0; i < numstatements; i++)
 	{
 		source->statements[i] = *iterator;
+		source->statements[i].index = i;
 		iterator = iterator->next;
 	}
 

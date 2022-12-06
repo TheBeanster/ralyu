@@ -84,8 +84,17 @@
     <ClCompile Include="ralu_string.c">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="ral_state.c">
+    <ClCompile Include="ral_function.c">
       <Filter>Source Files\Interpreter\Execute</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_expression_eval.c">
+      <Filter>Source Files\Interpreter\Expression</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_object.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_object_types.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,10 +134,7 @@
     <ClInclude Include="ralu_string.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ral_stack.h">
-      <Filter>Source Files\Interpreter\Execute</Filter>
-    </ClInclude>
-    <ClInclude Include="ral_functioncall.h">
+    <ClInclude Include="ral_function.h">
       <Filter>Source Files\Interpreter\Execute</Filter>
     </ClInclude>
   </ItemGroup>
