@@ -31,3 +31,29 @@ OH I FIGURED OUT A SOLUTION
 
 A function call node has a pointer to a function call struct, that struct has a list of all paramater expressions,
 when going through a tree, it will be possible to evaluate expressions and perform function calls.
+
+Evaluating expressions is easy and can be done with a single function, like evaluate_expression, since it doesn't
+require using the execution stack.
+
+func(a + 1, funcb(0 * 0) + 1) + funca(10).x + funcd().y
+                  --0--
+     --1--  --------2-------          -3
+--------------------------4----------------------------
+eval expr 0
+call funcb
+
+eval expr 1
+eval expr 2
+call func
+
+eval expr 3
+call funca
+
+call funcd
+
+eval expr 4
+
+Evaluating expressions means going through every function call and then evaluating the top level expression.
+Every function call precedes zero or more expression evals.
+If calling functions automatically entail evaluating expression trees for their arguments then this could be made far simpler.
+On the stack, it will simply be a list of calls and then evaling an expression.

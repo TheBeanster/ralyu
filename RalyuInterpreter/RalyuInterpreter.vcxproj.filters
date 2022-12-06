@@ -87,9 +87,6 @@
     <ClCompile Include="ral_state.c">
       <Filter>Source Files\Interpreter\Execute</Filter>
     </ClCompile>
-    <ClCompile Include="ral_expression_eval.c">
-      <Filter>Source Files\Interpreter\Expression</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_cli.h">
@@ -128,7 +125,10 @@
     <ClInclude Include="ralu_string.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ral_state.h">
+    <ClInclude Include="ral_stack.h">
+      <Filter>Source Files\Interpreter\Execute</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_functioncall.h">
       <Filter>Source Files\Interpreter\Execute</Filter>
     </ClInclude>
   </ItemGroup>

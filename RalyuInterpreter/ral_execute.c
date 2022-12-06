@@ -20,11 +20,10 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit)
 		// Execute the current statement
 		
 		Ral_ExecuteStatement(state, &state->current_sourceunit->statements[state->current_statementid]);
-
+		
 		// Find what the next statement executed should be
-
 		// Go to next statement
-		continue_executing = Ral_SetStateExecutionPosition(state, sourceunit, state->current_statementid + 1);
+		Ral_GotoNextStatement(state);
 	}
 
 	Ral_FREE(state);
@@ -56,4 +55,12 @@ Ral_Bool Ral_ExecuteStatement(
 	}
 
 	return Ral_TRUE;
+}
+
+
+
+Ral_Bool Ral_GotoNextStatement(Ral_State* const state)
+{
+	Ral_Bool ret = Ral_FALSE;
+	return Ral_SetStateExecutionPosition(state, state->current_sourceunit, state->current_statementid + 1);
 }
