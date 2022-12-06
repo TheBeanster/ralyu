@@ -31,11 +31,6 @@ typedef struct Ral_ExprNode
 	Ral_ExprNodeType type;
 } Ral_ExprNode;
 
-typedef struct Ral_ExprNode_FunctionCall
-{
-	Ral_ExprNode base;
-} Ral_ExprNode_FunctionCall;
-
 
 
 typedef struct Ral_Expression
