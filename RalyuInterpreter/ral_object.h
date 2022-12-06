@@ -29,7 +29,8 @@ typedef enum
 
 extern const Ral_Type ral_base_types[];
 
-
+#define Ral_TYPEINT		(&ral_base_types[Ral_BASETYPE_INT])
+#define Ral_TYPEFLOAT	(&ral_base_types[Ral_BASETYPE_FLOAT])
 
 
 
@@ -68,6 +69,14 @@ void Ral_DeleteObject(
 );
 
 
+
+Ral_Object_Int* Ral_CreateIntObjectFromInt(
+	const int i
+);
+
+Ral_Object_Float* Ral_CreateFloatObjectFromFloat(
+	const float f
+);
 
 Ral_Object* Ral_CreateObjectFromLiteral(
 	const Ral_Token* const token

@@ -155,7 +155,7 @@ const char* ral_operatorid_names[] =
 	RALPREFIX "OPERATOR_MEMBERACCESS"
 };
 
-const int operator_precedence[] =
+const int ral_operator_precedence[] =
 {
 	1, // "ASSIGN",
 	1, // "ASSIGNADDITION",

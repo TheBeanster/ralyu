@@ -4,6 +4,17 @@
 
 
 
+static Ral_Object* evaluate_binary_operator(
+	const Ral_OperatorID operator,
+	const Ral_ExprNode* const left,
+	const Ral_ExprNode* const right
+)
+{
+
+}
+
+
+
 static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 {
 	if (!node) return NULL;
@@ -17,23 +28,23 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 
 		Ral_Object* left_arg = NULL;
 		Ral_Object* right_arg = NULL;
-		if (token->operatorid != Ral_OPERATOR_ASSIGN) // If operator is standard assign then don't get the left value
+
+		if (token->operatorid == Ral_OPERATOR_ASSIGN) // If operator is standard assign then don't get the left value
 		{
-			left_arg = evaluate_node(node->left);
+			
+			return;
 		}
+
+		left_arg = evaluate_node(node->left);
 		if (!Ral_IS_UNARY_OPERATOR(token->operatorid)) // If operator is unary then don't get right value
 		{
+			// 
 			right_arg = evaluate_node(node->right);
-		}
-
-		switch (token->operatorid)
+		} else
 		{
-		case Ral_OPERATOR_ADDITION:
-
-			break;
-		default:
-			break;
+			// Unary operator
 		}
+
 		break;
 
 	case Ral_EXPRNODETYPE_LITERAL:

@@ -85,7 +85,7 @@ Ral_OperatorID Ral_CheckOperator(const char* const str);
 
 extern const char* ral_operatorid_names[];
 
-extern const int Ral_operator_precedence[];
+extern const int ral_operator_precedence[];
 
 #define Ral_EXPRESSION_NESTING_PRECEDENCE_SHIFT 4
 

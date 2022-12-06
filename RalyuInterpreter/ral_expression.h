@@ -29,6 +29,8 @@ typedef struct Ral_ExprNode
 	const Ral_Token* corresp_token;
 
 	Ral_ExprNodeType type;
+
+	Ral_List functioncall_parameters;
 } Ral_ExprNode;
 
 

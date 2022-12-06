@@ -1,6 +1,7 @@
 #include "ral_object.h"
 
 #include "ralu_memory.h"
+#include "ralu_string.h"
 
 #include "ral_cli.h"
 
@@ -8,13 +9,13 @@
 
 Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 {
-	if (type == &ral_base_types[Ral_BASETYPE_INT])
+	if (type == Ral_TYPEINT)
 	{
 		Ral_Object_Int* object = Ral_ALLOC_TYPE(Ral_Object_Int);
 		object->base.type = type;
 		return object;
 	}
-	if (type == &ral_base_types[Ral_BASETYPE_FLOAT])
+	if (type == Ral_TYPEFLOAT)
 	{
 		Ral_Object_Float* object = Ral_ALLOC_TYPE(Ral_Object_Float);
 		object->base.type = type;
@@ -30,8 +31,8 @@ Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 void Ral_DeleteObject(Ral_Object* const object)
 {
 	if (
-		object->type == &ral_base_types[Ral_BASETYPE_INT] ||
-		object->type == &ral_base_types[Ral_BASETYPE_FLOAT])
+		object->type == Ral_TYPEINT ||
+		object->type == Ral_TYPEFLOAT)
 	{
 		Ral_FREE(object);
 	}
@@ -39,12 +40,38 @@ void Ral_DeleteObject(Ral_Object* const object)
 
 
 
+
+
+
+
+
+Ral_Object_Int* Ral_CreateIntObjectFromInt(const int i)
+{
+	Ral_Object_Int* obj = Ral_CreateObject(Ral_TYPEINT);
+	obj->value = i;
+	return obj;
+}
+
+Ral_Object_Float* Ral_CreateFloatObjectFromFloat(const float f)
+{
+	Ral_Object_Float* obj = Ral_CreateObject(Ral_TYPEFLOAT);
+	obj->value = f;
+	return obj;
+}
+
 Ral_Object* Ral_CreateObjectFromLiteral(const Ral_Token* const token)
 {
 	if (token->type == Ral_TOKENTYPE_NUMBERLITERAL)
 	{
-		Ral_Object_Int* obj = Ral_CreateObject(&ral_base_types[Ral_BASETYPE_INT]);
-		obj->value = token->numberliteral_value;
+		if (Ral_IsCharIn('.', token->string))
+		{
+			// Number literal has a .
+			return Ral_CreateFloatObjectFromFloat(token->numberliteral_value);
+		} else
+		{
+			// Number literal is an int
+			return Ral_CreateIntObjectFromInt(token->numberliteral_value);
+		}
 	}
 	else if (token->type == Ral_TOKENTYPE_STRINGLITERAL)
 	{
