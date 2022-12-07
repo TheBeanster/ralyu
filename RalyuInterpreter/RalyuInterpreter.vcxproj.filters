@@ -96,6 +96,9 @@
     <ClCompile Include="ral_object_types.c">
       <Filter>Source Files\Interpreter\Object</Filter>
     </ClCompile>
+    <ClCompile Include="ral_object_arithmetic.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ral_cli.h">

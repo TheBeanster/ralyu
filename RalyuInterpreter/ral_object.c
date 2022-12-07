@@ -28,7 +28,7 @@ Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 
 
 
-void Ral_DeleteObject(Ral_Object* const object)
+void Ral_DestroyObject(Ral_Object* const object)
 {
 	if (
 		object->type == Ral_TYPEINT ||
@@ -36,6 +36,7 @@ void Ral_DeleteObject(Ral_Object* const object)
 	{
 		Ral_FREE(object);
 	}
+	printf("NO DELETE IMPLEMENTATION!\n");
 }
 
 
@@ -82,4 +83,23 @@ Ral_Object* Ral_CreateObjectFromLiteral(const Ral_Token* const token)
 		RalCLI_ERROR("Tried to evaluate literal value of token that was not literal!");
 		return NULL;
 	}
+}
+
+
+
+
+
+Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
+{
+	return NULL;
+}
+
+Ral_Object_Int* Ral_CopyIntObject(const Ral_Object_Int* const obj)
+{
+	return Ral_CreateIntObjectFromInt(obj->value);
+}
+
+Ral_Object_Float* Ral_CopyFloatObject(const Ral_Object_Float* const obj)
+{
+	return Ral_CreateFloatObjectFromFloat(obj->value);
 }

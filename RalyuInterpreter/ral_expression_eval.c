@@ -1,8 +1,13 @@
 #include "ral_expression.h"
 
 #include "ral_function.h"
+#include "ral_cli.h"
 
 #include <stdio.h>
+
+
+
+static Ral_Object* evaluate_node(Ral_ExprNode* const node);
 
 
 
@@ -12,7 +17,73 @@ static Ral_Object* evaluate_binary_operator(
 	const Ral_ExprNode* const right
 )
 {
+	Ral_Object* leftobj = evaluate_node(left);
+	Ral_Object* rightobj = evaluate_node(right);
 
+	Ral_Object* result = NULL;
+
+	switch (operator)
+	{
+	case Ral_OPERATOR_ADDITION:			result = Ral_Object_Add		(leftobj, rightobj); break;
+	case Ral_OPERATOR_SUBTRACTION:		result = Ral_Object_Subtract(leftobj, rightobj); break;
+	case Ral_OPERATOR_MULTIPLICATION:	result = Ral_Object_Multiply(leftobj, rightobj); break;
+	case Ral_OPERATOR_DIVISION:			result = Ral_Object_Divide	(leftobj, rightobj); break;
+	
+	case Ral_OPERATOR_EQUALITY:			result = Ral_Object_Equality(leftobj, rightobj); break;
+
+	default:
+		printf("Binary operator not implemented!\n");
+		break;
+	}
+
+	Ral_DestroyObject(leftobj);
+	Ral_DestroyObject(rightobj);
+	if (!result)
+	{
+		printf("Could not evaluate binary operator!\n");
+		return NULL;
+	}
+
+	return result;
+}
+
+
+
+static Ral_Object* evaluate_assignment_operator(
+	const Ral_OperatorID operator,
+	const Ral_ExprNode* const left,
+	const Ral_ExprNode* const right
+)
+{
+	if (left->type != Ral_EXPRNODETYPE_VARIABLE)
+	{
+		RalCLI_ERROR("NONO\n");
+		return NULL;
+	}
+
+	Ral_Object* result = evaluate_node(right);
+	// Find the variable
+	// Assign the number to IT
+	return result;
+}
+
+
+
+static Ral_Object* evaluate_unary_operator(
+	const Ral_OperatorID operator,
+	const Ral_ExprNode* const left,
+	const Ral_ExprNode* const right
+)
+{
+	switch (operator)
+	{
+	case Ral_OPERATOR_NEGATIVE:
+		return Ral_Object_Negative(right);
+		break;
+	default:
+		return NULL;
+		break;
+	}
 }
 
 
@@ -32,13 +103,25 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 	case Ral_EXPRNODETYPE_OPERATOR: {}
 		Ral_Token* token = node->corresp_token;
 		if (!token) return NULL;
-		if (token->operatorid == Ral_NOT_OPERATOR) return NULL;
+		Ral_OperatorID op = token->operatorid;
+		if (op == Ral_NOT_OPERATOR) return NULL;
 
 		Ral_ExprNode* left_node = node->left;
 		Ral_ExprNode* right_node = node->right;
 
-		evaluate_node(left_node);
-		evaluate_node(right_node);
+		if (Ral_IS_UNARY_OPERATOR(op))
+		{
+			// Unary operator
+			return evaluate_unary_operator(op, left_node, right_node);
+		} else if (!Ral_IS_ASSIGNMENT_OPERATOR(op))
+		{
+			// Binary operator
+			return evaluate_binary_operator(op, left_node, right_node);
+		} else if (Ral_IS_ASSIGNMENT_OPERATOR(op))
+		{
+			// Assignment operator
+			return evaluate_assignment_operator(op, left_node, right_node);
+		}
 		depth--;
 		break;
 
@@ -54,6 +137,8 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 
 	case Ral_EXPRNODETYPE_FUNCTION:
 		depth--;
+
+		Ral_Function* function = 0;
 
 		// Make a list of objects for the results for the parameters
 		Ral_ExprNode* parameter_node = node->functioncall_parameters.begin;

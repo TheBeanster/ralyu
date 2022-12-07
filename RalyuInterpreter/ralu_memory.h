@@ -2,7 +2,7 @@
 
 #include "ralu_stdinclude.h"
 
-#define RalCompile_USE_STD_MALLOC 0
+#define RalCompile_USE_STD_MALLOC 1
 
 
 
