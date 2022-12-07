@@ -157,6 +157,7 @@
     <ClCompile Include="ral_object.c" />
     <ClCompile Include="ral_object_arithmetic.c" />
     <ClCompile Include="ral_object_types.c" />
+    <ClCompile Include="ral_object_variable.c" />
     <ClCompile Include="ral_sourcekeys.c" />
     <ClCompile Include="ral_sourceunit.c" />
     <ClCompile Include="ral_statement.c" />

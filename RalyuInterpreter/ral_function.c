@@ -57,10 +57,14 @@ Ral_Object* Ral_CallFunction(
 		Ral_Object* return_object = (function->extern_function)(parameters);
 	} else
 	{
+		// Run the code
+
+		Ral_List local_variables = { 0 };
 		Ral_Statement* current_statement = function->declaration;
 		while (current_statement)
 		{
 			current_statement = Ral_ExecuteStatement(state, current_statement);
 		}
+		Ral_ClearList(&local_variables, &Ral_DestroyObject);
 	}
 }

@@ -30,13 +30,14 @@ Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 
 void Ral_DestroyObject(Ral_Object* const object)
 {
-	if (
-		object->type == Ral_TYPEINT ||
+	if (object->type == Ral_TYPEINT ||
 		object->type == Ral_TYPEFLOAT)
 	{
 		Ral_FREE(object);
+	} else
+	{
+		Ral_FREE(object);
 	}
-	printf("NO DELETE IMPLEMENTATION!\n");
 }
 
 

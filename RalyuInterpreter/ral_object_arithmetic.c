@@ -16,9 +16,9 @@ Ral_Object* Ral_Object_Add(
 		return NULL;
 	}
 
-	if (Ral_ISBASETYPE(Ral_BASETYPE_INT, a))
+	if (a->type == Ral_TYPEINT)
 	{
-		if (Ral_ISBASETYPE(Ral_BASETYPE_INT, b))
+		if (b->type == Ral_TYPEINT)
 		{
 			Ral_Object_Int* int_a = (Ral_Object_Int*)a;
 			Ral_Object_Int* int_b = (Ral_Object_Int*)a;
@@ -74,12 +74,12 @@ Ral_Object* Ral_Object_Negative(
 		return NULL;
 	}
 
-	if (Ral_ISBASETYPE(Ral_BASETYPE_INT, a))
+	if (a->type == Ral_TYPEINT)
 	{
 		Ral_Object_Int* intobj = Ral_CopyIntObject((Ral_Object_Int*)a);
 		intobj->value = -intobj->value;
 	}
-	else if (Ral_ISBASETYPE(Ral_BASETYPE_FLOAT, a))
+	else if (a->type == Ral_TYPEFLOAT)
 	{
 		Ral_Object_Float* floatobj = Ral_CopyFloatObject((Ral_Object_Float*)a);
 		floatobj->value = -floatobj->value;

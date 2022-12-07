@@ -32,8 +32,6 @@ extern const Ral_Type ral_base_types[];
 #define Ral_TYPEINT		(&ral_base_types[Ral_BASETYPE_INT])
 #define Ral_TYPEFLOAT	(&ral_base_types[Ral_BASETYPE_FLOAT])
 
-#define Ral_ISBASETYPE(basetype, object) (object->type == &ral_base_types[basetype])
-
 
 
 typedef struct Ral_Object
@@ -41,7 +39,7 @@ typedef struct Ral_Object
 	Ral_LISTLINKS(Ral_Object);
 
 	const Ral_Type* type;
-	char* name;
+	const char* name;
 } Ral_Object;
 
 typedef int Ral_Integer;
@@ -111,3 +109,13 @@ Ral_Object* Ral_Object_Inequality	(Ral_Object* const a, Ral_Object* const b);
 
 Ral_Bool	Ral_Object_IsFalse		(Ral_Object* const a);
 Ral_Bool	Ral_Object_IsTrue		(Ral_Object* const a);
+
+
+
+
+
+Ral_Object* Ral_DeclareVariable(
+	Ral_List* const			list,
+	const char* const		name,
+	const Ral_Type* const	type
+);
