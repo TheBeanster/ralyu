@@ -59,25 +59,25 @@ static int read_function_call(
 
 	for (int i = begin + 2; i < statement->numtokens; i++)
 	{
-		Ral_Token* token = &statement->tokens[i];
+		Ral_Token* curtoken = &statement->tokens[i];
 
-		if (paren_depth == 0 && token->separatorid == Ral_SEPARATOR_COMMA)
+		if (paren_depth == 0 && curtoken->separatorid == Ral_SEPARATOR_COMMA)
 		{
 			Ral_ExprNode* param_node = NULL;
 			if (!(i <= param_begin || i > statement->numtokens))
 				param_node = read_expression(statement, param_begin, i);
 			if (param_node)
-				Ral_PushFrontList(&token->expr_node->functioncall_parameters, param_node);
+				Ral_PushFrontList(&node->functioncall_parameters, param_node);
 			else
 				goto free_and_exit;
 			param_begin = i + 1;
 		}
 		
-		if (token->separatorid == Ral_SEPARATOR_LPAREN)
+		if (curtoken->separatorid == Ral_SEPARATOR_LPAREN)
 		{
 			paren_depth++;
 		}
-		if (token->separatorid == Ral_SEPARATOR_RPAREN)
+		if (curtoken->separatorid == Ral_SEPARATOR_RPAREN)
 		{
 			paren_depth--;
 			if (paren_depth < 0)
@@ -86,7 +86,9 @@ static int read_function_call(
 				if (!(i <= param_begin || i > statement->numtokens))
 					param_node = read_expression(statement, param_begin, i);
 				if (param_node)
-					Ral_PushFrontList(&token->expr_node->functioncall_parameters, param_node);
+					Ral_PushFrontList(&node->functioncall_parameters, param_node);
+				else
+					goto free_and_exit;
 				param_begin = i + 1;
 				break;
 			}
@@ -97,6 +99,7 @@ static int read_function_call(
 
 free_and_exit:
 	Ral_DestroyExprNode(node);
+	token->expr_node = NULL;
 }
 
 
@@ -114,6 +117,17 @@ static Ral_ExprNode* read_expression(
 	const int end
 )
 {
+	/*
+	The first step of building the expression tree is finding all operators and operands.
+	They will be put in the l_tokens and l_operators lists. The l_tokens has every operand
+	and operator and uses the list links of the tokens themselves. The l_operators has
+	expr_list_elem and has all the operators and also what precedence they have. 
+
+	After they've been read the l_operators list will be sorted so the operator with highest
+	precedence comes first. And at last, the actual tree structure will be created by looping
+	over the operators and getting the operands from the l_tokens list.
+	*/
+
 	if (end - 1 <= begin)
 	{
 		// Expression is one token long
@@ -123,6 +137,7 @@ static Ral_ExprNode* read_expression(
 		return node;
 	}
 
+	Ral_ExprNode* topnode = NULL;
 	Ral_List l_tokens = { 0 };
 	Ral_List l_operators = { 0 };
 	int current_paren_depth = 0;
@@ -285,7 +300,7 @@ static Ral_ExprNode* read_expression(
 			if (!left_node)
 			{
 				// Tree node doens't already exist
-				RalCLI_ERROR("FUCK");
+				RalCLI_ERROR("FUCKS");
 				goto free_and_exit;
 			} else
 			{
@@ -299,7 +314,7 @@ static Ral_ExprNode* read_expression(
 			if (!right_node)
 			{
 				// Tree node doens't already exist
-				RalCLI_ERROR("FUCK");
+				RalCLI_ERROR("FUCKZ");
 				goto free_and_exit;
 			} else
 			{
@@ -310,17 +325,20 @@ static Ral_ExprNode* read_expression(
 			node->right = right_node;
 		}
 
-		if (!iterator->next) return node;
+		if (!iterator->next)
+		{
+			topnode = node;
+			break;
+		}
 		iterator = iterator->next;
 	}
 
-	exit(-1);
-	return NULL;
+
 
 free_and_exit:
-	RalCLI_ERROR("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-	exit(-1000000);
-	return NULL;
+	Ral_ClearList(&l_operators, NULL);
+
+	return topnode;
 }
 
 
