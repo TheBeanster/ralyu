@@ -43,7 +43,9 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit);
 
 Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
-	const Ral_Statement* const statement
+	const Ral_Statement* const statement,
+	Ral_List* const local_variables,
+	Ral_Object** return_object
 );
 
 

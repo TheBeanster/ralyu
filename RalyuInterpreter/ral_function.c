@@ -51,10 +51,12 @@ Ral_Object* Ral_CallFunction(
 {
 	if (!validate_parameters(function, parameters)) return NULL;
 
+	Ral_Object* return_object = NULL;
+
 	if (function->extern_function != NULL)
 	{
 		// If there is an extern function pointer run it instead
-		Ral_Object* return_object = (function->extern_function)(parameters);
+		return_object = (function->extern_function)(parameters);
 	} else
 	{
 		// Run the code
@@ -63,8 +65,11 @@ Ral_Object* Ral_CallFunction(
 		Ral_Statement* current_statement = function->declaration;
 		while (current_statement)
 		{
-			current_statement = Ral_ExecuteStatement(state, current_statement);
+			current_statement = Ral_ExecuteStatement(state, current_statement, &local_variables, &return_object);
+			if (return_object) break;
 		}
 		Ral_ClearList(&local_variables, &Ral_DestroyObject);
 	}
+
+	return return_object;
 }

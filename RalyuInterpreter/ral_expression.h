@@ -63,5 +63,6 @@ void Ral_DestroyExpression(
 
 Ral_Object* Ral_EvaluateExpression(
 	Ral_State* const state,
+	Ral_List* const local_variables,
 	const Ral_Expression* const expression
 );

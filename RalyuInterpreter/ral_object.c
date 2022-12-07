@@ -30,6 +30,8 @@ Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 
 void Ral_DestroyObject(Ral_Object* const object)
 {
+	if (!object) return;
+
 	if (object->type == Ral_TYPEINT ||
 		object->type == Ral_TYPEFLOAT)
 	{

@@ -24,13 +24,19 @@ typedef struct Ral_Type
 typedef enum
 {
 	Ral_BASETYPE_INT,
-	Ral_BASETYPE_FLOAT
+	Ral_BASETYPE_FLOAT,
+	Ral_NUMBASETYPES
 } Ral_BaseTypeIndex;
 
 extern const Ral_Type ral_base_types[];
 
 #define Ral_TYPEINT		(&ral_base_types[Ral_BASETYPE_INT])
 #define Ral_TYPEFLOAT	(&ral_base_types[Ral_BASETYPE_FLOAT])
+
+Ral_Type* Ral_GetType(
+	const struct Ral_State* const state,
+	const char* const str
+);
 
 
 

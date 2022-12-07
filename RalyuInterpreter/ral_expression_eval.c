@@ -7,18 +7,24 @@
 
 
 
-static Ral_Object* evaluate_node(Ral_ExprNode* const node);
+static Ral_Object* evaluate_node(
+	Ral_State* const state,
+	Ral_List* const local_variables,
+	Ral_ExprNode* const node
+);
 
 
 
 static Ral_Object* evaluate_binary_operator(
+	Ral_State* const state,
+	Ral_List* const local_variables,
 	const Ral_OperatorID operator,
 	const Ral_ExprNode* const left,
 	const Ral_ExprNode* const right
 )
 {
-	Ral_Object* leftobj = evaluate_node(left);
-	Ral_Object* rightobj = evaluate_node(right);
+	Ral_Object* leftobj = evaluate_node(state, local_variables, left);
+	Ral_Object* rightobj = evaluate_node(state, local_variables, right);
 
 	Ral_Object* result = NULL;
 
@@ -50,6 +56,8 @@ static Ral_Object* evaluate_binary_operator(
 
 
 static Ral_Object* evaluate_assignment_operator(
+	Ral_State* const state,
+	Ral_List* const local_variables,
 	const Ral_OperatorID operator,
 	const Ral_ExprNode* const left,
 	const Ral_ExprNode* const right
@@ -61,8 +69,9 @@ static Ral_Object* evaluate_assignment_operator(
 		return NULL;
 	}
 
-	Ral_Object* result = evaluate_node(right);
+	Ral_Object* result = evaluate_node(state, local_variables, right);
 	// Find the variable
+	//Ral_Object* var = Ral_GetVariable
 	// Assign the number to IT
 	return result;
 }
@@ -70,6 +79,8 @@ static Ral_Object* evaluate_assignment_operator(
 
 
 static Ral_Object* evaluate_unary_operator(
+	Ral_State* const state,
+	Ral_List* const local_variables,
 	const Ral_OperatorID operator,
 	const Ral_ExprNode* const left,
 	const Ral_ExprNode* const right
@@ -88,7 +99,11 @@ static Ral_Object* evaluate_unary_operator(
 
 
 
-static Ral_Object* evaluate_node(Ral_ExprNode* const node)
+static Ral_Object* evaluate_node(
+	Ral_State* const state,
+	Ral_List* const local_variables,
+	Ral_ExprNode* const node
+)
 {
 	if (!node) return NULL;
 
@@ -112,15 +127,15 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 		if (Ral_IS_UNARY_OPERATOR(op))
 		{
 			// Unary operator
-			return evaluate_unary_operator(op, left_node, right_node);
+			return evaluate_unary_operator(state, local_variables, op, left_node, right_node);
 		} else if (!Ral_IS_ASSIGNMENT_OPERATOR(op))
 		{
 			// Binary operator
-			return evaluate_binary_operator(op, left_node, right_node);
+			return evaluate_binary_operator(state, local_variables, op, left_node, right_node);
 		} else if (Ral_IS_ASSIGNMENT_OPERATOR(op))
 		{
 			// Assignment operator
-			return evaluate_assignment_operator(op, left_node, right_node);
+			return evaluate_assignment_operator(state, local_variables, op, left_node, right_node);
 		}
 		depth--;
 		break;
@@ -145,7 +160,7 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 		while (parameter_node)
 		{
 			depth += 2;
-			evaluate_node(parameter_node);
+			evaluate_node(state, local_variables, parameter_node);
 			depth -= 2;
 			parameter_node = parameter_node->next;
 		}
@@ -160,9 +175,9 @@ static Ral_Object* evaluate_node(Ral_ExprNode* const node)
 
 
 
-Ral_Object* Ral_EvaluateExpression(Ral_State* const state, const Ral_Expression* const expression)
+Ral_Object* Ral_EvaluateExpression(Ral_State* const state, Ral_List* const local_variables, const Ral_Expression* const expression)
 {
-	Ral_Object* result = evaluate_node(expression->top);
+	Ral_Object* result = evaluate_node(state, local_variables, expression->top);
 
 	return result;
 }
