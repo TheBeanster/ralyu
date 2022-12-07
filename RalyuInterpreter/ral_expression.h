@@ -22,14 +22,17 @@ typedef enum
 
 typedef struct Ral_ExprNode
 {
+	Ral_LISTLINKS(Ral_ExprNode);
+
 	struct Ral_ExprNode* parent;
 	struct Ral_ExprNode* left;
 	struct Ral_ExprNode* right;
 
-	const Ral_Token* corresp_token;
+	Ral_Token* corresp_token;
 
 	Ral_ExprNodeType type;
 
+	// List of Ral_ExprNodes. The top node of every tree of the parameters.
 	Ral_List functioncall_parameters;
 } Ral_ExprNode;
 

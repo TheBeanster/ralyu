@@ -8,6 +8,85 @@
 
 
 
+static Ral_ExprNodeType get_type(const Ral_Token* const token)
+{
+	if (token->type == Ral_TOKENTYPE_STRINGLITERAL ||
+		token->type == Ral_TOKENTYPE_NUMBERLITERAL)
+		return Ral_EXPRNODETYPE_LITERAL;
+	if (token->type == Ral_TOKENTYPE_IDENTIFIER)
+	{
+		// If the token has an expression node and that node has functioncall parameters then it is prob a function call
+		if (token->expr_node && token->expr_node->functioncall_parameters.itemcount > 0)
+			return Ral_EXPRNODETYPE_FUNCTION;
+		else
+			return Ral_EXPRNODETYPE_VARIABLE;
+	}
+}
+
+static Ral_ExprNode* read_expression(
+	const Ral_Statement* const statement,
+	const int begin,
+	const int end
+);
+
+
+
+static int read_function_call(
+	const Ral_Statement* const statement,
+	const int begin,
+	Ral_Token* const token
+)
+{
+	Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
+	node->corresp_token = token;
+	node->type = Ral_EXPRNODETYPE_FUNCTION;
+	// List of Ral_ExprNodes
+	Ral_List parameters = { 0 };
+	int paren_depth = 0;
+	int param_begin = begin + 2; // After function opening parenthesis
+
+	// TODO Check if this goes out of bounds of tokens array
+	for (int i = begin + 2; i < statement->numtokens; i++)
+	{
+		Ral_Token* token = &statement->tokens[i];
+
+		if (paren_depth == 0 && token->separatorid == Ral_SEPARATOR_COMMA)
+		{
+			Ral_ExprNode* param_node = NULL;
+			if (!(i <= param_begin || i > statement->numtokens))
+				param_node = read_expression(statement, param_begin, i);
+			if (param_node)
+				Ral_PushFrontList(&parameters, param_node);
+			param_begin = i + 1;
+		}
+		
+		if (token->separatorid == Ral_SEPARATOR_LPAREN)
+		{
+			paren_depth++;
+		}
+		if (token->separatorid == Ral_SEPARATOR_RPAREN)
+		{
+			paren_depth--;
+			if (paren_depth < 0)
+			{
+				Ral_ExprNode* param_node = NULL;
+				if (!(i <= param_begin || i > statement->numtokens))
+					param_node = read_expression(statement, param_begin, i);
+				if (param_node)
+					Ral_PushFrontList(&parameters, param_node);
+				param_begin = i + 1;
+				break;
+			}
+		}
+	}
+
+	token->expr_node = node;
+	token->expr_node->functioncall_parameters = parameters;
+	return param_begin - 1;
+}
+
+
+
 typedef struct expr_list_elem
 {
 	Ral_LISTLINKS(expr_list_elem);
@@ -21,6 +100,15 @@ static Ral_ExprNode* read_expression(
 	const int end
 )
 {
+	if (end - 1 == begin)
+	{
+		// Expression is one token long
+		Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
+		node->corresp_token = &statement->tokens[begin];
+		node->type = get_type(node->corresp_token);
+		return node;
+	}
+
 	Ral_List l_tokens = { 0 };
 	Ral_List l_operators = { 0 };
 	int current_paren_depth = 0;
@@ -41,18 +129,49 @@ static Ral_ExprNode* read_expression(
 			token->prev = NULL;
 			token->next = NULL;
 			Ral_PushFrontList(&l_tokens, token);
+
+			token->expr_node = Ral_ALLOC_TYPE(Ral_ExprNode);
+			token->expr_node->corresp_token = token;
+			token->expr_node->type = Ral_EXPRNODETYPE_OPERATOR;
 		}
 		else if (
-			token->type == Ral_TOKENTYPE_IDENTIFIER ||
 			token->type == Ral_TOKENTYPE_NUMBERLITERAL ||
 			token->type == Ral_TOKENTYPE_STRINGLITERAL)
 		{
-			// Insert the token in the l_tokens list
 			token->prev = NULL;
 			token->next = NULL;
 			Ral_PushFrontList(&l_tokens, token);
 
-			// TODO Check if it's a function call
+			token->expr_node = Ral_ALLOC_TYPE(Ral_ExprNode);
+			token->expr_node->corresp_token = token;
+			token->expr_node->type = Ral_EXPRNODETYPE_LITERAL;
+		}
+		else if (token->type == Ral_TOKENTYPE_IDENTIFIER)
+		{
+			// Check if identifier is a function call
+			if ((i + 1 < statement->numtokens) &&
+				(statement->tokens[i + 1].separatorid == Ral_SEPARATOR_LPAREN))
+			{
+				// Identifier is function call
+				// Eval the func
+				i = read_function_call(
+					statement,
+					i,
+					token
+				);
+				token->prev = NULL;
+				token->next = NULL;
+				Ral_PushFrontList(&l_tokens, token);
+			} else
+			{
+				token->prev = NULL;
+				token->next = NULL;
+				Ral_PushFrontList(&l_tokens, token);
+
+				token->expr_node = Ral_ALLOC_TYPE(Ral_ExprNode);
+				token->expr_node->corresp_token = token;
+				token->expr_node->type = Ral_EXPRNODETYPE_VARIABLE;
+			}
 		}
 		else if (token->separatorid == Ral_SEPARATOR_LPAREN)
 		{
@@ -106,10 +225,9 @@ static Ral_ExprNode* read_expression(
 
 		Ral_OperatorID op = iterator->token->operatorid;
 
-		printf("op = %s, l = %s, r = %s\n",
-			ral_operatorid_names[op],
-			iterator->token->prev->string,
-			iterator->token->next->string);
+		Ral_ExprNode* node = iterator->token->expr_node;
+
+		printf("op = %s\n", ral_operatorid_names[op]);
 
 		if (Ral_IS_UNARY_OPERATOR(op))
 		{
@@ -119,29 +237,13 @@ static Ral_ExprNode* read_expression(
 				// Make sure there is a token to the right of the negative sign
 				if (!iterator->token->next) goto free_and_exit;
 				
-				// Create the operator node
-				Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
-				node->parent = NULL;
-				node->left = NULL;
-				node->right = NULL;
-				node->corresp_token = iterator->token;
-				node->type = Ral_EXPRNODETYPE_OPERATOR;
-
 				Ral_ExprNode* right_node = iterator->token->next->expr_node;
 				if (!right_node)
 				{
-					// Tree node doens't already exist
-					right_node = Ral_ALLOC_TYPE(Ral_ExprNode);
-					right_node->parent = node;
-					right_node->left = NULL;
-					right_node->right = NULL;
-					right_node->corresp_token = iterator->token->next;
-					right_node->type = 0;												//!!! TODO GET TYPE
-					Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+					RalCLI_ERROR("FUCK");
+					goto free_and_exit;
 				} else
 				{
-					// Token is already in the tree
-					assert(right_node->parent == NULL);
 					// Just set it's tree links
 					right_node->parent = node;
 					Ral_UnlinkFromList(&l_tokens, iterator->token->next);
@@ -159,29 +261,15 @@ static Ral_ExprNode* read_expression(
 			// Make sure there is a token to the left and right of the negative sign
 			if (!iterator->token->prev || !iterator->token->next) goto free_and_exit;
 
-			// Create the operator node
-			Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
-			node->parent = NULL;
-			node->left = NULL;
-			node->right = NULL;
-			node->corresp_token = iterator->token;
-			node->type = Ral_EXPRNODETYPE_OPERATOR;
 
 			Ral_ExprNode* left_node = iterator->token->prev->expr_node;
 			if (!left_node)
 			{
 				// Tree node doens't already exist
-				left_node = Ral_ALLOC_TYPE(Ral_ExprNode);
-				left_node->parent = node;
-				left_node->left = NULL;
-				left_node->right = NULL;
-				left_node->corresp_token = iterator->token->prev;
-				left_node->type = 0;
-				Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
+				RalCLI_ERROR("FUCK");
+				goto free_and_exit;
 			} else
 			{
-				// Token is already in the tree
-				assert(left_node->parent == NULL);
 				// Just set it's tree links and remove from the tokens list
 				left_node->parent = node;
 				Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
@@ -192,17 +280,10 @@ static Ral_ExprNode* read_expression(
 			if (!right_node)
 			{
 				// Tree node doens't already exist
-				right_node = Ral_ALLOC_TYPE(Ral_ExprNode);
-				right_node->parent = node;
-				right_node->left = NULL;
-				right_node->right = NULL;
-				right_node->corresp_token = iterator->token->next;
-				right_node->type = 0;
-				Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+				RalCLI_ERROR("FUCK");
+				goto free_and_exit;
 			} else
 			{
-				// Token is already in the tree
-				assert(right_node->parent == NULL);
 				// Just set it's tree links
 				right_node->parent = node;
 				Ral_UnlinkFromList(&l_tokens, iterator->token->next);
@@ -210,10 +291,12 @@ static Ral_ExprNode* read_expression(
 			node->right = right_node;
 		}
 
+		if (!iterator->next) return node;
 		iterator = iterator->next;
 	}
 
-	return iterator;
+	exit(-1);
+	return NULL;
 
 free_and_exit:
 	RalCLI_ERROR("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
