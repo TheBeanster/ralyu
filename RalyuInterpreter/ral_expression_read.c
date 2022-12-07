@@ -31,21 +31,32 @@ static Ral_ExprNode* read_expression(
 
 
 
+/// @brief Takes a starting token in a statement, reads a function call, puts the expr_node of that function call in the token
+/// and returns the position where the function call ends.
+/// @param statement The statement the function call is inside.
+/// @param begin The index of the token that is the function call.
+/// @param token A pointer to that token.
+/// @return The index in the tokens array of the statement where the function ends.
 static int read_function_call(
 	const Ral_Statement* const statement,
 	const int begin,
 	Ral_Token* const token
 )
 {
+	// Make sure the token doesn't already have parameters
+	if (token->expr_node &&
+		(token->expr_node->functioncall_parameters.itemcount > 0)) return -1;
+
+	// The exprnode of the function call
 	Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
 	node->corresp_token = token;
+	token->expr_node = node;
 	node->type = Ral_EXPRNODETYPE_FUNCTION;
-	// List of Ral_ExprNodes
-	Ral_List parameters = { 0 };
-	int paren_depth = 0;
-	int param_begin = begin + 2; // After function opening parenthesis
 
-	// TODO Check if this goes out of bounds of tokens array
+	int paren_depth = 0; // The depth level of parentheses
+	int param_begin = begin + 2; // Where the current parameter being read started
+	// begin + 2 is the token after the opening parenthesis
+
 	for (int i = begin + 2; i < statement->numtokens; i++)
 	{
 		Ral_Token* token = &statement->tokens[i];
@@ -56,7 +67,9 @@ static int read_function_call(
 			if (!(i <= param_begin || i > statement->numtokens))
 				param_node = read_expression(statement, param_begin, i);
 			if (param_node)
-				Ral_PushFrontList(&parameters, param_node);
+				Ral_PushFrontList(&token->expr_node->functioncall_parameters, param_node);
+			else
+				goto free_and_exit;
 			param_begin = i + 1;
 		}
 		
@@ -73,26 +86,27 @@ static int read_function_call(
 				if (!(i <= param_begin || i > statement->numtokens))
 					param_node = read_expression(statement, param_begin, i);
 				if (param_node)
-					Ral_PushFrontList(&parameters, param_node);
+					Ral_PushFrontList(&token->expr_node->functioncall_parameters, param_node);
 				param_begin = i + 1;
 				break;
 			}
 		}
 	}
 
-	token->expr_node = node;
-	token->expr_node->functioncall_parameters = parameters;
 	return param_begin - 1;
+
+free_and_exit:
+	Ral_DestroyExprNode(node);
 }
 
 
 
-typedef struct expr_list_elem
+typedef struct expr_operator
 {
-	Ral_LISTLINKS(expr_list_elem);
+	Ral_LISTLINKS(expr_operator);
 	Ral_Token* token;
 	int precedence;
-} expr_list_elem;
+} expr_operator;
 
 static Ral_ExprNode* read_expression(
 	const Ral_Statement* const statement,
@@ -100,7 +114,7 @@ static Ral_ExprNode* read_expression(
 	const int end
 )
 {
-	if (end - 1 == begin)
+	if (end - 1 <= begin)
 	{
 		// Expression is one token long
 		Ral_ExprNode* node = Ral_ALLOC_TYPE(Ral_ExprNode);
@@ -118,7 +132,7 @@ static Ral_ExprNode* read_expression(
 
 		if (token->type == Ral_TOKENTYPE_OPERATOR)
 		{
-			expr_list_elem* operator = Ral_ALLOC_TYPE(expr_list_elem);
+			expr_operator* operator = Ral_ALLOC_TYPE(expr_operator);
 			operator->token = token;
 			operator->precedence = 
 				(current_paren_depth << Ral_EXPRESSION_NESTING_PRECEDENCE_SHIFT) + 
@@ -193,11 +207,16 @@ static Ral_ExprNode* read_expression(
 		}
 	}
 
-
+	// Check if the operators list is empty
+	if (l_operators.itemcount == 0)
+	{
+		// If so return the first token
+		return ((Ral_Token*)l_tokens.begin)->expr_node;
+	}
 
 	// Sort the l_operators list
-	expr_list_elem* current;
-	expr_list_elem* index;
+	expr_operator* current;
+	expr_operator* index;
 	int temp;
 	for (current = l_operators.begin; current->next != NULL; current = current->next)
 	{
@@ -218,7 +237,7 @@ static Ral_ExprNode* read_expression(
 	}
 	// TODO There might be some issues with the sorting
 
-	expr_list_elem* iterator = l_operators.begin;
+	expr_operator* iterator = l_operators.begin;
 	while (iterator)
 	{
 		// Loop over all operators from highest to lowest precedence
@@ -328,6 +347,29 @@ Ral_Expression* Ral_CreateExpression(
 }
 
 
+
+
+
+
+
+
+void Ral_DestroyExprNode(Ral_ExprNode* const node)
+{
+	if (!node) return;
+
+	if (node->left)
+		Ral_DestroyExprNode(node->left);
+	if (node->right)
+		Ral_DestroyExprNode(node->right);
+	Ral_ExprNode* iterator = node->functioncall_parameters.begin;
+	while (iterator)
+	{
+		Ral_DestroyExprNode(iterator);
+		iterator = iterator->next;
+	}
+
+	Ral_FREE(node);
+}
 
 
 

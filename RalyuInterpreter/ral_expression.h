@@ -38,6 +38,10 @@ typedef struct Ral_ExprNode
 
 
 
+void Ral_DestroyExprNode(Ral_ExprNode* const node);
+
+
+
 typedef struct Ral_Expression
 {
 	Ral_ExprNode* top;
