@@ -1,5 +1,7 @@
 #include "ral_function.h"
 
+#include "ralu_memory.h"
+
 #include "ral_logging.h"
 #include "ral_cli.h"
 
@@ -39,6 +41,16 @@ static Ral_Bool validate_parameters(
 			return Ral_FALSE;
 		}
 	}
+}
+
+
+
+Ral_Function* Ral_DeclareFunction(Ral_State* const state, const char* const name, const Ral_List* const parameters)
+{
+	Ral_Function* function = Ral_ALLOC_TYPE(Ral_Function);
+	function->parameters = parameters;
+	Ral_PushFrontList(&state->functions, function);
+	return nullptr;
 }
 
 

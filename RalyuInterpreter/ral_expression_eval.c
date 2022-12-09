@@ -131,6 +131,7 @@ static Ral_Object* evaluate_function_call(
 	const Ral_ExprNode* const node
 )
 {
+	// The list of objects for the parameters
 	Ral_List parameters = { 0 };
 	Ral_ExprNode* parameter_node = node->functioncall_parameters.begin;
 	while (parameter_node)
@@ -152,12 +153,6 @@ static Ral_Object* evaluate_node(
 )
 {
 	if (!node) return NULL;
-
-	/*static int depth = 0;
-	for (int i = 0; i < depth; i++)
-		putchar(' ');
-	printf("%s\n", node->corresp_token->string);
-	depth++;*/
 
 	switch (node->type)
 	{
@@ -193,9 +188,8 @@ static Ral_Object* evaluate_node(
 		return Ral_GetVariable(state, local_variables, node->corresp_token->string);
 		break;
 
-	case Ral_EXPRNODETYPE_FUNCTION: {}
-		// Make a list of objects for the results for the parameters
-		evaluate_function_call(state, local_variables, node);
+	case Ral_EXPRNODETYPE_FUNCTION:
+		return evaluate_function_call(state, local_variables, node);
 		break;
 
 	default:

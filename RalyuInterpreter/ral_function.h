@@ -22,12 +22,21 @@ typedef Ral_Object (*(*Ral_ExternFunctionPtr)(Ral_List* parameters));
 typedef struct Ral_Function
 {
 	Ral_LISTLINKS(Ral_Function);
+	char* name;
 
 	Ral_Statement* declaration; // Pointer to the statement declaring the function
 	Ral_ExternFunctionPtr extern_function;
 
 	Ral_List parameters; // List of Ral_FunctionParamater
 } Ral_Function;
+
+
+
+Ral_Function* Ral_DeclareFunction(
+	Ral_State* const state,
+	const char* const name,
+	const Ral_List* const parameters
+);
 
 
 
