@@ -9,15 +9,6 @@
 
 
 
-typedef struct Ral_Scope
-{
-	Ral_LISTLINKS(Ral_Scope);
-
-	Ral_List variables;
-} Ral_Scope;
-
-
-
 typedef struct
 {
 	Ral_SourceUnit* mainsource;
@@ -25,7 +16,7 @@ typedef struct
 	Ral_List global_types;
 	Ral_List functions;
 
-	Ral_List scopestack;
+	Ral_List global_variables;
 } Ral_State;
 
 Ral_State* Ral_CreateState(

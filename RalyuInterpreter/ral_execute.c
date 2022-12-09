@@ -12,7 +12,7 @@ Ral_State* Ral_CreateState(const Ral_SourceUnit* const mainsource)
 {
 	Ral_State* state = Ral_ALLOC_TYPE(Ral_State);
 	state->mainsource = mainsource;
-
+	
 	return state;
 }
 
@@ -41,7 +41,7 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit)
 		current_statement = Ral_ExecuteStatement(state, current_statement, &local_variables, &return_object);
 		if (return_object) break;
 	}
-
+	
 	Ral_FREE(state);
 
 	RalCLI_DEBUGLOG("Return object ptr = %p", return_object);
@@ -109,6 +109,18 @@ Ral_Statement* Ral_ExecuteStatement(
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
 		Ral_Object* result = build_and_eval_expression(state, local_variables, statement, 0, statement->numtokens);
+		Ral_DestroyObject(result);
+	}
+		break;
+
+	case Ral_STATEMENTTYPE_PRINT:
+	{
+		Ral_Object* result = build_and_eval_expression(state, local_variables, statement, 1, statement->numtokens);
+		if (!result) return NULL;
+		if (result->type == Ral_TYPEINT)
+		{
+			printf("%i\n", ((Ral_Object_Int*)result)->value);
+		}
 		Ral_DestroyObject(result);
 	}
 		break;

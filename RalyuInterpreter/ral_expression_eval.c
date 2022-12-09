@@ -7,6 +7,12 @@
 
 
 
+/// @brief Calculates the value of a node in the tree by recursively calculating it's child nodes.
+/// Remember to destroy the returned object!
+/// @param state To get global variables and functions.
+/// @param local_variables To get local variables.
+/// @param node The node to calculate.
+/// @return A Ral_Object storing the nodes value.
 static Ral_Object* evaluate_node(
 	Ral_State* const state,
 	Ral_List* const local_variables,
@@ -41,7 +47,7 @@ static Ral_Object* evaluate_binary_operator(
 		printf("Binary operator not implemented!\n");
 		break;
 	}
-
+	
 	Ral_DestroyObject(leftobj);
 	Ral_DestroyObject(rightobj);
 	if (!result)
@@ -69,11 +75,31 @@ static Ral_Object* evaluate_assignment_operator(
 		return NULL;
 	}
 
+	// Get the result to the right of the assignment
 	Ral_Object* result = evaluate_node(state, local_variables, right);
+
 	// Find the variable
-	//Ral_Object* var = Ral_GetVariable
+	Ral_Object* var = Ral_GetVariable(state, local_variables, left->corresp_token->string);
+
+	if (!var) goto on_failure;
+
+	Ral_Bool success = Ral_FALSE;
+
 	// Assign the number to IT
+	switch (operator)
+	{
+	case Ral_OPERATOR_ASSIGN: success = Ral_Object_Assign(var, result); break;
+	default:
+		break;
+	}
+
+	if (!success) goto on_failure;
+
 	return result;
+
+on_failure:
+	Ral_DestroyObject(result);
+	return NULL;
 }
 
 
@@ -99,6 +125,26 @@ static Ral_Object* evaluate_unary_operator(
 
 
 
+static Ral_Object* evaluate_function_call(
+	Ral_State* const state,
+	Ral_List* const local_variables,
+	const Ral_ExprNode* const node
+)
+{
+	Ral_List parameters = { 0 };
+	Ral_ExprNode* parameter_node = node->functioncall_parameters.begin;
+	while (parameter_node)
+	{
+		Ral_Object* param = evaluate_node(state, local_variables, parameter_node);
+
+		parameter_node = parameter_node->next;
+	}
+
+	return Ral_CreateIntObjectFromInt(0);
+}
+
+
+
 static Ral_Object* evaluate_node(
 	Ral_State* const state,
 	Ral_List* const local_variables,
@@ -107,11 +153,11 @@ static Ral_Object* evaluate_node(
 {
 	if (!node) return NULL;
 
-	static int depth = 0;
+	/*static int depth = 0;
 	for (int i = 0; i < depth; i++)
 		putchar(' ');
 	printf("%s\n", node->corresp_token->string);
-	depth++;
+	depth++;*/
 
 	switch (node->type)
 	{
@@ -137,35 +183,19 @@ static Ral_Object* evaluate_node(
 			// Assignment operator
 			return evaluate_assignment_operator(state, local_variables, op, left_node, right_node);
 		}
-		depth--;
 		break;
 
 	case Ral_EXPRNODETYPE_LITERAL:
-		depth--;
 		return Ral_CreateObjectFromLiteral(node->corresp_token);
 		break;
 
 	case Ral_EXPRNODETYPE_VARIABLE:
-		depth--;
-		return Ral_CreateIntObjectFromInt(0);
+		return Ral_GetVariable(state, local_variables, node->corresp_token->string);
 		break;
 
-	case Ral_EXPRNODETYPE_FUNCTION:
-		depth--;
-
-		Ral_Function* function = 0;
-
+	case Ral_EXPRNODETYPE_FUNCTION: {}
 		// Make a list of objects for the results for the parameters
-		Ral_ExprNode* parameter_node = node->functioncall_parameters.begin;
-		while (parameter_node)
-		{
-			depth += 2;
-			evaluate_node(state, local_variables, parameter_node);
-			depth -= 2;
-			parameter_node = parameter_node->next;
-		}
-
-		return Ral_CreateIntObjectFromInt(0);
+		evaluate_function_call(state, local_variables, node);
 		break;
 
 	default:

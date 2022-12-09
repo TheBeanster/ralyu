@@ -104,6 +104,8 @@ Ral_Object_Float* Ral_CopyFloatObject(
 
 
 
+Ral_Bool Ral_Object_Assign(Ral_Object* const assign, Ral_Object* const value);
+
 Ral_Object* Ral_Object_Add			(Ral_Object* const a, Ral_Object* const b);
 Ral_Object* Ral_Object_Subtract		(Ral_Object* const a, Ral_Object* const b);
 Ral_Object* Ral_Object_Multiply		(Ral_Object* const a, Ral_Object* const b);
@@ -120,8 +122,19 @@ Ral_Bool	Ral_Object_IsTrue		(Ral_Object* const a);
 
 
 
+/// @brief Creates a new object, assigns a name to it and puts it in 'list'
+/// @param list Either the global_variables list in a state or a local_variables list.
+/// @param name The name of the variable.
+/// @param type The type of the variable.
+/// @return A pointer to the new variable.
 Ral_Object* Ral_DeclareVariable(
 	Ral_List* const			list,
 	const char* const		name,
 	const Ral_Type* const	type
+);
+
+Ral_Object* Ral_GetVariable(
+	const struct Ral_State* const	state,
+	const Ral_List* const			local_variables,
+	const char* const				name
 );

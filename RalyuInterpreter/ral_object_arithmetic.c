@@ -1,5 +1,31 @@
 #include "ral_object.h"
 
+#include "ral_cli.h"
+
+
+
+Ral_Bool Ral_Object_Assign(Ral_Object* const assign, Ral_Object* const value)
+{
+	if (assign->type != value->type)
+	{
+		RalCLI_ERROR("Type mismatch!");
+		return Ral_FALSE;
+	}
+
+	if (assign->type->tag == Ral_TYPETAG_BASE)
+	{
+		if (assign->type == Ral_TYPEINT)
+		{
+			Ral_Object_Int* intassign = (Ral_Object_Int*)assign;
+			Ral_Object_Int* intvalue = (Ral_Object_Int*)value;
+			intassign->value = intvalue->value;
+			return Ral_TRUE;
+		}
+	}
+
+	return Ral_FALSE;
+}
+
 
 
 Ral_Object* Ral_Object_Add(
