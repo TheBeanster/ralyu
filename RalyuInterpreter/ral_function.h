@@ -32,6 +32,11 @@ typedef struct Ral_Function
 
 
 
+/// @brief 
+/// @param state 
+/// @param name 
+/// @param parameters Pointer to a list of Ral_FunctionParameters. This copies the list over to its own so remeber to free it!
+/// @return 
 Ral_Function* Ral_DeclareFunction(
 	Ral_State* const state,
 	const char* const name,

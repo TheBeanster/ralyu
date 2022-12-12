@@ -5,6 +5,7 @@
 #include "ral_expression.h"
 #include "ral_cli.h"
 #include "ral_sourceunit.h"
+#include "ral_function.h"
 
 
 
@@ -103,6 +104,29 @@ Ral_Statement* Ral_ExecuteStatement(
 		);
 		Ral_Object* result = build_and_eval_expression(state, local_variables, statement, 1, statement->numtokens);
 		Ral_DestroyObject(result);
+	}
+		break;
+
+	case Ral_STATEMENTTYPE_FUNCTION:
+	{
+		if (statement->numtokens < 4)
+		{
+			RalCLI_ERROR("Invalid function declaration!");
+			return NULL;
+		}
+		// Read function parameters
+		Ral_List parameters = { 0 };
+		for (int i = 0; i < statement->numtokens; i++)
+		{
+			Ral_Type* type = Ral_GetType(state, statement->tokens[i].string);
+			if (!type)
+			{
+				// Found parameter name
+
+			}
+		}
+		Ral_DeclareFunction(state, statement->tokens[1].string, &parameters);
+		Ral_ClearList(&parameters, NULL);
 	}
 		break;
 
