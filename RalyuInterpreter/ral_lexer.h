@@ -10,15 +10,12 @@ typedef enum
 	Ral_KEYWORD_RETURN,
 
 	Ral_KEYWORD_IF,
-	Ral_KEYWORD_THEN,
 	Ral_KEYWORD_ELSE,
 
 	Ral_KEYWORD_FOR,
 	Ral_KEYWORD_WHILE,
 	Ral_KEYWORD_DO,
 	Ral_KEYWORD_GOTO,
-
-	Ral_KEYWORD_END,
 
 	Ral_KEYWORD_PRINT,
 
@@ -93,6 +90,7 @@ extern const int ral_operator_precedence[];
 
 typedef enum
 {
+	Ral_SEPARATOR_SEMICOLON,
 	Ral_SEPARATOR_COMMA,
 	Ral_SEPARATOR_LPAREN,
 	Ral_SEPARATOR_RPAREN,

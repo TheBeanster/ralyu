@@ -454,14 +454,6 @@ static Ral_List* separate_source_statements(
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				break;
 
-			case Ral_KEYWORD_END:
-				Ral_PushFrontList(
-					statements,
-					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_END, source)
-				);
-				cur_statementtype = Ral_STATEMENTTYPE_NULL;
-				break;
-
 			case Ral_KEYWORD_BOOL:
 			case Ral_KEYWORD_INT:
 			case Ral_KEYWORD_FLOAT:

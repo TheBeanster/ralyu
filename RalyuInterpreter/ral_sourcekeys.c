@@ -18,15 +18,12 @@ const char* ral_keyword_strings[] =
 	"return",
 
 	"if",
-	"then",
 	"else",
 
 	"for",
 	"while",
 	"do",
 	"goto",
-
-	"end",
 
 	"print",
 
@@ -60,15 +57,12 @@ const char* ral_keywordid_names[] =
 	RALPREFIX "KEYWORD_RETURN",
 
 	RALPREFIX "KEYWORD_IF",
-	RALPREFIX "KEYWORD_THEN",
 	RALPREFIX "KEYWORD_ELSE",
 
 	RALPREFIX "KEYWORD_FOR",
 	RALPREFIX "KEYWORD_WHILE",
 	RALPREFIX "KEYWORD_DO",
 	RALPREFIX "KEYWORD_GOTO",
-
-	RALPREFIX "KEYWORD_END",
 
 	RALPREFIX "KEYWORD_PRINT",
 
@@ -188,6 +182,7 @@ const int ral_operator_precedence[] =
 
 const char ral_separator_chars[] =
 {
+	';',
 	',',
 	'(',
 	')',
@@ -208,6 +203,7 @@ Ral_OperatorID Ral_CheckSeparator(const char character)
 
 const char* ral_separatorid_names[] =
 {
+	RALPREFIX "SEPARATOR_SEMICOLON",
 	RALPREFIX "SEPARATOR_COMMA",
 	RALPREFIX "SEPARATOR_LPAREN",
 	RALPREFIX "SEPARATOR_RPAREN",

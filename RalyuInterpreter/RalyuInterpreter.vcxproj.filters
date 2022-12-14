@@ -153,5 +153,8 @@
     <Text Include="planning_expression_thang.txt">
       <Filter>Source Files\Interpreter\Expression</Filter>
     </Text>
+    <Text Include="testsyntax.txt">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </Text>
   </ItemGroup>
 </Project>
