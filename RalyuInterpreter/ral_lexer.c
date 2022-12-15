@@ -460,6 +460,12 @@ static Ral_List* separate_source_statements(
 			case Ral_KEYWORD_CHAR:
 			case Ral_KEYWORD_STRING:
 				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
+				expression_statement_type = Ral_STATEMENTTYPE_EXPRESSION;
+				break;
+
+			case Ral_KEYWORD_VAR:
+				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION; // Continue reading as if it is an expression
+				expression_statement_type = Ral_STATEMENTTYPE_DECLARATION;// But remember that it is for a print statement
 				break;
 
 			case Ral_KEYWORD_FUNCTION:

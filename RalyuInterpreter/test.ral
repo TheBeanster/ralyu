@@ -9,26 +9,17 @@ struct Point {
 
 
 function add(Point a, Point b) Point {
-	Point result;
+	var Point result;
 	result.x = a.x + b.x;
 	result.y = a.y + b.y;
 	return result;
 }
 
-function mul(Point a, Point b) Point {
-	Point result;
-	result.x = a.x * b.x;
-	result.y = a.y * b.y;
-	return result;
-}
 
-function mul(Point a, any b) Point {
-	Point result;
-	result.x = a.x * b;
-	result.y = a.y * b;
-	return result;
+
+function lol(Point a) {
+
 }
 
 
-
-Point p = Point{0, 0};
+var Point p = Point{0, 0};

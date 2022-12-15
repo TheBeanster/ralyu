@@ -30,6 +30,8 @@ const char* ral_keyword_strings[] =
 	"false",
 	"true",
 
+	"var",
+
 	"function"
 };
 
@@ -70,6 +72,8 @@ const char* ral_keywordid_names[] =
 
 	RALPREFIX "KEYWORD_FALSE",
 	RALPREFIX "KEYWORD_TRUE",
+
+	RALPREFIX "KEYWORD_VAR",
 
 	RALPREFIX "KEYWORD_FUNCTION"
 };
@@ -220,7 +224,8 @@ const char* const ral_statementtype_names[] =
 	RALPREFIX "STATEMENTTYPE_NULL",
 
 	RALPREFIX "STATEMENTTYPE_EXPRESSION",
-	
+	RALPREFIX "STATEMENTTYPE_DECLARATION",
+
 	RALPREFIX "STATEMENTTYPE_STRUCT",
 	RALPREFIX "STATEMENTTYPE_FUNCTION",
 	RALPREFIX "STATEMENTTYPE_ENDBRACE",
