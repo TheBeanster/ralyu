@@ -97,7 +97,7 @@ void Ral_PrintTokenValue(const Ral_Token* const token)
 
 	case Ral_TOKENTYPE_STRINGLITERAL:
 		putchar('\"');
-		Ral_PrintCondensedStringLiteral(token->stringliteral_value);
+		Ral_PrintCondensedString(token->stringliteral_value);
 		putchar('\"');
 		break;
 

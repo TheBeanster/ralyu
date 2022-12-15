@@ -28,6 +28,13 @@ char* Ral_CreateCutString(
 	const int			length
 );
 
-void Ral_PrintCondensedStringLiteral(
+char* Ral_CreateMergeStrings(
+	const char* const	str1,
+	const char* const	str2
+);
+
+/// @brief Prints a string while removing spacing, ' ', '\t' and '\n'.
+/// @param string Pointer to a string
+void Ral_PrintCondensedString(
 	const char* const	string
 );

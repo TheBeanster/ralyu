@@ -109,6 +109,8 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
+		// Before evaling the expression, check if the expression is a declaration
+
 		Ral_Object* result = build_and_eval_expression(state, local_variables, statement, 0, statement->numtokens);
 		Ral_DestroyObject(result);
 	}

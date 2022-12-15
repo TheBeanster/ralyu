@@ -10,7 +10,8 @@
 typedef enum
 {
 	Ral_TYPETAG_BASE,
-	Ral_TYPETAG_STRUCT
+	Ral_TYPETAG_ARRAY,
+	Ral_TYPETAG_STRUCT,
 } Ral_TypeTag;
 
 typedef struct Ral_Type
@@ -21,10 +22,37 @@ typedef struct Ral_Type
 	Ral_TypeTag tag;
 } Ral_Type;
 
+
+
+typedef struct Ral_ArrayType
+{
+	Ral_Type base;
+	const Ral_Type* elementtype;
+} Ral_ArrayType;
+
+
+
+typedef struct Ral_StructTypeMember
+{
+	Ral_LISTLINKS(Ral_StructTypeMember);
+
+	char*			name;
+	const Ral_Type* type;
+} Ral_StructTypeMember;
+
+typedef struct Ral_StructType
+{
+	Ral_Type base;
+	Ral_List* members;
+} Ral_StructType;
+
+
+
 typedef enum
 {
 	Ral_BASETYPE_INT,
 	Ral_BASETYPE_FLOAT,
+	Ral_BASETYPE_STRING,
 	Ral_NUMBASETYPES
 } Ral_BaseTypeIndex;
 
@@ -32,11 +60,29 @@ extern const Ral_Type ral_base_types[];
 
 #define Ral_TYPEINT		(&ral_base_types[Ral_BASETYPE_INT])
 #define Ral_TYPEFLOAT	(&ral_base_types[Ral_BASETYPE_FLOAT])
+#define Ral_TYPESTRING	(&ral_base_types[Ral_BASETYPE_STRING])
+
+
+
+Ral_Type* Ral_DeclareArrayType(
+	const struct Ral_State* const state,
+	const Ral_Type* const elementtype
+);
+
+Ral_Type* Ral_DeclareStructType(
+	const struct Ral_State* const state,
+	const char* const str,
+	const Ral_List* const members
+);
 
 Ral_Type* Ral_GetType(
 	const struct Ral_State* const state,
 	const char* const str
 );
+
+
+
+
 
 
 

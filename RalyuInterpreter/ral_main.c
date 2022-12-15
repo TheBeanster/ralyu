@@ -3,6 +3,8 @@
 #include "ralu_memory.h"
 #include "ralu_file.h"
 
+#include "ralu_string.h"
+
 #include "ral_cli.h"
 #include "ral_sourceunit.h"
 #include "ral_lexer.h"
@@ -16,8 +18,6 @@ int main(int argc, char** argv)
 	printf(" --- Ralyu interpreter ---\n");
 
 	//RalCLI_ReadArgs(argc, argv);
-
-
 
 	// This is all temporary code just to load some test ralyu code, it is bad and horrible
 

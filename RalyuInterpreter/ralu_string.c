@@ -93,7 +93,25 @@ char* Ral_CreateCutString(
 
 
 
-void Ral_PrintCondensedStringLiteral(const char* const string)
+char* Ral_CreateMergeStrings(const char* const str1, const char* const str2)
+{
+	int len1 = strlen(str1);
+	int len2 = strlen(str2);
+	int length = len1 + len2;
+	char* dststr = Ral_MALLOC(length + 1); // Plus 1 to include null terminator
+
+	for (int i = 0; i < len1; i++)
+		dststr[i] = str1[i];
+	for (int i = 0; i < len2; i++)
+		dststr[i + len1] = str2[i];
+
+	dststr[length] = '\0';
+	return dststr;
+}
+
+
+
+void Ral_PrintCondensedString(const char* const string)
 {
 	char* c = string;
 	Ral_Bool prev_was_spacer = Ral_TRUE;

@@ -9,18 +9,24 @@
 
 Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 {
-	if (type == Ral_TYPEINT)
+	if (type->tag == Ral_TYPETAG_BASE)
 	{
-		Ral_Object_Int* object = Ral_ALLOC_TYPE(Ral_Object_Int);
-		object->base.type = type;
-		return object;
+		if (type == Ral_TYPEINT)
+		{
+			Ral_Object_Int* object = Ral_ALLOC_TYPE(Ral_Object_Int);
+			object->base.type = type;
+			return object;
+		}
+		if (type == Ral_TYPEFLOAT)
+		{
+			Ral_Object_Float* object = Ral_ALLOC_TYPE(Ral_Object_Float);
+			object->base.type = type;
+			return object;
+		}
+
 	}
-	if (type == Ral_TYPEFLOAT)
-	{
-		Ral_Object_Float* object = Ral_ALLOC_TYPE(Ral_Object_Float);
-		object->base.type = type;
-		return object;
-	}
+
+
 
 	RalCLI_ERROR("Tried to create object of invalid type");
 	return NULL;
