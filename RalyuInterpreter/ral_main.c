@@ -45,14 +45,14 @@ int main(int argc, char** argv)
 
 
 	// Print what the tokenizer got
-	for (int i = 0; i < mainsource->numstatements; i++)
+	/*for (int i = 0; i < mainsource->numstatements; i++)
 	{
 		Ral_PrintStatementTokens(&mainsource->statements[i]);
-	}
+	}*/
 
 
 
-	//Ral_ExecuteSource(mainsource);
+	Ral_ExecuteSource(mainsource);
 	
 
 

@@ -64,13 +64,13 @@ extern const Ral_Type ral_base_types[];
 
 
 
-Ral_Type* Ral_DeclareArrayType(
-	const struct Ral_State* const state,
+Ral_ArrayType* Ral_DeclareArrayType(
+	struct Ral_State* const state,
 	const Ral_Type* const elementtype
 );
 
-Ral_Type* Ral_DeclareStructType(
-	const struct Ral_State* const state,
+Ral_StructType* Ral_DeclareStructType(
+	struct Ral_State* const state,
 	const char* const str,
 	const Ral_List* const members
 );
@@ -78,6 +78,20 @@ Ral_Type* Ral_DeclareStructType(
 Ral_Type* Ral_GetType(
 	const struct Ral_State* const state,
 	const char* const str
+);
+
+Ral_ArrayType* Ral_GetArrayType(
+	const struct Ral_State* const state,
+	const Ral_Type* const elementtype
+);
+
+/// @brief Gets an array type based on the elementtype of an array or creates a new type if it doesn't exist.
+/// @param state The state containing the 'arraytypes' list.
+/// @param elementtype 
+/// @return 
+Ral_ArrayType* Ral_GetOrDeclareArrayType(
+	struct Ral_State* const state,
+	const Ral_Type* const elementtype
 );
 
 

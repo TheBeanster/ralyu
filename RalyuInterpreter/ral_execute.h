@@ -33,6 +33,12 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit);
 
 
 
+/// @brief 
+/// @param state 
+/// @param statement The statement to execute.
+/// @param local_variables 
+/// @param return_object A pointer to the object that this execution should return.
+/// @return A pointer to the next statement to execute, or NULL if the execution should stop.
 Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
 	const Ral_Statement* const statement,

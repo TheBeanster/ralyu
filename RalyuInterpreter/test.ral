@@ -1,25 +1,7 @@
-
-
-
 struct Point {
 	float x,
-	float y,
+	float y
 };
 
 
 
-function add(Point a, Point b) Point {
-	var Point result;
-	result.x = a.x + b.x;
-	result.y = a.y + b.y;
-	return result;
-}
-
-
-
-function lol(Point a) {
-
-}
-
-
-var Point p = Point{0, 0};

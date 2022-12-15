@@ -50,6 +50,7 @@ static Ral_Object* evaluate_binary_operator(
 	
 	Ral_DestroyObject(leftobj);
 	Ral_DestroyObject(rightobj);
+
 	if (!result)
 	{
 		printf("Could not evaluate binary operator!\n");
@@ -89,6 +90,7 @@ static Ral_Object* evaluate_assignment_operator(
 	switch (operator)
 	{
 	case Ral_OPERATOR_ASSIGN: success = Ral_Object_Assign(var, result); break;
+	//case Ral_OPERATOR_ASSIGNADDITION: success = Ral_Object_AssignAdd(var, result); break;
 	default:
 		break;
 	}
@@ -112,10 +114,14 @@ static Ral_Object* evaluate_unary_operator(
 	const Ral_ExprNode* const right
 )
 {
+	Ral_Object* rightobj = evaluate_node(state, local_variables, right);
+
+	Ral_Object* result = NULL;
+
 	switch (operator)
 	{
 	case Ral_OPERATOR_NEGATIVE:
-		return Ral_Object_Negative(right);
+		return Ral_Object_Negative(rightobj);
 		break;
 	default:
 		return NULL;
@@ -185,7 +191,7 @@ static Ral_Object* evaluate_node(
 		break;
 
 	case Ral_EXPRNODETYPE_VARIABLE:
-		return Ral_GetVariable(state, local_variables, node->corresp_token->string);
+		return Ral_CopyObject(Ral_GetVariable(state, local_variables, node->corresp_token->string));
 		break;
 
 	case Ral_EXPRNODETYPE_FUNCTION:

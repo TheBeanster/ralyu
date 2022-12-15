@@ -215,6 +215,11 @@ static Ral_ExprNode* read_expression(
 				goto free_and_exit;
 			}
 		}
+		else if (token->separatorid == Ral_SEPARATOR_SEMICOLON)
+		{
+			// Semicolon means end of expression
+			break;
+		}
 		else
 		{
 			RalCLI_ERROR("Invalid expression token\n");

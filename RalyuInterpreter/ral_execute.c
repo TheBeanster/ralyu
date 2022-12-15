@@ -1,6 +1,7 @@
 #include "ral_execute.h"
 
 #include "ralu_memory.h"
+#include "ralu_string.h"
 
 #include "ral_expression.h"
 #include "ral_cli.h"
@@ -33,13 +34,12 @@ void Ral_ExecuteSource(const Ral_SourceUnit* const sourceunit)
 	Ral_State* state = Ral_CreateState(sourceunit);
 	if (!state) return;
 
-	Ral_List local_variables = { 0 };
 	Ral_Object* return_object = NULL;
 
 	while (current_statement)
 	{
 		// Execute the current statement
-		current_statement = Ral_ExecuteStatement(state, current_statement, &local_variables, &return_object);
+		current_statement = Ral_ExecuteStatement(state, current_statement, &state->global_variables, &return_object);
 		if (return_object) break;
 	}
 	
@@ -83,6 +83,89 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	switch (statement->type)
 	{
+
+	case Ral_STATEMENTTYPE_DECLARATION:
+	{
+		if (statement->numtokens < 4)
+		{
+			RalCLI_ERROR("Invalid declaration!");
+			return NULL;
+		}
+
+		// Find the type and name tokens of the variable
+		int variable_name_tokenid = 0; // The token id of the variable name token
+		int alpha_token_count = 0; // The number of text tokens encountered in the statement
+		for (int i = 1; i < statement->numtokens; i++)
+		{
+			// Loop over the tokens in the statement and look for the second identifier or keyword
+			if (statement->tokens[i].type == Ral_TOKENTYPE_KEYWORD ||
+				statement->tokens[i].type == Ral_TOKENTYPE_IDENTIFIER)
+			{
+				alpha_token_count++;
+				if (alpha_token_count == 2)
+				{
+					variable_name_tokenid = i;
+					break;
+				}
+			}
+		}
+
+		if (variable_name_tokenid < 2)
+		{
+			// The variable name was not found
+			RalCLI_ERROR("Missing variable name!");
+			return NULL;
+		}
+		// The type of this declared variable will be the tokens from 1 to variable_name_tokenid - 1
+		// The name of this declared variable will be the token variable_name_tokenid
+
+		// TODO This code is hairclenchingly horryifying, make a function for this task.
+		// The full name of the type
+		char* type_name = Ral_MALLOC(1);
+		type_name[0] = '\0';
+		for (int i = 1; i < variable_name_tokenid; i++)
+		{
+			char* del = type_name;
+			type_name = Ral_CreateMergeStrings(type_name, statement->tokens[i].string);
+			Ral_FREE(del);
+		}
+
+		// The name of the variable
+		char* var_name = statement->tokens[variable_name_tokenid].string;
+
+		Ral_Type* type = Ral_GetType(state, type_name);
+
+		if (!type)
+		{
+			Ral_FREE(type_name);
+			RalCLI_ERROR("Invalid type!");
+			return NULL;
+		}
+
+		RalCLI_DEBUGLOG("Declaring var \"%s\" of type \"%s\"", var_name, type_name);
+
+		Ral_DeclareVariable(local_variables, var_name, type);
+
+		// Check if the variable gets assigned
+		if (variable_name_tokenid + 2 >= statement->numtokens)
+		{
+			// No assignment to variable
+			break;
+		} else
+		{
+			Ral_Object* result = build_and_eval_expression(
+				state,
+				local_variables,
+				statement,
+				variable_name_tokenid,
+				statement->numtokens
+			);
+			Ral_DestroyObject(result);
+		}
+	}
+		break;
+
+
 
 	case Ral_STATEMENTTYPE_FUNCTION:
 	{

@@ -14,13 +14,13 @@ Ral_Object* Ral_CreateObject(const Ral_Type* const type)
 		if (type == Ral_TYPEINT)
 		{
 			Ral_Object_Int* object = Ral_ALLOC_TYPE(Ral_Object_Int);
-			object->base.type = type;
+			object->base.type = Ral_TYPEINT;
 			return object;
 		}
 		if (type == Ral_TYPEFLOAT)
 		{
 			Ral_Object_Float* object = Ral_ALLOC_TYPE(Ral_Object_Float);
-			object->base.type = type;
+			object->base.type = Ral_TYPEFLOAT;
 			return object;
 		}
 
@@ -57,14 +57,16 @@ void Ral_DestroyObject(Ral_Object* const object)
 
 Ral_Object_Int* Ral_CreateIntObjectFromInt(const int i)
 {
-	Ral_Object_Int* obj = Ral_CreateObject(Ral_TYPEINT);
+	Ral_Object_Int* obj = Ral_ALLOC_TYPE(Ral_Object_Int);
+	obj->base.type = Ral_TYPEINT;
 	obj->value = i;
 	return obj;
 }
 
 Ral_Object_Float* Ral_CreateFloatObjectFromFloat(const float f)
 {
-	Ral_Object_Float* obj = Ral_CreateObject(Ral_TYPEFLOAT);
+	Ral_Object_Float* obj = Ral_ALLOC_TYPE(Ral_Object_Float);
+	obj->base.type = Ral_TYPEFLOAT;
 	obj->value = f;
 	return obj;
 }
@@ -100,6 +102,17 @@ Ral_Object* Ral_CreateObjectFromLiteral(const Ral_Token* const token)
 
 Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
 {
+	if (obj->type->tag == Ral_TYPETAG_BASE)
+	{
+		if (obj->type == Ral_TYPEINT)
+		{
+			return Ral_CopyIntObject(obj);
+		}
+		else if (obj->type == Ral_TYPEFLOAT)
+		{
+			return Ral_CopyFloatObject(obj);
+		}
+	}
 	return NULL;
 }
 

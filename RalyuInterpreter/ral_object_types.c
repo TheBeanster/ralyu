@@ -32,7 +32,7 @@ const Ral_Type ral_base_types[] =
 
 
 
-Ral_Type* Ral_DeclareArrayType(const Ral_State* const state, const Ral_Type* const elementtype)
+Ral_ArrayType* Ral_DeclareArrayType(Ral_State* const state, const Ral_Type* const elementtype)
 {
 	Ral_ArrayType* type = Ral_ALLOC_TYPE(Ral_ArrayType);
 	type->base.name = Ral_CreateMergeStrings(elementtype->name, "[]");
@@ -44,7 +44,7 @@ Ral_Type* Ral_DeclareArrayType(const Ral_State* const state, const Ral_Type* con
 
 
 
-Ral_Type* Ral_DeclareStructType(const Ral_State* const state, const char* const str, const Ral_List* const members)
+Ral_StructType* Ral_DeclareStructType(Ral_State* const state, const char* const str, const Ral_List* const members)
 {
 	Ral_StructType* type = Ral_ALLOC_TYPE(Ral_StructType);
 	type->base.name = _strdup(str);
@@ -73,6 +73,9 @@ Ral_Type* Ral_GetType(
 
 			iterator = iterator->next;
 		}
+		// If the typename is an array but no matching type was found, 
+		// there is definately no type with this name so return NULL.
+		return NULL;
 	}
 
 	// Check if typename is a base type
@@ -93,6 +96,34 @@ Ral_Type* Ral_GetType(
 		
 		iterator = iterator->next;
 	}
-
 	return NULL;
+}
+
+
+
+Ral_ArrayType* Ral_GetArrayType(const Ral_State* const state, const Ral_Type* const elementtype)
+{
+	// Only look at the array types in state
+	Ral_ArrayType* iterator = ((Ral_State*)state)->arraytypes.begin;
+	while (iterator)
+	{
+		if(iterator->elementtype == elementtype)
+			return iterator;
+
+		iterator = iterator->base.next;
+	}
+	return NULL;
+}
+
+
+
+Ral_ArrayType* Ral_GetOrDeclareArrayType(Ral_State* const state, const Ral_Type* const elementtype)
+{
+	Ral_ArrayType* type = Ral_GetArrayType(state, elementtype);
+	if (!type)
+	{
+		// There is no array with the specified elementtype so create a new one
+		return Ral_DeclareArrayType(state, elementtype);
+	}
+	return type;
 }
