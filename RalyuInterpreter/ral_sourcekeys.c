@@ -4,15 +4,6 @@
 
 
 
-// Include the Ral_ prefix in serialized enum names
-#if 0
-#define RALPREFIX "Ral_"
-#else
-#define RALPREFIX ""
-#endif
-
-
-
 const char* ral_keyword_strings[] =
 {
 	"return",
@@ -26,6 +17,8 @@ const char* ral_keyword_strings[] =
 	"goto",
 
 	"print",
+
+	"struct",
 
 	"void",
 	"bool",
@@ -65,6 +58,8 @@ const char* ral_keywordid_names[] =
 	RALPREFIX "KEYWORD_GOTO",
 
 	RALPREFIX "KEYWORD_PRINT",
+
+	RALPREFIX "KEYWORD_STRUCT",
 
 	RALPREFIX "KEYWORD_VOID",
 	RALPREFIX "KEYWORD_BOOL",
@@ -186,6 +181,10 @@ const char ral_separator_chars[] =
 	',',
 	'(',
 	')',
+	'[',
+	']',
+	'{',
+	'}',
 	":"
 };
 
@@ -207,6 +206,10 @@ const char* ral_separatorid_names[] =
 	RALPREFIX "SEPARATOR_COMMA",
 	RALPREFIX "SEPARATOR_LPAREN",
 	RALPREFIX "SEPARATOR_RPAREN",
+	RALPREFIX "SEPARATOR_LBRACKET",
+	RALPREFIX "SEPARATOR_RBRACKET",
+	RALPREFIX "SEPARATOR_LBRACE",
+	RALPREFIX "SEPARATOR_RBRACE",
 	RALPREFIX "SEPARATOR_COLON"
 };
 
@@ -217,8 +220,10 @@ const char* const ral_statementtype_names[] =
 	RALPREFIX "STATEMENTTYPE_NULL",
 
 	RALPREFIX "STATEMENTTYPE_EXPRESSION",
-	RALPREFIX "STATEMENTTYPE_DECLARATION",
+	
+	RALPREFIX "STATEMENTTYPE_STRUCT",
 	RALPREFIX "STATEMENTTYPE_FUNCTION",
+	RALPREFIX "STATEMENTTYPE_ENDBRACE",
 
 	RALPREFIX "STATEMENTTYPE_IF",
 	RALPREFIX "STATEMENTTYPE_ELSE",

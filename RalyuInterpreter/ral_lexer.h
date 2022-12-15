@@ -5,6 +5,15 @@
 
 
 
+// Include the Ral_ prefix in serialized enum names
+#if 0
+#define RALPREFIX "Ral_"
+#else
+#define RALPREFIX ""
+#endif
+
+
+
 typedef enum
 {
 	Ral_KEYWORD_RETURN,
@@ -18,6 +27,8 @@ typedef enum
 	Ral_KEYWORD_GOTO,
 
 	Ral_KEYWORD_PRINT,
+
+	Ral_KEYWORD_STRUCT,
 
 	Ral_KEYWORD_VOID,
 	Ral_KEYWORD_BOOL,
@@ -94,6 +105,10 @@ typedef enum
 	Ral_SEPARATOR_COMMA,
 	Ral_SEPARATOR_LPAREN,
 	Ral_SEPARATOR_RPAREN,
+	Ral_SEPARATOR_LBRACKET,
+	Ral_SEPARATOR_RBRACKET,
+	Ral_SEPARATOR_LBRACE,
+	Ral_SEPARATOR_RBRACE,
 	Ral_SEPARATOR_COLON,
 
 	Ral_NUM_SEPARATORS,
@@ -166,8 +181,10 @@ typedef enum
 	Ral_STATEMENTTYPE_NULL,
 
 	Ral_STATEMENTTYPE_EXPRESSION,
-	Ral_STATEMENTTYPE_DECLARATION,
+
+	Ral_STATEMENTTYPE_STRUCT,
 	Ral_STATEMENTTYPE_FUNCTION,
+	Ral_STATEMENTTYPE_ENDBRACE, // A right brace '}' closing a function
 
 	Ral_STATEMENTTYPE_IF,
 	Ral_STATEMENTTYPE_ELSE,

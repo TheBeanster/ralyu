@@ -40,7 +40,7 @@ static chartype_t check_chartype(const char c)
 	if (c == '\n') return CHARTYPE_ENDLINE;
 	if (Ral_IsCharIn(c, "+-=<>/*%!")) return CHARTYPE_OPERATOR;
 	if (c == '\"') return CHARTYPE_DOUBLEQUOTES;
-	if (Ral_IsCharIn(c, "(),:")) return CHARTYPE_SEPARATOR;
+	if (Ral_IsCharIn(c, ";()[]{},:")) return CHARTYPE_SEPARATOR;
 	if (c == '#') return CHARTYPE_COMMENT;
 	return CHARTYPE_NULL;
 }
@@ -407,26 +407,26 @@ static Ral_List* separate_source_statements(
 	// Used to keep track of what the expression being read is for
 	Ral_StatementType expression_statement_type = Ral_STATEMENTTYPE_NULL;
 
+	int parenthesis_depth = 0;
+	int brace_depth = 0;
+
 	for (int i = 0; i < tokens->itemcount; i++)
 	{
+		if		(iterator->separatorid == Ral_SEPARATOR_LBRACE) brace_depth++;
+		else if (iterator->separatorid == Ral_SEPARATOR_RBRACE) brace_depth--;
+		else if (iterator->separatorid == Ral_SEPARATOR_LPAREN) parenthesis_depth++;
+		else if (iterator->separatorid == Ral_SEPARATOR_RPAREN) parenthesis_depth--;
+
 		switch (cur_statementtype)
 		{
 		case Ral_STATEMENTTYPE_NULL:
-			// Start of new statement
+			// No current statement
 
 			switch (iterator->keywordid)
 			{
 			case Ral_KEYWORD_IF:
 				cur_statementtype = Ral_STATEMENTTYPE_IF;
 				break;
-
-				/*case Ral_KEYWORD_BOOL:
-				case Ral_KEYWORD_INT:
-				case Ral_KEYWORD_FLOAT:
-				case Ral_KEYWORD_CHAR:
-				case Ral_KEYWORD_STRING:
-				cur_statementtype = Ral_STATEMENTTYPE_DECLARATION;
-				break;*/
 
 			case Ral_KEYWORD_FOR:
 				cur_statementtype = Ral_STATEMENTTYPE_FOR;
@@ -460,11 +460,14 @@ static Ral_List* separate_source_statements(
 			case Ral_KEYWORD_CHAR:
 			case Ral_KEYWORD_STRING:
 				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
-				expression_statement_type = Ral_STATEMENTTYPE_DECLARATION;
 				break;
 
 			case Ral_KEYWORD_FUNCTION:
 				cur_statementtype = Ral_STATEMENTTYPE_FUNCTION;
+				break;
+
+			case Ral_KEYWORD_STRUCT:
+				cur_statementtype = Ral_STATEMENTTYPE_STRUCT;
 				break;
 
 				// Keywords that are invalid as the start of statements
@@ -478,36 +481,22 @@ static Ral_List* separate_source_statements(
 				break;
 
 			default:
-				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
-				expression_statement_type = Ral_STATEMENTTYPE_EXPRESSION;
+				// First token in new statement is not a keyword
 
-				// Check if the expression is a single token
-				if (!iterator->next ||
-					iterator->next->type == Ral_TOKENTYPE_IDENTIFIER ||
-					iterator->next->type == Ral_TOKENTYPE_NUMBERLITERAL ||
-					iterator->next->type == Ral_TOKENTYPE_STRINGLITERAL ||
-					iterator->next->type == Ral_SEPARATOR_LPAREN)
+				if (iterator->separatorid == Ral_SEPARATOR_RBRACE)
 				{
+					// No current statement and then } is end of function
 					Ral_PushFrontList(
 						statements,
-						Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION, source)
+						Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_ENDBRACE, source)
 					);
 					cur_statementtype = Ral_STATEMENTTYPE_NULL;
-				}
-				else if (iterator->next->type == Ral_TOKENTYPE_KEYWORD)
-				{
-					if (!(
-						iterator->next->keywordid == Ral_KEYWORD_FALSE ||
-						iterator->next->keywordid == Ral_KEYWORD_TRUE))
-					{
-						Ral_PushFrontList(
-							statements,
-							Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_EXPRESSION, source)
-						);
-						cur_statementtype = Ral_STATEMENTTYPE_NULL;
-					}
+					break;
 				}
 
+				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
+				expression_statement_type = Ral_STATEMENTTYPE_EXPRESSION;
+				
 				break;
 			}
 
@@ -517,7 +506,7 @@ static Ral_List* separate_source_statements(
 
 
 		case Ral_STATEMENTTYPE_IF:
-			if (iterator->keywordid == Ral_KEYWORD_THEN)
+			if (iterator->keywordid == 0)
 			{
 				Ral_PushFrontList(
 					statements,
@@ -558,8 +547,21 @@ static Ral_List* separate_source_statements(
 			cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			break;
 
+
+
+		case Ral_STATEMENTTYPE_STRUCT:
+			if (iterator->separatorid == Ral_SEPARATOR_SEMICOLON)
+			{
+				Ral_PushFrontList(
+					statements,
+					Ral_CreateStatement(statement_starttoken, iterator, Ral_STATEMENTTYPE_STRUCT, source)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+			}
+			break;
+
 		case Ral_STATEMENTTYPE_FUNCTION:
-			if (iterator->separatorid == Ral_SEPARATOR_RPAREN)
+			if (iterator->separatorid == Ral_SEPARATOR_LBRACE)
 			{
 				Ral_PushFrontList(
 					statements,
@@ -572,38 +574,13 @@ static Ral_List* separate_source_statements(
 
 
 		case Ral_STATEMENTTYPE_EXPRESSION:
-			if (iterator->type == Ral_TOKENTYPE_IDENTIFIER ||
-				iterator->type == Ral_TOKENTYPE_NUMBERLITERAL ||
-				iterator->type == Ral_TOKENTYPE_STRINGLITERAL ||
-				iterator->separatorid == Ral_SEPARATOR_RPAREN)
+			if (iterator->separatorid == Ral_SEPARATOR_SEMICOLON)
 			{
-				if (!iterator->next ||
-					iterator->next->type == Ral_TOKENTYPE_IDENTIFIER ||
-					iterator->next->type == Ral_TOKENTYPE_NUMBERLITERAL ||
-					iterator->next->type == Ral_TOKENTYPE_STRINGLITERAL ||
-					iterator->next->type == Ral_SEPARATOR_LPAREN)
-				{
-					Ral_PushFrontList(
-						statements,
-						Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type, source)
-					);
-					cur_statementtype = Ral_STATEMENTTYPE_NULL;
-				}
-
-				else if (iterator->next->type == Ral_TOKENTYPE_KEYWORD)
-				{
-					if (!(
-						iterator->next->keywordid == Ral_KEYWORD_FALSE ||
-						iterator->next->keywordid == Ral_KEYWORD_TRUE))
-					{
-						Ral_PushFrontList(
-							statements,
-							Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type, source)
-						);
-						cur_statementtype = Ral_STATEMENTTYPE_NULL;
-					}
-				}
-
+				Ral_PushFrontList(
+					statements,
+					Ral_CreateStatement(statement_starttoken, iterator, expression_statement_type, source)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
 			break;
 
@@ -646,6 +623,14 @@ Ral_Bool Ral_TokenizeSourceUnit(Ral_SourceUnit* const source)
 		Ral_ClearList(tokens, &Ral_DestroyToken);
 		Ral_FREE(tokens);
 		return Ral_FALSE;
+	}
+
+	Ral_Token* iter = tokens->begin;
+	while (iter)
+	{
+		Ral_PrintToken(iter);
+		putchar('\n');
+		iter = iter->next;
 	}
 
 	Ral_List* statements = separate_source_statements(tokens, source);

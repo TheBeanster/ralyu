@@ -84,29 +84,6 @@ Ral_Statement* Ral_ExecuteStatement(
 	switch (statement->type)
 	{
 
-	case Ral_STATEMENTTYPE_DECLARATION:
-	{
-		Ral_Type* decl_type = Ral_GetType(state, statement->tokens[0].string);
-		if (!decl_type)
-		{
-			RalCLI_ERROR("Missing type!");
-			return NULL;
-		}
-		if (statement->numtokens <= 1)
-		{
-			RalCLI_ERROR("Missing variable name for declaration!");
-			return NULL;
-		}
-		Ral_Object* var = Ral_DeclareVariable(
-			local_variables,
-			statement->tokens[1].string,
-			decl_type
-		);
-		Ral_Object* result = build_and_eval_expression(state, local_variables, statement, 1, statement->numtokens);
-		Ral_DestroyObject(result);
-	}
-		break;
-
 	case Ral_STATEMENTTYPE_FUNCTION:
 	{
 		if (statement->numtokens < 4)

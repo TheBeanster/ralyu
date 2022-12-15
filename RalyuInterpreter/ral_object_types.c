@@ -27,7 +27,7 @@ Ral_Type* Ral_GetType(
 		}
 	}
 
-	Ral_Type* iterator = ((Ral_State*)state)->global_types.begin;
+	Ral_Type* iterator = ((Ral_State*)state)->types.begin;
 	while (iterator)
 	{
 		if (strcmp(str, iterator->name) == 0)

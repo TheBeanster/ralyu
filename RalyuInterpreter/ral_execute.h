@@ -13,7 +13,8 @@ typedef struct
 {
 	Ral_SourceUnit* mainsource;
 
-	Ral_List global_types;
+	Ral_List types;
+	Ral_List arraytypes;
 	Ral_List functions;
 
 	Ral_List global_variables;

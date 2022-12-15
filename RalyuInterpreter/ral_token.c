@@ -44,7 +44,7 @@ void Ral_DestroyToken(
 
 void Ral_PrintToken(const Ral_Token* const token)
 {
-	printf("Token \"%s\" | type = ", token->string);
+	printf("Token \"%s\"\x1B[30G| type = ", token->string);
 	switch (token->type)
 	{
 	case Ral_TOKENTYPE_KEYWORD:
@@ -52,15 +52,15 @@ void Ral_PrintToken(const Ral_Token* const token)
 		break;
 
 	case Ral_TOKENTYPE_IDENTIFIER:
-		printf("Ral_TOKENTYPE_IDENTIFIER");
+		printf(RALPREFIX "TOKENTYPE_IDENTIFIER");
 		break;
 
 	case Ral_TOKENTYPE_NUMBERLITERAL:
-		printf("Ral_TOKENTYPE_NUMBERLITERAL");
+		printf(RALPREFIX "TOKENTYPE_NUMBERLITERAL");
 		break;
 
 	case Ral_TOKENTYPE_STRINGLITERAL:
-		printf("Ral_TOKENTYPE_STRINGLITERAL");
+		printf(RALPREFIX "TOKENTYPE_STRINGLITERAL");
 		break;
 
 	case Ral_TOKENTYPE_OPERATOR:
@@ -68,7 +68,7 @@ void Ral_PrintToken(const Ral_Token* const token)
 		break;
 
 	case Ral_TOKENTYPE_SEPARATOR:
-		printf("%s", ral_separatorid_names[token->operatorid]);
+		printf("%s", ral_separatorid_names[token->separatorid]);
 		break;
 
 	default:
