@@ -3,16 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB81484E-3B68-4A52-8DBE-DABF0C6A7369}"
-	ProjectSection(SolutionItems) = preProject
-		lol.txt = lol.txt
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ralyu", "Ralyu.vcxproj", "{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}"
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Debug|x64.ActiveCfg = Debug|x64
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Debug|x64.Build.0 = Debug|x64
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Debug|x86.ActiveCfg = Debug|Win32
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Debug|x86.Build.0 = Debug|Win32
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Release|x64.ActiveCfg = Release|x64
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Release|x64.Build.0 = Release|x64
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Release|x86.ActiveCfg = Release|Win32
+		{B6A71F03-F35B-40B8-B06D-B14B0E7F2FDA}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {29972D70-E1F5-47E4-92F7-3E862979F063}
+		SolutionGuid = {0C01B557-1B9B-4CEF-831F-461F8B765BA0}
 	EndGlobalSection
 EndGlobal
