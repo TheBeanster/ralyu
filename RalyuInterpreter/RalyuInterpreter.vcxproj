@@ -143,48 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ral_cli.c" />
-    <ClCompile Include="ral_execute.c" />
-    <ClCompile Include="ral_expression_eval.c" />
-    <ClCompile Include="ral_expression_read.c" />
-    <ClCompile Include="ralu_file.c" />
-    <ClCompile Include="ral_function.c" />
-    <ClCompile Include="ral_lexer.c" />
-    <ClCompile Include="ralu_list.c" />
-    <ClCompile Include="ral_logging.c" />
     <ClCompile Include="ral_main.c" />
-    <ClCompile Include="ralu_memory.c" />
-    <ClCompile Include="ral_object.c" />
-    <ClCompile Include="ral_object_arithmetic.c" />
-    <ClCompile Include="ral_object_types.c" />
-    <ClCompile Include="ral_object_variable.c" />
-    <ClCompile Include="ral_sourcekeys.c" />
-    <ClCompile Include="ral_sourceunit.c" />
-    <ClCompile Include="ral_statement.c" />
-    <ClCompile Include="ralu_string.c" />
-    <ClCompile Include="ral_token.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ral_cli.h" />
-    <ClInclude Include="ral_execute.h" />
-    <ClInclude Include="ral_expression.h" />
-    <ClInclude Include="ralu_file.h" />
-    <ClInclude Include="ralu_list.h" />
-    <ClInclude Include="ral_function.h" />
-    <ClInclude Include="ral_logging.h" />
-    <ClInclude Include="ralu_memory.h" />
-    <ClInclude Include="ral_object.h" />
-    <ClInclude Include="ral_sourceunit.h" />
-    <ClInclude Include="ralu_stdinclude.h" />
-    <ClInclude Include="ralu_string.h" />
-    <ClInclude Include="ral_lexer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.ral" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="planning_expression_thang.txt" />
-    <Text Include="testsyntax.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
