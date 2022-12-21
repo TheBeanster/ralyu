@@ -266,6 +266,11 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 
 
 	return tokens;
+
+onerror:
+	Ral_ClearList(tokens, &Ral_DestroyToken);
+	Ral_FREE(tokens);
+	return NULL;
 }
 
 
@@ -354,6 +359,121 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 
 
 	return retvalue;
+}
+
+
+
+
+
+static Ral_List* separate_source_statements(
+	const Ral_List* const tokens
+)
+{
+	Ral_List* statements = Ral_ALLOC_TYPE(Ral_List);
+
+	Ral_Token* cur_statementstart = tokens->begin;
+	Ral_Token* iterator = tokens->begin;
+
+	Ral_StatementType cur_statementtype = Ral_STATEMENTTYPE_NULL;
+	Ral_StatementType expression_read_type = Ral_STATEMENTTYPE_NULL;
+
+	int parenthesis_depth = 0;
+	int bracket_depth = 0;
+	int brace_depth = 0;
+
+	for (int i = 0; i < tokens->itemcount; i++)
+	{
+		if		(iterator->separatorid == Ral_SEPARATOR_LBRACE) brace_depth++;
+		else if (iterator->separatorid == Ral_SEPARATOR_RBRACE) brace_depth--;
+		else if (iterator->separatorid == Ral_SEPARATOR_LPAREN) parenthesis_depth++;
+		else if (iterator->separatorid == Ral_SEPARATOR_RPAREN) parenthesis_depth--;
+		else if (iterator->separatorid == Ral_SEPARATOR_LBRACKET) bracket_depth++;
+		else if (iterator->separatorid == Ral_SEPARATOR_RBRACKET) bracket_depth--;
+
+		switch (cur_statementtype)
+		{
+		case Ral_STATEMENTTYPE_NULL:
+			// Read new statement
+
+			if (iterator->type == Ral_TOKENTYPE_ENDLINE) break; // Ignore empty lines
+
+			switch (iterator->keywordid)
+			{
+			case Ral_KEYWORD_IF:
+				cur_statementtype = Ral_STATEMENTTYPE_IF;
+				break;
+
+			case Ral_KEYWORD_ELSE:
+				// Push the else statement immediatly
+				Ral_PushBackList(
+					statements,
+					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_ELSE)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				break;
+
+			case Ral_KEYWORD_FOR:
+				cur_statementtype = Ral_STATEMENTTYPE_FOR;
+				break;
+
+			case Ral_KEYWORD_WHILE:
+				cur_statementtype = Ral_STATEMENTTYPE_WHILE;
+				break;
+
+			case Ral_KEYWORD_RETURN:
+				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION; // Continue reading as if it is an expression
+				expression_read_type = Ral_STATEMENTTYPE_RETURN; // But remember that it is for a return statement
+				break;
+
+			case Ral_KEYWORD_BOOL:
+			case Ral_KEYWORD_INT:
+			case Ral_KEYWORD_FLOAT:
+			case Ral_KEYWORD_STRING:
+			case Ral_KEYWORD_TRUE:
+			case Ral_KEYWORD_FALSE:
+				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
+				expression_read_type = Ral_STATEMENTTYPE_EXPRESSION;
+				break;
+
+			case Ral_KEYWORD_FUNCTION:
+				cur_statementtype = Ral_STATEMENTTYPE_FUNCTION;
+				break;
+
+			case Ral_KEYWORD_STRUCT:
+				cur_statementtype = Ral_STATEMENTTYPE_STRUCT;
+				break;
+
+			case Ral_KEYWORD_END:
+				// Push the end statement immediatly
+				Ral_PushBackList(
+					statements,
+					Ral_CreateStatement(iterator, iterator, Ral_STATEMENTTYPE_END)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				break;
+
+			default:
+				// First token in new statement is not a keyword
+
+				// Treat as expression
+				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
+				expression_read_type = Ral_STATEMENTTYPE_EXPRESSION;
+				break;
+			}
+
+			cur_statementstart = iterator;
+			break;
+
+
+
+		case Ral_STATEMENTTYPE_IF:
+			
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 

@@ -19,6 +19,7 @@
 typedef enum
 {
 	Ral_KEYWORD_IF,
+	Ral_KEYWORD_THEN,
 	Ral_KEYWORD_ELSE,
 	Ral_KEYWORD_FOR,
 	Ral_KEYWORD_WHILE,
@@ -157,6 +158,52 @@ void Ral_DestroyToken(
 void Ral_PrintToken(
 	const Ral_Token* const token
 );
+
+
+
+typedef enum
+{
+	Ral_STATEMENTTYPE_NULL,
+	Ral_STATEMENTTYPE_EXPRESSION,
+	Ral_STATEMENTTYPE_STRUCT,
+	Ral_STATEMENTTYPE_FUNCTION,
+	Ral_STATEMENTTYPE_RETURN,
+	Ral_STATEMENTTYPE_IF,
+	Ral_STATEMENTTYPE_ELSE,
+	Ral_STATEMENTTYPE_FOR,
+	Ral_STATEMENTTYPE_WHILE,
+	Ral_STATEMENTTYPE_GOTO,
+	Ral_STATEMENTTYPE_END,
+
+	Ral_NUM_STATEMENTTYPES,
+} Ral_StatementType;
+
+extern const char* const ral_serialized_statementtype_names[];
+
+typedef struct Ral_Statement
+{
+	Ral_LISTLINKS(Ral_Statement);
+
+	Ral_StatementType	type;
+	Ral_Token*			tokens;
+	int					numtokens;
+
+	Ral_SourceUnit*		parentsource;
+	int					index;
+} Ral_Statement;
+
+Ral_Statement* Ral_CreateStatement(
+	const Ral_Token* const	begin,
+	const Ral_Token* const	end,
+	const Ral_StatementType type
+);
+
+void Ral_DestroyStatement(Ral_Statement* const statement);
+
+void Ral_PrintStatementString(const Ral_Statement* const statement);
+
+void Ral_PrintStatementTokens(const Ral_Statement* const statement);
+
 
 
 

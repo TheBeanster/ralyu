@@ -149,6 +149,7 @@
     <ClCompile Include="ralyu_testmain.c" />
     <ClCompile Include="ral_lexer.c" />
     <ClCompile Include="ral_lexer_keys.c" />
+    <ClCompile Include="ral_lexer_statement.c" />
     <ClCompile Include="ral_lexer_token.c" />
     <ClCompile Include="ral_sourceunit.c" />
   </ItemGroup>

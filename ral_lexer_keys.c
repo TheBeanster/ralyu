@@ -7,6 +7,7 @@
 const char* const ral_keyword_strings[] =
 {
 	"if",
+	"then",
 	"else",
 	"for",
 	"while",
@@ -38,6 +39,7 @@ Ral_KeywordID Ral_CheckKeyword(const char* const str)
 const char* const ral_serialized_keywordid_names[] =
 {
 	Ral_STR_PREFIX "KEYWORD_IF",
+	Ral_STR_PREFIX "KEYWORD_THEN",
 	Ral_STR_PREFIX "KEYWORD_ELSE",
 	Ral_STR_PREFIX "KEYWORD_FOR",
 	Ral_STR_PREFIX "KEYWORD_WHILE",
