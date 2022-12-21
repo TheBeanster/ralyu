@@ -152,9 +152,13 @@
     <ClInclude Include="ralu_memory.h" />
     <ClInclude Include="ral_sourceunit.h" />
     <ClInclude Include="ralu_stdinclude.h" />
+    <ClInclude Include="ral_state.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="planning.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

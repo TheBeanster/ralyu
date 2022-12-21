@@ -1,13 +1,32 @@
 
 
 
-A source unit is a block of code that can be executed in isolation or as a function call from another execution.
-A Ralyu state keeps track of all source units
-A function has a pointer to a source unit.
+Returning NULL is the same as returning void.
+
+A token cannot contain a space unless it is a string literal.
 
 
 
-example source unit:
+A sourceunit is a block of code that can be executed in isolation or as a function call from another execution.
+A Ralyu state keeps track of all sourceunits
+A function has a pointer to a sourceunit.
+
+There are two types of sourceunits
+GLOBAL and FUNCTION
+
+Global sourceunits store all their variable and function declarations in the state as globals.
+Function sourceunits store their variable and function declarations locally and are discarded when the sourceunit exits.
+Function sourceunits can also have arguments and a return value that can be used by both Ralyu and C.
+
+To run code, you first load a sourceunit and then you run it.
+Loading it only turns the source code into statements and tokens by the lexer which can be executed.
+You should not load the same source code twice.
+
+Running sourceunits executes its statements.
+
+
+
+example source unit ":
 
 int a = 0
 a += 10
@@ -17,9 +36,17 @@ function add(int a, int b)
 	return a + b
 end
 
-a = add(a, a)
+int b = add(a, a)
+print(b)
 
 *end of file*
 
+When this piece of code is read, it will generate two sourceunits and two global variables in the state
 
+
+
+Calling Ralyu code from C:
+
+The base function for calling code is:
+Ral_Object* Ral_CallFunction(Ral_State* state, Ral_Function* function, Ral_List* arguments)
 

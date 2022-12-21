@@ -44,10 +44,16 @@
     <ClInclude Include="ralu_stdinclude.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="ral_state.h">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="planning.txt">
       <Filter>Source Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>
