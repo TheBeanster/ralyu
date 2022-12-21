@@ -105,7 +105,7 @@ void Ral_PrintStatementTokens(const Ral_Statement* const statement)
 	for (int i = 0; i < statement->numtokens; i++)
 	{
 		Ral_PrintToken(&statement->tokens[i]);
-		printf("\n    ");
+		if (i < statement->numtokens - 1)
+			printf("\n    ");
 	}
-	putchar('\n');
 }

@@ -54,10 +54,15 @@ static chartype check_chartype(const char c)
 /// @param length The length of the source string.
 /// @return A pointer to the list of tokens. Even though it shouldn't be able to return NULL, 
 /// do check that just in case that changes later.
-static Ral_List* separate_tokens(const char* const source, const int length)
-{
-	Ral_List* tokens = Ral_ALLOC_TYPE(Ral_List);
 
+/// @brief Reads through a string character by character and divides it into separate tokens.
+/// The types of these tokens must be determined later in the determine_token_types() function.
+/// @param tokens Pointer to an empty list to put the tokens into.
+/// @param source Pointer to a string.
+/// @param length The length of the source string.
+/// @return The number of errors found.
+static int separate_tokens(Ral_List* const tokens, const char* const source, const int length)
+{
 	int			curlinenum = 1;
 
 	// Reading tokens works by checking where a token starts and where it ends, character by character,
@@ -79,6 +84,8 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 	// When reading a numberliteral, check if a decimal point has been found.
 	// If this is true and you find another decimal point, that will be an error.
 	Ral_Bool numberliteral_decimal = Ral_FALSE;
+
+	int			numerrors = 0;
 
 
 
@@ -115,7 +122,8 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 				if (cur_chartype == CHARTYPE_POINT)
 				{
 					// Two decimal points in one number error
-					Ral_LOG_SYNTAXERROR(curlinenum, "Two decimal points in one number error!");
+					Ral_LOG_SYNTAXERROR(curlinenum, "Two decimal points in one number!");
+					numerrors++;
 				}
 			} else
 			{
@@ -129,6 +137,7 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 				{
 					// A letter or underscore directly after number
 					Ral_LOG_SYNTAXERROR(curlinenum, "A letter or underscore directly after number!");
+					numerrors++;
 				}
 
 				// Number token ends
@@ -182,6 +191,7 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 			if (cur_chartype == CHARTYPE_ENDLINE)
 			{
 				Ral_LOG_SYNTAXERROR(curlinenum - 1, "String doesn't have closing quotes!");
+				numerrors++;
 				goto push_string_literal;
 			}
 			// String literals end when another double quote is found
@@ -259,18 +269,22 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 	if (curtoken_type == CHARTYPE_QUOTE)
 	{
 		Ral_LOG_SYNTAXERROR(curlinenum, "String doesn't have closing quotes!");
+		numerrors++;
 		curtoken_end = length;
 		PUSH_TOKEN;
 	}
 
 
 
-	return tokens;
+	// Add an endline token at the end to make sure parsing works
+	Ral_PushBackList(
+		tokens,
+		(Ral_ListNode*)Ral_CreateToken("\n", 0, 1, curlinenum, CHARTYPE_ENDLINE)
+	);
 
-onerror:
-	Ral_ClearList(tokens, &Ral_DestroyToken);
-	Ral_FREE(tokens);
-	return NULL;
+
+
+	return numerrors;
 }
 
 
@@ -280,12 +294,12 @@ onerror:
 /// @brief Goes through a list of tokens and determines more info about them. Such as what operator an operator token is,
 /// or if a text token is a keyword or an identifier.
 /// @param tokens The list of tokens to analyze.
-/// @return TRUE if there were no errors or FALSE if some was found.
-static Ral_Bool determine_token_types(const Ral_List* const tokens)
+/// @return The number of errors found.
+static int determine_token_types(Ral_List* const tokens)
 {
-	Ral_Bool retvalue = Ral_TRUE;
-
 	Ral_TokenType prev_token_type = Ral_TOKENTYPE_NULL;
+
+	int numerrors = 0;
 
 	Ral_Token* iterator = (Ral_Token*)tokens->begin;
 	while (iterator)
@@ -306,7 +320,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			{
 				// Invalid operator
 				Ral_LOG_SYNTAXERROR(iterator->linenum, "Invalid operator \"%s\"!", iterator->string);
-				retvalue = Ral_FALSE;
+				numerrors++;
 			} else
 			{
 				// Check if unary negative or subtraction
@@ -326,7 +340,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			{
 				// Invalid separator
 				Ral_LOG_SYNTAXERROR(iterator->linenum, "Invalid separator \"%s\"!", iterator->string);
-				retvalue = Ral_FALSE;
+				numerrors++;
 			}
 			iterator->type = Ral_TOKENTYPE_SEPARATOR;
 			break;
@@ -347,30 +361,31 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			break;
 
 		default:
-			
-			retvalue = Ral_FALSE;
-			break;
+			Ral_LOG_SYNTAXERROR(iterator->linenum, "Invalid token \"%s\"!", iterator->string);
+			numerrors++;
+			Ral_Token* deltoken = iterator;
+			iterator = iterator->next;
+			Ral_UnlinkFromList(tokens, deltoken);
+			Ral_DestroyToken(deltoken);
+			continue;
 		}
 
 		prev_token_type = iterator->type;
-		iterator = (Ral_Token*)iterator->next;
+		iterator = iterator->next;
 	}
 
-
-
-	return retvalue;
+	return numerrors;
 }
 
 
 
 
 
-static Ral_List* separate_source_statements(
+static int separate_source_statements(
+	Ral_List* const statements,
 	const Ral_List* const tokens
 )
 {
-	Ral_List* statements = Ral_ALLOC_TYPE(Ral_List);
-
 	Ral_Token* cur_statementstart = tokens->begin;
 	Ral_Token* iterator = tokens->begin;
 
@@ -384,6 +399,8 @@ static Ral_List* separate_source_statements(
 	int start_parenthesis_depth = 0;
 	int start_bracket_depth = 0;
 	int start_brace_depth = 0;
+
+	int numerrors = 0;
 
 	for (int i = 0; i < tokens->itemcount; i++)
 	{
@@ -471,6 +488,7 @@ static Ral_List* separate_source_statements(
 			case Ral_KEYWORD_DO:
 			case Ral_KEYWORD_THEN:
 				Ral_LOG_SYNTAXERROR(iterator->linenum, "Invalid statement start keyword \"%s\"!", iterator->string);
+				numerrors++;
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				break;
 			}
@@ -522,6 +540,7 @@ static Ral_List* separate_source_statements(
 			if (iterator->type != Ral_TOKENTYPE_IDENTIFIER)
 			{
 				Ral_LOG_SYNTAXERROR(iterator->linenum, "Goto label \"%s\" is not an identifier!", iterator->string);
+				numerrors++;
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 				break;
 			}
@@ -532,6 +551,8 @@ static Ral_List* separate_source_statements(
 			cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			break;
 
+
+
 		case Ral_STATEMENTTYPE_EXPRESSION:
 			if (iterator->type == Ral_TOKENTYPE_ENDLINE)
 			{
@@ -539,6 +560,7 @@ static Ral_List* separate_source_statements(
 					(start_bracket_depth		>= bracket_depth) &&
 					(start_brace_depth			>= brace_depth))
 				{
+				pushexpression:
 					// TODO It is probably possible to implement an error for statements that have too many parentheses or similar
 
 					Ral_PushBackList(
@@ -557,30 +579,27 @@ static Ral_List* separate_source_statements(
 		iterator = iterator->next;
 	}
 
-	return statements;
+	return numerrors;
 }
 
 
 
 
 
-Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string, const int length)
+Ral_Bool parse_source_statements(
+	Ral_List* const statements,
+	const char* const string,
+	const int length
+)
 {
-	Ral_List* tokens = separate_tokens(string, length);
-	if (!tokens)
-	{
-		printf("Could not parse source unit\n");
-		return Ral_FALSE;
-	}
+	Ral_List tokens = { 0 };
 
-	if (!determine_token_types(tokens))
-	{
-		Ral_ClearList(tokens, NULL);
-		printf("Could not parse source unit\n");
-		return Ral_FALSE;
-	}
+	int numerrors = 0;
 
-	Ral_Token* token_iter = (Ral_Token*)tokens->begin;
+	numerrors += separate_tokens(&tokens, string, length);
+	numerrors += determine_token_types(&tokens);
+	
+	Ral_Token* token_iter = (Ral_Token*)tokens.begin;
 	while (token_iter)
 	{
 		Ral_PrintToken(token_iter);
@@ -588,7 +607,14 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 		token_iter = token_iter->next;
 	}
 
-	Ral_List* statements = separate_source_statements(tokens);
+	numerrors += separate_source_statements(statements, &tokens);
+
+	if (numerrors > 0)
+	{
+		Ral_ClearList(&tokens, NULL);
+		printf("Could not parse source unit\nErrors: %i\n", numerrors);
+		return Ral_FALSE;
+	}
 
 	for (int i = 0; i < statements->itemcount; i++)
 	{
@@ -607,6 +633,32 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 		putchar('\n');
 		statement_iter = statement_iter->next;
 	}
+
+	return Ral_TRUE;
+}
+
+
+
+
+
+Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string, const int length)
+{
+	if (!sourceunit) return Ral_FALSE;
+	if (sourceunit->numstatements != 0) return Ral_FALSE;
+	if (!string) return Ral_FALSE;
+	if (length <= 0) return Ral_FALSE;
+
+	Ral_List statements = { 0 };
+
+	if (!parse_source_statements(&statements, string, length))
+	{
+		return Ral_FALSE;
+	}
+
+	sourceunit->numstatements = statements.itemcount;
+	sourceunit->statements = Ral_CALLOC(statements.itemcount, sizeof(Ral_Statement));
+
+	
 
 	return Ral_TRUE;
 }
