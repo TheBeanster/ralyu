@@ -98,6 +98,11 @@ void Ral_ClearList(
 	void(*destroy_func)(void*)
 )
 {
+	if (!list) return;
+	if (list->itemcount <= 0) return;
+	if (list->begin == NULL) return;
+	if (list->end == NULL) return;
+
 	Ral_ListNode* iterator = list->begin;
 	while (iterator)
 	{

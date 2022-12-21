@@ -599,20 +599,22 @@ Ral_Bool parse_source_statements(
 	numerrors += separate_tokens(&tokens, string, length);
 	numerrors += determine_token_types(&tokens);
 	
-	Ral_Token* token_iter = (Ral_Token*)tokens.begin;
+	// Print the tokens
+	/*Ral_Token* token_iter = (Ral_Token*)tokens.begin;
 	while (token_iter)
 	{
 		Ral_PrintToken(token_iter);
 		putchar('\n');
 		token_iter = token_iter->next;
-	}
+	}*/
 
 	numerrors += separate_source_statements(statements, &tokens);
 
 	if (numerrors > 0)
 	{
-		Ral_ClearList(&tokens, NULL);
 		printf("Could not parse source unit\nErrors: %i\n", numerrors);
+		Ral_ClearList(&tokens, &Ral_DestroyToken);
+		Ral_ClearList(statements, &Ral_DestroyStatement);
 		return Ral_FALSE;
 	}
 
@@ -626,13 +628,14 @@ Ral_Bool parse_source_statements(
 		}
 	}
 
-	Ral_Statement* statement_iter = (Ral_Statement*)statements->begin;
+	// Print statements
+	/*Ral_Statement* statement_iter = (Ral_Statement*)statements->begin;
 	while (statement_iter)
 	{
 		Ral_PrintStatementTokens(statement_iter);
 		putchar('\n');
 		statement_iter = statement_iter->next;
-	}
+	}*/
 
 	return Ral_TRUE;
 }
@@ -652,13 +655,12 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 
 	if (!parse_source_statements(&statements, string, length))
 	{
+		Ral_ClearList(&statements, &Ral_DestroyStatement);
 		return Ral_FALSE;
 	}
 
 	sourceunit->numstatements = statements.itemcount;
 	sourceunit->statements = Ral_CALLOC(statements.itemcount, sizeof(Ral_Statement));
-
-	
 
 	return Ral_TRUE;
 }

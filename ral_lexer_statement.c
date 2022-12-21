@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "ralu_memory.h"
+#include "ralu_string.h"
 
 #include "ral_sourceunit.h"
 
@@ -56,6 +57,9 @@ Ral_Statement* Ral_CreateStatement(
 			continue;
 		}
 		statement->tokens[i] = *iterator;
+		statement->tokens[i].string = _strdup(iterator->string);
+		statement->tokens[i].prev = NULL;
+		statement->tokens[i].next = NULL;
 		iterator = iterator->next;
 	}
 

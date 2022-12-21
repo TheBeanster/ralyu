@@ -19,5 +19,6 @@ typedef struct Ral_SourceUnit
 
 Ral_SourceUnit* Ral_LoadSourceString(
 	Ral_State* const state,
-	const char* const string
+	const char* const string,
+	const int length
 );
