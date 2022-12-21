@@ -1,5 +1,7 @@
 #include "ralu_list.h"
 
+#include "ralu_memory.h"
+
 
 
 void Ral_PushFrontList(
@@ -87,4 +89,26 @@ void Ral_UnlinkFromList(
 	node->next = NULL;
 
 	list->itemcount--;
+}
+
+
+
+void Ral_ClearList(
+	Ral_List* const list,
+	void(*destroy_func)(void*)
+)
+{
+	Ral_ListNode* iterator = list->begin;
+	while (iterator)
+	{
+		Ral_ListNode* delblock = iterator;
+		iterator = iterator->next;
+		if (destroy_func)
+			destroy_func(delblock);
+		else
+			Ral_FREE(delblock);
+	}
+	list->begin = NULL;
+	list->end = NULL;
+	list->itemcount = 0;
 }

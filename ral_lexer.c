@@ -371,6 +371,7 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 
 	if (!determine_token_types(tokens))
 	{
+		Ral_ClearList(tokens, NULL);
 		printf("Could not parse source unit\n");
 		return Ral_FALSE;
 	}

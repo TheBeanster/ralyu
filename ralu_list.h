@@ -68,3 +68,12 @@ void Ral_UnlinkFromList(
 	Ral_List* const		list,
 	Ral_ListNode* const	node
 );
+
+/// @brief Removes all elements from a list and calling the destroy_func on every element.
+/// This does not free the list itself, only empties it.
+/// @param list Pointer to the list to empty.
+/// @param destroy_func Pointer to a destructor function, or NULL to use Ral_FREE().
+void Ral_ClearList(
+	Ral_List* const list,
+	void(*destroy_func)(void*)
+);
