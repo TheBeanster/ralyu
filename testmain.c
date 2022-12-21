@@ -1,6 +1,9 @@
+#include "ral_stdinclude.h"
 #include <stdio.h>
+
+
 
 int main()
 {
-	printf("Hello");
+	printf("Test implementation of Ralyu");
 }
