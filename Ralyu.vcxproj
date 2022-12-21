@@ -145,11 +145,15 @@
   <ItemGroup>
     <ClCompile Include="ralu_list.c" />
     <ClCompile Include="ralu_memory.c" />
+    <ClCompile Include="ralu_string.c" />
     <ClCompile Include="ralyu_testmain.c" />
+    <ClCompile Include="ral_lexer.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h" />
     <ClInclude Include="ralu_memory.h" />
+    <ClInclude Include="ralu_string.h" />
+    <ClInclude Include="ral_lexer.h" />
     <ClInclude Include="ral_sourceunit.h" />
     <ClInclude Include="ralu_stdinclude.h" />
     <ClInclude Include="ral_state.h" />

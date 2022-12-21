@@ -21,12 +21,14 @@ Function sourceunits can also have arguments and a return value that can be used
 To run code, you first load a sourceunit and then you run it.
 Loading it only turns the source code into statements and tokens by the lexer which can be executed.
 You should not load the same source code twice.
+Loading doesn't do anything to the state other than appending it and its functions to the sourceunits list.
 
 Running sourceunits executes its statements.
+Running a global sourceunit
 
 
 
-example source unit ":
+example source unit:
 
 int a = 0
 a += 10

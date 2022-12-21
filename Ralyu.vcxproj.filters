@@ -30,6 +30,12 @@
     <ClCompile Include="ralyu_testmain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ralu_string.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_lexer.c">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">
@@ -46,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="ral_state.h">
       <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_lexer.h">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_string.h">
+      <Filter>Source Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
