@@ -41,7 +41,11 @@ void Ral_DestroyToken(
 
 void Ral_PrintToken(const Ral_Token* const token)
 {
-	printf("Token \"%s\"\x1B[30G| type = ", token->string);
+	if (token->type != Ral_TOKENTYPE_ENDLINE)
+		printf("Token \"%s\"\x1B[30G| type = ", token->string);
+	else
+		printf("Token \"\\n\"\x1B[30G| type = ");
+
 	switch (token->type)
 	{
 	case Ral_TOKENTYPE_KEYWORD:
@@ -70,6 +74,10 @@ void Ral_PrintToken(const Ral_Token* const token)
 
 	case Ral_TOKENTYPE_SEPARATOR:
 		printf("%s", ral_serialized_separatorid_names[token->separatorid]);
+		break;
+
+	case Ral_TOKENTYPE_ENDLINE:
+		printf(Ral_STR_PREFIX "TOKENTYPE_ENDLINE");
 		break;
 
 	default:

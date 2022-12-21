@@ -30,6 +30,6 @@ int main(int argc, char** argv)
 
 
 	Ral_SourceUnit* source = Ral_ALLOC_TYPE(Ral_SourceUnit);
-	Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("int a = 0"));
+	Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("int a = \"Hello\"\nint b = 0"));
 
 }

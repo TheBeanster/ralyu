@@ -179,9 +179,15 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 
 
 		case CHARTYPE_DOUBLEQUOTES:
+			if (cur_chartype == CHARTYPE_ENDLINE)
+			{
+				Ral_LOG_SYNTAXERROR(curlinenum - 1, "String doesn't have closing quotes!");
+				goto push_string_literal;
+			}
 			// String literals end when another double quote is found
 			if (cur_chartype == CHARTYPE_DOUBLEQUOTES)
 			{
+			push_string_literal:
 				curtoken_end = i + 1; // Plus 1 to include closing "
 				PUSH_TOKEN;
 				tokenchange = Ral_TRUE;
@@ -202,10 +208,18 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 
 
 
+		case CHARTYPE_ENDLINE:
+			// Endlines are always 1 character so push it immedietly
+			curtoken_end = i;
+			PUSH_TOKEN;
+			tokenchange = Ral_TRUE;
+			break;
+
+
+
 			// Default is error, it should be considered spacer
 		default:
 			// TODO Add warning about invalid characters
-		case CHARTYPE_ENDLINE:
 		case CHARTYPE_SPACER:
 			if (cur_chartype == CHARTYPE_SPACER)
 			{
@@ -323,6 +337,10 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 			iterator->type = Ral_TOKENTYPE_STRINGLITERAL;
 			break;
 
+		case CHARTYPE_ENDLINE:
+			iterator->type = Ral_TOKENTYPE_ENDLINE;
+			break;
+
 		default:
 			
 			retvalue = Ral_FALSE;
@@ -345,6 +363,11 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string, const int length)
 {
 	Ral_List* tokens = separate_tokens(string, length);
+	if (!tokens)
+	{
+		printf("Could not parse source unit\n");
+		return Ral_FALSE;
+	}
 
 	if (!determine_token_types(tokens))
 	{
@@ -352,7 +375,7 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 		return Ral_FALSE;
 	}
 
-	Ral_Token* iter = tokens->begin;
+	Ral_Token* iter = (Ral_Token*)tokens->begin;
 	while (iter)
 	{
 		Ral_PrintToken(iter);
