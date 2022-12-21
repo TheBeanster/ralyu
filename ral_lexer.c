@@ -19,7 +19,7 @@ typedef enum
 	CHARTYPE_SEPARATOR,
 	CHARTYPE_SPACER,		// Space or tab
 	CHARTYPE_ENDLINE,
-	CHARTYPE_QUOTE,	// Double quotation marks for strings
+	CHARTYPE_QUOTE,			// Double quotation marks for strings
 	CHARTYPE_COMMENT,		// Comments start with # and end with an endline
 } chartype;
 
@@ -31,7 +31,7 @@ static chartype check_chartype(const char c)
 	if (strchr("+-/*=<>!", c))	return CHARTYPE_OPERATOR;
 	if (strchr(",:()[]{}", c))	return CHARTYPE_SEPARATOR;
 	if (isblank(c))				return CHARTYPE_SPACER;
-	if (c == '\n')				return CHARTYPE_ENDLINE;
+	if (c == '\n' || c == ';')	return CHARTYPE_ENDLINE; // Semicolon acts the same as endline
 	if (c == '\"' || c == '\'')	return CHARTYPE_QUOTE;
 	if (c == '#')				return CHARTYPE_COMMENT;
 	return CHARTYPE_NULL;
