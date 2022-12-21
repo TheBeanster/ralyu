@@ -3,6 +3,8 @@
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
 
+#include "ral_sourceunit.h"
+
 
 
 // Include the Ral_ prefix in serialized enum names
@@ -140,6 +142,26 @@ typedef struct Ral_Token
 	Ral_SeparatorID	separatorid;
 } Ral_Token;
 
+Ral_Token* Ral_CreateToken(
+	const char* const	string,
+	const int			start,
+	const int			end,
+	const int			linenum,
+	const int			type
+);
+
+void Ral_DestroyToken(
+	Ral_Token* const token
+);
+
 void Ral_PrintToken(
 	const Ral_Token* const token
+);
+
+
+
+Ral_Bool Ral_ParseSourceUnit(
+	Ral_SourceUnit* const sourceunit,
+	const char* const string,
+	const int length
 );

@@ -5,8 +5,11 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
-
+#include "ralu_memory.h"
+#include "ralu_string.h"
 #include <stdio.h>
+
+#include "ral_lexer.h"
 
 
 
@@ -23,5 +26,10 @@ int main(int argc, char** argv)
 	Ral_PushBackList(&list, &node2);
 	Ral_PushBackList(&list, &node3);
 	Ral_UnlinkFromList(&list, &node2);
+
+
+
+	Ral_SourceUnit* source = Ral_ALLOC_TYPE(Ral_SourceUnit);
+	Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("int a = 0"));
 
 }
