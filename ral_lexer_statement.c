@@ -30,12 +30,13 @@ Ral_Statement* Ral_CreateStatement(
 	const Ral_StatementType		type
 )
 {
-	// Count the number of tokens in the statement
+	// Count the number of tokens in the statement and make sure the tokens enclose a list
 	int numtokens = 0;
 	Ral_Token* iterator = begin;
 	while (1)
 	{
-		numtokens++;
+		if (iterator->type != Ral_TOKENTYPE_ENDLINE)
+			numtokens++;
 		if (iterator == end) break;
 		iterator = iterator->next;
 		if (!iterator)
@@ -48,6 +49,12 @@ Ral_Statement* Ral_CreateStatement(
 	iterator = begin;
 	for (int i = 0; i < numtokens; i++)
 	{
+		if (iterator->type == Ral_TOKENTYPE_ENDLINE) // Skip endline tokens
+		{
+			iterator = iterator->next;
+			i--; // Step back to not skip anything in the array
+			continue;
+		}
 		statement->tokens[i] = *iterator;
 		iterator = iterator->next;
 	}
@@ -82,7 +89,10 @@ void Ral_PrintStatementString(const Ral_Statement* const statement)
 
 	for (int i = 0; i < statement->numtokens; i++)
 	{
-		printf("%s ", statement->tokens[i].string);
+		if (statement->tokens[i].type == Ral_TOKENTYPE_ENDLINE)
+			printf("\\n ");
+		else
+			printf("%s ", statement->tokens[i].string);
 	}
 }
 

@@ -19,7 +19,7 @@ typedef enum
 	CHARTYPE_SEPARATOR,
 	CHARTYPE_SPACER,		// Space or tab
 	CHARTYPE_ENDLINE,
-	CHARTYPE_DOUBLEQUOTES,	// Double quotation marks for strings
+	CHARTYPE_QUOTE,	// Double quotation marks for strings
 	CHARTYPE_COMMENT,		// Comments start with # and end with an endline
 } chartype;
 
@@ -32,7 +32,7 @@ static chartype check_chartype(const char c)
 	if (strchr(",:()[]{}", c))	return CHARTYPE_SEPARATOR;
 	if (isblank(c))				return CHARTYPE_SPACER;
 	if (c == '\n')				return CHARTYPE_ENDLINE;
-	if (c == '\"')				return CHARTYPE_DOUBLEQUOTES;
+	if (c == '\"' || c == '\'')	return CHARTYPE_QUOTE;
 	if (c == '#')				return CHARTYPE_COMMENT;
 	return CHARTYPE_NULL;
 }
@@ -178,14 +178,14 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 
 
 
-		case CHARTYPE_DOUBLEQUOTES:
+		case CHARTYPE_QUOTE:
 			if (cur_chartype == CHARTYPE_ENDLINE)
 			{
 				Ral_LOG_SYNTAXERROR(curlinenum - 1, "String doesn't have closing quotes!");
 				goto push_string_literal;
 			}
 			// String literals end when another double quote is found
-			if (cur_chartype == CHARTYPE_DOUBLEQUOTES)
+			if (cur_chartype == CHARTYPE_QUOTE)
 			{
 			push_string_literal:
 				curtoken_end = i + 1; // Plus 1 to include closing "
@@ -237,7 +237,7 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 		{
 			// After a token end, this will determine what the new token is.
 
-			if ((curtoken_type == CHARTYPE_DOUBLEQUOTES) || (curtoken_type == CHARTYPE_COMMENT))
+			if ((curtoken_type == CHARTYPE_QUOTE) || (curtoken_type == CHARTYPE_COMMENT))
 			{
 				// Special cases for string and comment since they both stop at specific characters.
 				// A double quotation mark for strings and endline for comments.
@@ -256,7 +256,7 @@ static Ral_List* separate_tokens(const char* const source, const int length)
 
 
 	// Check if the current type is a string literal
-	if (curtoken_type == CHARTYPE_DOUBLEQUOTES)
+	if (curtoken_type == CHARTYPE_QUOTE)
 	{
 		Ral_LOG_SYNTAXERROR(curlinenum, "String doesn't have closing quotes!");
 		curtoken_end = length;
@@ -338,7 +338,7 @@ static Ral_Bool determine_token_types(const Ral_List* const tokens)
 				iterator->type = Ral_TOKENTYPE_INTLITERAL;
 			break;
 
-		case CHARTYPE_DOUBLEQUOTES:
+		case CHARTYPE_QUOTE:
 			iterator->type = Ral_TOKENTYPE_STRINGLITERAL;
 			break;
 
@@ -381,15 +381,22 @@ static Ral_List* separate_source_statements(
 	int bracket_depth = 0;
 	int brace_depth = 0;
 
+	int start_parenthesis_depth = 0;
+	int start_bracket_depth = 0;
+	int start_brace_depth = 0;
+
 	for (int i = 0; i < tokens->itemcount; i++)
 	{
-		if		(iterator->separatorid == Ral_SEPARATOR_LBRACE) brace_depth++;
-		else if (iterator->separatorid == Ral_SEPARATOR_RBRACE) brace_depth--;
-		else if (iterator->separatorid == Ral_SEPARATOR_LPAREN) parenthesis_depth++;
-		else if (iterator->separatorid == Ral_SEPARATOR_RPAREN) parenthesis_depth--;
-		else if (iterator->separatorid == Ral_SEPARATOR_LBRACKET) bracket_depth++;
-		else if (iterator->separatorid == Ral_SEPARATOR_RBRACKET) bracket_depth--;
-
+		switch (iterator->separatorid)
+		{
+		case Ral_SEPARATOR_LPAREN:		parenthesis_depth++;	break;
+		case Ral_SEPARATOR_RPAREN:		parenthesis_depth--;	break;
+		case Ral_SEPARATOR_LBRACKET:	bracket_depth++;		break;
+		case Ral_SEPARATOR_RBRACKET:	bracket_depth--;		break;
+		case Ral_SEPARATOR_LBRACE:		brace_depth++;			break;
+		case Ral_SEPARATOR_RBRACE:		brace_depth--;			break;
+		}
+		
 		switch (cur_statementtype)
 		{
 		case Ral_STATEMENTTYPE_NULL:
@@ -459,7 +466,18 @@ static Ral_List* separate_source_statements(
 				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
 				expression_read_type = Ral_STATEMENTTYPE_EXPRESSION;
 				break;
+
+				// Invalid keywords at statement start
+			case Ral_KEYWORD_DO:
+			case Ral_KEYWORD_THEN:
+				Ral_LOG_SYNTAXERROR(iterator->linenum, "Invalid statement start keyword \"%s\"!", iterator->string);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				break;
 			}
+
+			start_parenthesis_depth = parenthesis_depth;
+			start_bracket_depth = bracket_depth;
+			start_brace_depth = brace_depth;
 
 			cur_statementstart = iterator;
 			break;
@@ -467,13 +485,79 @@ static Ral_List* separate_source_statements(
 
 
 		case Ral_STATEMENTTYPE_IF:
-			
+			if (iterator->keywordid == Ral_KEYWORD_THEN)
+			{
+				Ral_PushBackList(
+					statements,
+					Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_IF)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+			}
+			break;
+
+		case Ral_STATEMENTTYPE_FOR:
+			if (iterator->keywordid == Ral_KEYWORD_DO)
+			{
+				Ral_PushBackList(
+					statements,
+					Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_FOR)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+			}
+			break;
+
+		case Ral_STATEMENTTYPE_WHILE:
+			if (iterator->keywordid == Ral_KEYWORD_DO)
+			{
+				Ral_PushBackList(
+					statements,
+					Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_WHILE)
+				);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+			}
+			break;
+
+		case Ral_STATEMENTTYPE_GOTO:
+			// If reading a goto statement then it will finish by the next token, since the next token should be an identifier
+			if (iterator->type != Ral_TOKENTYPE_IDENTIFIER)
+			{
+				Ral_LOG_SYNTAXERROR(iterator->linenum, "Goto label \"%s\" is not an identifier!", iterator->string);
+				cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				break;
+			}
+			Ral_PushBackList(
+				statements,
+				Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_GOTO)
+			);
+			cur_statementtype = Ral_STATEMENTTYPE_NULL;
+			break;
+
+		case Ral_STATEMENTTYPE_EXPRESSION:
+			if (iterator->type == Ral_TOKENTYPE_ENDLINE)
+			{
+				if ((start_parenthesis_depth	>= parenthesis_depth) &&
+					(start_bracket_depth		>= bracket_depth) &&
+					(start_brace_depth			>= brace_depth))
+				{
+					// TODO It is probably possible to implement an error for statements that have too many parentheses or similar
+
+					Ral_PushBackList(
+						statements,
+						Ral_CreateStatement(cur_statementstart, iterator, expression_read_type)
+					);
+					cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				}
+			}
 			break;
 
 		default:
 			break;
 		}
+
+		iterator = iterator->next;
 	}
+
+	return statements;
 }
 
 
@@ -496,12 +580,32 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 		return Ral_FALSE;
 	}
 
-	Ral_Token* iter = (Ral_Token*)tokens->begin;
-	while (iter)
+	Ral_Token* token_iter = (Ral_Token*)tokens->begin;
+	while (token_iter)
 	{
-		Ral_PrintToken(iter);
+		Ral_PrintToken(token_iter);
 		putchar('\n');
-		iter = iter->next;
+		token_iter = token_iter->next;
+	}
+
+	Ral_List* statements = separate_source_statements(tokens);
+
+	for (int i = 0; i < statements->itemcount; i++)
+	{
+		Ral_Statement* statement = (Ral_Statement*)statements->begin;
+		for (int j = 0; j < statement->numtokens; j++)
+		{
+			statement->tokens[j].prev = NULL;
+			statement->tokens[j].next = NULL;
+		}
+	}
+
+	Ral_Statement* statement_iter = (Ral_Statement*)statements->begin;
+	while (statement_iter)
+	{
+		Ral_PrintStatementTokens(statement_iter);
+		putchar('\n');
+		statement_iter = statement_iter->next;
 	}
 
 	return Ral_TRUE;

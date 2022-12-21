@@ -11,7 +11,7 @@ typedef struct Ral_SourceUnit
 {
 	Ral_LISTLINKS(Ral_SourceUnit);
 
-	
+	struct Ral_Statement* statements;
 } Ral_SourceUnit;
 
 
