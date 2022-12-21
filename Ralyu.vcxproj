@@ -143,13 +143,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ral_list.c" />
-    <ClCompile Include="ral_memory.c" />
-    <ClCompile Include="testmain.c" />
+    <ClCompile Include="ralu_list.c" />
+    <ClCompile Include="ralu_memory.c" />
+    <ClCompile Include="ralyu_testmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ral_stdinclude.h" />
-    <ClInclude Include="ral_utility.h" />
+    <ClInclude Include="ralu_list.h" />
+    <ClInclude Include="ralu_memory.h" />
+    <ClInclude Include="ral_sourceunit.h" />
+    <ClInclude Include="ralu_stdinclude.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="planning.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

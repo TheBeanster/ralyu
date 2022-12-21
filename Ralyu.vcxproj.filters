@@ -16,24 +16,38 @@
     <Filter Include="Source Files\Utility">
       <UniqueIdentifier>{6a085181-5765-4c2b-82b5-f844a507c6f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter">
+      <UniqueIdentifier>{fe9ad3af-567e-4db2-a2ae-06e1f94fd2a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="testmain.c">
+    <ClCompile Include="ralu_memory.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ralu_list.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ralyu_testmain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ral_memory.c">
-      <Filter>Source Files\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_list.c">
-      <Filter>Source Files\Utility</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ral_stdinclude.h">
+    <ClInclude Include="ralu_list.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ral_utility.h">
+    <ClInclude Include="ralu_memory.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="ral_sourceunit.h">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="ralu_stdinclude.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="planning.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

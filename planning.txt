@@ -1,0 +1,25 @@
+
+
+
+A source unit is a block of code that can be executed in isolation or as a function call from another execution.
+A Ralyu state keeps track of all source units
+A function has a pointer to a source unit.
+
+
+
+example source unit:
+
+int a = 0
+a += 10
+print(a)
+
+function add(int a, int b)
+	return a + b
+end
+
+a = add(a, a)
+
+*end of file*
+
+
+

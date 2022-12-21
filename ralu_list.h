@@ -1,50 +1,12 @@
 #pragma once
 
-#include "ral_stdinclude.h"
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <ctype.h>
-
-
-
-
-
-// Ralyu memory management utilities
-
-// Compile memory management functions with raw standard library function calls
-// or call specific ralyu implementations with error checking.
-// Compiling the normal standard library functions could be useful in some IDEs
-// that keep track of allocations by checking these.
-#define Ral_COMPILE_USE_STD_MALLOC 1
-
-#if Ral_COMPILE_USE_STD_MALLOC
-
-#define Ral_MALLOC(size)			malloc(size)
-#define Ral_CALLOC(count, size)		calloc(count, size)
-#define Ral_REALLOC(block, size)	realloc(block, size)
-#define	Ral_ALLOC_TYPE(type)		(type*)calloc(1, sizeof(type))
-#define Ral_FREE(block)				free(block)
-
-#else
-
-void* Ral_Malloc(const size_t size);
-void* Ral_Calloc(const int count, const size_t size);
-void* Ral_Realloc(void* block, const size_t size);
-void* Ral_Free(const void* const block);
-
-#define Ral_MALLOC(size)			Ral_Malloc(size)
-#define Ral_CALLOC(count, size)		Ral_Calloc(count, size)
-#define	Ral_ALLOC_TYPE(type)		Ral_Calloc(1, sizeof(type))
-#define Ral_FREE(block)				Ral_Free(block)
-
-#endif
-
-
+#include "ralu_stdinclude.h"
 
 
 
 // Ralyu linked list implementation
+
+
 
 typedef struct Ral_ListNode
 {
@@ -55,8 +17,8 @@ typedef struct Ral_ListNode
 // Doubly linked list
 typedef struct Ral_List
 {
-	Ral_ListNode* head;
-	Ral_ListNode* tail;
+	Ral_ListNode* begin;
+	Ral_ListNode* end;
 	int itemcount;
 } Ral_List;
 
@@ -64,6 +26,8 @@ typedef struct Ral_List
 // for the list links. This must be the first member of a struct to cast it directly
 // to a Ral_ListNode type. Otherwise, you must specify where these links are.
 #define Ral_LISTLINKS(type) struct type* prev; struct type* next
+
+
 
 /// @brief Pushes an element onto the beginning of a list.
 /// @param list The list to push the element onto.
