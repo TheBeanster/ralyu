@@ -33,11 +33,13 @@ Ral_Statement* Ral_CreateStatement(
 {
 	// Count the number of tokens in the statement and make sure the tokens enclose a list
 	int numtokens = 0;
+	int statement_numtokens = 0;
 	Ral_Token* iterator = begin;
 	while (1)
 	{
+		numtokens++;
 		if (iterator->type != Ral_TOKENTYPE_ENDLINE)
-			numtokens++;
+			statement_numtokens++;
 		if (iterator == end) break;
 		iterator = iterator->next;
 		if (!iterator)
@@ -45,20 +47,27 @@ Ral_Statement* Ral_CreateStatement(
 	}
 
 	Ral_Statement* statement = Ral_ALLOC_TYPE(Ral_Statement);
-	statement->numtokens = numtokens;
-	statement->tokens = Ral_CALLOC(numtokens, sizeof(Ral_Token));
+	statement->numtokens = statement_numtokens;
+	statement->tokens = Ral_CALLOC(statement->numtokens, sizeof(Ral_Token));
 	iterator = begin;
+	int arrayindex = 0;
 	for (int i = 0; i < numtokens; i++)
 	{
 		if (iterator->type == Ral_TOKENTYPE_ENDLINE) // Skip endline tokens
 		{
+			Ral_FREE(iterator->string); // Free endline tokens' strings here 
+			// since they wont be refrenced again when the lists get emptied.
+			// The lists get emptied using FREE which doesn't remove the string since the string
+			// moves to the array.
+			// This is probably bad practice and might need refactoring in the future.
+			// But it is just barely okay.
 			iterator = iterator->next;
-			i--; // Step back to not skip anything in the array
 			continue;
 		}
-		statement->tokens[i] = *iterator;
-		statement->tokens[i].prev = NULL;
-		statement->tokens[i].next = NULL;
+		statement->tokens[arrayindex] = *iterator;
+		statement->tokens[arrayindex].prev = NULL;
+		statement->tokens[arrayindex].next = NULL;
+		arrayindex++;
 		iterator = iterator->next;
 	}
 

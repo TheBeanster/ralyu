@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	//Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("int a = 0"));
 	//Ral_PrintSourceUnit(source);
 	//Ral_DestroySourceUnit(source);
-
+	
 	while (1)
 	{
 		char input[101];
