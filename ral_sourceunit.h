@@ -22,3 +22,11 @@ Ral_SourceUnit* Ral_LoadSourceString(
 	const char* const string,
 	const int length
 );
+
+void Ral_DestroySourceUnit(
+	Ral_SourceUnit* const sourceunit
+);
+
+void Ral_PrintSourceUnit(
+	const Ral_SourceUnit* const sourceunit
+);

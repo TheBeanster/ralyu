@@ -57,7 +57,6 @@ Ral_Statement* Ral_CreateStatement(
 			continue;
 		}
 		statement->tokens[i] = *iterator;
-		statement->tokens[i].string = _strdup(iterator->string);
 		statement->tokens[i].prev = NULL;
 		statement->tokens[i].next = NULL;
 		iterator = iterator->next;
@@ -77,8 +76,10 @@ void Ral_DestroyStatement(Ral_Statement* const statement)
 {
 	for (int i = 0; i < statement->numtokens; i++)
 	{
-		Ral_DestroyToken(&statement->tokens[i]);
+		if (statement->tokens[i].string)
+			Ral_FREE(statement->tokens[i].string);
 	}
+	Ral_FREE(statement->tokens);
 	Ral_FREE(statement);
 }
 

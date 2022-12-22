@@ -19,15 +19,20 @@ int main(int argc, char** argv)
 {
 	printf("Test implementation of Ralyu\n");
 
-	Ral_SourceUnit* source = Ral_ALLOC_TYPE(Ral_SourceUnit);
-	Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("0.0.0"));
+	//Ral_SourceUnit* source = Ral_ALLOC_TYPE(Ral_SourceUnit);
+	////"int a = 0; int b = a + 1; print(a); print(b)"
+	//Ral_ParseSourceUnit(source, Ral_STR_COMMA_LEN("int a = 0"));
+	//Ral_PrintSourceUnit(source);
+	//Ral_DestroySourceUnit(source);
 
-	/*while (1)
+	while (1)
 	{
 		char input[101];
 		printf("> ");
 		gets_s(input, 100);
 		Ral_SourceUnit* source = Ral_ALLOC_TYPE(Ral_SourceUnit);
 		Ral_ParseSourceUnit(source, input, strlen(input));
-	}*/
+		Ral_PrintSourceUnit(source);
+		Ral_DestroySourceUnit(source);
+	}
 }

@@ -610,15 +610,18 @@ Ral_Bool parse_source_statements(
 
 	numerrors += separate_source_statements(statements, &tokens);
 
+	// Clear the tokens list
+	Ral_ClearList(&tokens, NULL); // Instead of calling Ral_DestroyToken() call free. 
+	// This won't free the string of the token which is now owned by the statement array tokens
+	
 	if (numerrors > 0)
 	{
 		printf("Could not parse source unit\nErrors: %i\n", numerrors);
-		Ral_ClearList(&tokens, &Ral_DestroyToken);
 		Ral_ClearList(statements, &Ral_DestroyStatement);
 		return Ral_FALSE;
 	}
 
-	for (int i = 0; i < statements->itemcount; i++)
+	/*for (int i = 0; i < statements->itemcount; i++)
 	{
 		Ral_Statement* statement = (Ral_Statement*)statements->begin;
 		for (int j = 0; j < statement->numtokens; j++)
@@ -626,7 +629,7 @@ Ral_Bool parse_source_statements(
 			statement->tokens[j].prev = NULL;
 			statement->tokens[j].next = NULL;
 		}
-	}
+	}*/
 
 	// Print statements
 	/*Ral_Statement* statement_iter = (Ral_Statement*)statements->begin;
@@ -655,12 +658,18 @@ Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const
 
 	if (!parse_source_statements(&statements, string, length))
 	{
-		Ral_ClearList(&statements, &Ral_DestroyStatement);
 		return Ral_FALSE;
 	}
 
+	Ral_Statement* iterator = statements.begin;
 	sourceunit->numstatements = statements.itemcount;
 	sourceunit->statements = Ral_CALLOC(statements.itemcount, sizeof(Ral_Statement));
+	for (int i = 0; i < statements.itemcount; i++)
+	{
+		sourceunit->statements[i] = *iterator;
+		iterator = iterator->next;
+	}
+	Ral_ClearList(&statements, NULL); // Don't call Ral_DestroyStatement to not free any memory the array uses
 
 	return Ral_TRUE;
 }
