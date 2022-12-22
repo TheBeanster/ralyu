@@ -34,15 +34,14 @@ Ral_SourceUnit* Ral_LoadSourceString(
 	const char* const string
 )
 {
-	Ral_SourceUnit* sourceunit = Ral_ALLOC_TYPE(Ral_SourceUnit);
-	if (!Ral_ParseSourceUnit(sourceunit, string))
+	Ral_List statements = { 0 };
+	if (!Ral_ReadSourceStatements(&statements, string))
 	{
-		printf("Could not parse source code!\n");
-		Ral_FREE(sourceunit);
+		printf("Oh no this bad\n");
 		return NULL;
 	}
 
+	Ral_SourceUnit* source = Ral_LoadSourceUnitStatements(state, &statements, statements.begin);
 
-
-	return sourceunit;
+	return source;
 }

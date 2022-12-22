@@ -3,6 +3,8 @@
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
 
+#include "ral_sourceunit.h"
+
 
 
 typedef struct Ral_State
@@ -18,7 +20,7 @@ void Ral_DestroyState(Ral_State* const state);
 
 
 
-struct Ral_SourceUnit* Ral_LoadSourceString(
+Ral_SourceUnit* Ral_LoadSourceString(
 	Ral_State* const state,
 	const char* const string
 );

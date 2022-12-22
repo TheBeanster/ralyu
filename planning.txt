@@ -75,6 +75,6 @@ for i = 0, i < 1000, i+=1 do
 	ringparticle()
 end
 
-This code should produce two sourceunits
+This code should produce two sourceunits when loaded
 
 Executing code has two steps: loading and executing

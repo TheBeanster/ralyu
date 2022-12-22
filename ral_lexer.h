@@ -3,8 +3,6 @@
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
 
-#include "ral_sourceunit.h"
-
 
 
 // Include the Ral_ prefix in serialized enum names
@@ -208,10 +206,5 @@ void Ral_PrintStatementTokens(const Ral_Statement* const statement);
 
 Ral_Bool Ral_ReadSourceStatements(
 	Ral_List* const statements,
-	const char* const string
-);
-
-Ral_Bool Ral_ParseSourceUnit(
-	Ral_SourceUnit* const sourceunit,
 	const char* const string
 );

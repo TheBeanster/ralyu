@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "ral_lexer.h"
+#include "ral_state.h"
 
 
 
@@ -40,4 +41,15 @@ void Ral_PrintSourceUnit(
 		Ral_PrintStatementTokens(&sourceunit->statements[i]);
 		putchar('\n');
 	}
+}
+
+
+
+Ral_SourceUnit* Ral_LoadSourceUnitStatements(
+	Ral_State* const state,
+	Ral_List* const statements,
+	Ral_Statement* const begin
+)
+{
+	
 }

@@ -658,34 +658,3 @@ Ral_Bool Ral_ReadSourceStatements(
 
 	return Ral_TRUE;
 }
-
-
-
-
-
-Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string)
-{
-	if (!sourceunit) return Ral_FALSE;
-	if (sourceunit->numstatements != 0) return Ral_FALSE;
-	if (!string) return Ral_FALSE;
-	if (string[0] == '\0') return Ral_FALSE;
-
-	Ral_List statements = { 0 };
-
-	if (!parse_source_statements(&statements, string))
-	{
-		return Ral_FALSE;
-	}
-
-	Ral_Statement* iterator = statements.begin;
-	sourceunit->numstatements = statements.itemcount;
-	sourceunit->statements = Ral_CALLOC(statements.itemcount, sizeof(Ral_Statement));
-	for (int i = 0; i < statements.itemcount; i++)
-	{
-		sourceunit->statements[i] = *iterator;
-		iterator = iterator->next;
-	}
-	Ral_ClearList(&statements, NULL); // Don't call Ral_DestroyStatement to not free any memory the array uses
-
-	return Ral_TRUE;
-}
