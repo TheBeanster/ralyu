@@ -52,3 +52,29 @@ Calling Ralyu code from C:
 The base function for calling code is:
 Ral_Object* Ral_CallFunction(Ral_State* state, Ral_Function* function, Ral_List* arguments)
 
+
+
+Dream for running Ralyu:
+
+Ral_State* state = Ral_CreateState();
+Ral_ExecuteString(state, "int a = 0");
+file_t* mainsource = loadfile("test.ral");
+Ral_LoadSourceString(state, mainsource->buffer);
+
+
+
+
+
+system.ral:
+
+function ringparticle()
+	spawn_particle(rand(), rand())
+end
+
+for i = 0, i < 1000, i+=1 do
+	ringparticle()
+end
+
+This code should produce two sourceunits
+
+Executing code has two steps: loading and executing

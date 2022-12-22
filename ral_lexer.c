@@ -50,18 +50,10 @@ static chartype check_chartype(const char c)
 
 /// @brief Reads through a string character by character and divides it into separate tokens.
 /// The types of these tokens must be determined later in the determine_token_types() function.
-/// @param source Pointer to a string.
-/// @param length The length of the source string.
-/// @return A pointer to the list of tokens. Even though it shouldn't be able to return NULL, 
-/// do check that just in case that changes later.
-
-/// @brief Reads through a string character by character and divides it into separate tokens.
-/// The types of these tokens must be determined later in the determine_token_types() function.
 /// @param tokens Pointer to an empty list to put the tokens into.
 /// @param source Pointer to a string.
-/// @param length The length of the source string.
 /// @return The number of errors found.
-static int separate_tokens(Ral_List* const tokens, const char* const source, const int length)
+static int separate_tokens(Ral_List* const tokens, const char* const source)
 {
 	int			curlinenum = 1;
 
@@ -89,7 +81,8 @@ static int separate_tokens(Ral_List* const tokens, const char* const source, con
 
 
 
-	for (int i = 0; i < length + 1; i++) // Plus 1 to include '\0'
+	int i = 0;
+	while(1)
 	{
 		// Looping over ever char in the sourcecode one by one
 
@@ -261,6 +254,8 @@ static int separate_tokens(Ral_List* const tokens, const char* const source, con
 			}
 		}
 
+		if (cur_char == '\0') break;
+		i++; // Next char
 	}
 
 
@@ -270,7 +265,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source, con
 	{
 		Ral_LOG_SYNTAXERROR(curlinenum, "String doesn't have closing quotes!");
 		numerrors++;
-		curtoken_end = length;
+		curtoken_end = i;
 		PUSH_TOKEN;
 	}
 
@@ -588,15 +583,14 @@ static int separate_source_statements(
 
 Ral_Bool parse_source_statements(
 	Ral_List* const statements,
-	const char* const string,
-	const int length
+	const char* const string
 )
 {
 	Ral_List tokens = { 0 };
 
 	int numerrors = 0;
 
-	numerrors += separate_tokens(&tokens, string, length);
+	numerrors += separate_tokens(&tokens, string);
 	numerrors += determine_token_types(&tokens);
 	
 	// Print the tokens
@@ -647,16 +641,38 @@ Ral_Bool parse_source_statements(
 
 
 
-Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string, const int length)
+Ral_Bool Ral_ReadSourceStatements(
+	Ral_List* const statements,
+	const char* const string
+)
+{
+	if (!statements) return Ral_FALSE;
+	if (statements->itemcount > 0) return Ral_FALSE;
+	if (!string) return Ral_FALSE;
+	if (string[0] == '\0') return Ral_FALSE;
+
+	if (!parse_source_statements(statements, string))
+	{
+		return Ral_FALSE;
+	}
+
+	return Ral_TRUE;
+}
+
+
+
+
+
+Ral_Bool Ral_ParseSourceUnit(Ral_SourceUnit* const sourceunit, const char* const string)
 {
 	if (!sourceunit) return Ral_FALSE;
 	if (sourceunit->numstatements != 0) return Ral_FALSE;
 	if (!string) return Ral_FALSE;
-	if (length <= 0) return Ral_FALSE;
+	if (string[0] == '\0') return Ral_FALSE;
 
 	Ral_List statements = { 0 };
 
-	if (!parse_source_statements(&statements, string, length))
+	if (!parse_source_statements(&statements, string))
 	{
 		return Ral_FALSE;
 	}

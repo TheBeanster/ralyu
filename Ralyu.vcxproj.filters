@@ -48,6 +48,9 @@
     <ClCompile Include="ral_lexer_statement.c">
       <Filter>Source Files\Interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="ral_state.c">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">

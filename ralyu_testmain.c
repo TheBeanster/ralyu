@@ -11,7 +11,8 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 #include "ralu_string.h"
 #include <stdio.h>
 
-#include "ral_lexer.h"
+#include "ral_state.h"
+#include "ral_sourceunit.h"
 
 
 
@@ -25,7 +26,7 @@ int main(int argc, char** argv)
 	//Ral_PrintSourceUnit(source);
 	//Ral_DestroySourceUnit(source);
 	
-	while (1)
+	/*while (1)
 	{
 		char input[101];
 		printf("> ");
@@ -34,5 +35,17 @@ int main(int argc, char** argv)
 		Ral_ParseSourceUnit(source, input, strlen(input));
 		Ral_PrintSourceUnit(source);
 		Ral_DestroySourceUnit(source);
+	}*/
+
+	Ral_State* state = Ral_CreateState();
+	Ral_SourceUnit* source = Ral_LoadSourceString(state, "int a = 0\nif a == 0 then\nprint(\"hi\")\nend");
+	if (!source)
+	{
+		Ral_DestroyState(state);
+		return 0;
 	}
+
+	Ral_PrintSourceUnit(source);
+
+	Ral_DestroyState(state);
 }

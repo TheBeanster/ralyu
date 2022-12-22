@@ -152,6 +152,7 @@
     <ClCompile Include="ral_lexer_statement.c" />
     <ClCompile Include="ral_lexer_token.c" />
     <ClCompile Include="ral_sourceunit.c" />
+    <ClCompile Include="ral_state.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h" />

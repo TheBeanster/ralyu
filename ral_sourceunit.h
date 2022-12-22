@@ -17,12 +17,6 @@ typedef struct Ral_SourceUnit
 
 
 
-Ral_SourceUnit* Ral_LoadSourceString(
-	Ral_State* const state,
-	const char* const string,
-	const int length
-);
-
 void Ral_DestroySourceUnit(
 	Ral_SourceUnit* const sourceunit
 );

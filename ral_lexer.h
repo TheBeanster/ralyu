@@ -188,8 +188,8 @@ typedef struct Ral_Statement
 	Ral_Token*			tokens;
 	int					numtokens;
 
-	Ral_SourceUnit*		parentsource;
-	int					index;
+	struct Ral_SourceUnit*	parentsource; // The sourceunit that contains this statement
+	int						index; // The index of this statement in the parentsources 'statements' array
 } Ral_Statement;
 
 Ral_Statement* Ral_CreateStatement(
@@ -206,9 +206,12 @@ void Ral_PrintStatementTokens(const Ral_Statement* const statement);
 
 
 
+Ral_Bool Ral_ReadSourceStatements(
+	Ral_List* const statements,
+	const char* const string
+);
 
 Ral_Bool Ral_ParseSourceUnit(
 	Ral_SourceUnit* const sourceunit,
-	const char* const string,
-	const int length
+	const char* const string
 );
