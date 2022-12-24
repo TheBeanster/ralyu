@@ -41,7 +41,5 @@ Ral_SourceUnit* Ral_LoadSourceString(
 		return NULL;
 	}
 
-	Ral_SourceUnit* source = Ral_LoadSourceUnitStatements(state, &statements, statements.begin);
-
-	return source;
+	return NULL;
 }

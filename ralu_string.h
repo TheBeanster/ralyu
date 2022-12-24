@@ -15,3 +15,11 @@ char* Ral_CreateCutString(
 
 
 #define Ral_STR_COMMA_LEN(str) str, strlen(str)
+
+
+
+typedef struct Ral_DynamicString
+{
+	int length;
+} Ral_DynamicString;
+

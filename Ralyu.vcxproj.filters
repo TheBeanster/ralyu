@@ -19,6 +19,15 @@
     <Filter Include="Source Files\Interpreter">
       <UniqueIdentifier>{fe9ad3af-567e-4db2-a2ae-06e1f94fd2a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter\Lexer">
+      <UniqueIdentifier>{99dac2a7-3af1-40d1-a634-062c6a97f1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interpreter\Runtime">
+      <UniqueIdentifier>{85653c1e-2e91-4dda-a3db-206de1d5f440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interpreter\Object">
+      <UniqueIdentifier>{14249742-c28e-4dee-a029-b3c2caa77f94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ralu_memory.c">
@@ -33,23 +42,26 @@
     <ClCompile Include="ralu_string.c">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="ral_lexer.c">
-      <Filter>Source Files\Interpreter</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_lexer_keys.c">
-      <Filter>Source Files\Interpreter</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_lexer_token.c">
-      <Filter>Source Files\Interpreter</Filter>
-    </ClCompile>
     <ClCompile Include="ral_sourceunit.c">
       <Filter>Source Files\Interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="ral_lexer.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_lexer_keys.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
     <ClCompile Include="ral_lexer_statement.c">
-      <Filter>Source Files\Interpreter</Filter>
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_lexer_token.c">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="ral_state.c">
-      <Filter>Source Files\Interpreter</Filter>
+      <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_object.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,17 +77,23 @@
     <ClInclude Include="ralu_stdinclude.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ral_state.h">
-      <Filter>Source Files\Interpreter</Filter>
-    </ClInclude>
-    <ClInclude Include="ral_lexer.h">
-      <Filter>Source Files\Interpreter</Filter>
-    </ClInclude>
     <ClInclude Include="ralu_string.h">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="ral_logging.h">
       <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_lexer.h">
+      <Filter>Source Files\Interpreter\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_state.h">
+      <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_object.h">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_function.h">
+      <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

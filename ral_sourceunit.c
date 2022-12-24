@@ -42,14 +42,3 @@ void Ral_PrintSourceUnit(
 		putchar('\n');
 	}
 }
-
-
-
-Ral_SourceUnit* Ral_LoadSourceUnitStatements(
-	Ral_State* const state,
-	Ral_List* const statements,
-	Ral_Statement* const begin
-)
-{
-	
-}
