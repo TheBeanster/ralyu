@@ -12,6 +12,13 @@ Ral_Object* Ral_CreateIntObject(const int i)
 	return obj;
 }
 
+Ral_Object* Ral_CreateFloatObject(const float i)
+{
+	Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
+	obj->value.number = i;
+	return obj;
+}
+
 
 
 Ral_Object* Ral_CreateObject(

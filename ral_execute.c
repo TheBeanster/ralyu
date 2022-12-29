@@ -2,6 +2,7 @@
 
 #include "ral_logging.h"
 #include "ral_object.h"
+#include "ral_expression.h"
 
 
 
@@ -72,6 +73,8 @@ Ral_Statement* Ral_ExecuteStatement(
 			if (!type) break;
 
 			Ral_Object* var = Ral_DeclareVariable(scope_variables, type, statement->tokens[identifierid].string);
+
+			Ral_EvaluateExpression(state, statement->tokens, identifierid, statement->numtokens);
 
 			*return_object = var;
 		} else

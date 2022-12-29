@@ -155,6 +155,8 @@ typedef struct Ral_Token
 	Ral_KeywordID	keywordid;
 	Ral_OperatorID	operatorid;
 	Ral_SeparatorID	separatorid;
+
+	struct Ral_Object* expr_value;
 } Ral_Token;
 
 Ral_Token* Ral_CreateToken(

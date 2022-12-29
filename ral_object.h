@@ -72,6 +72,10 @@ Ral_Object* Ral_CreateIntObject(
 	const int i
 );
 
+Ral_Object* Ral_CreateFloatObject(
+	const float i
+);
+
 Ral_Object* Ral_CreateObject(
 	const Ral_Type* const type
 );
