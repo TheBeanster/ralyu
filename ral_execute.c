@@ -1,8 +1,11 @@
 #include "ral_execute.h"
 
+#include "ral_logging.h"
+#include "ral_object.h"
 
 
-void Ral_ExecuteGlobalSourceUnit(
+
+Ral_Object* Ral_ExecuteGlobalSourceUnit(
 	Ral_State* const state,
 	const Ral_SourceUnit* const source
 )
@@ -17,8 +20,16 @@ void Ral_ExecuteGlobalSourceUnit(
 
 	while (current_statement)
 	{
-		current_statement = Ral_ExecuteStatement(state, current_statement, &state->global_variables, &return_object);
+		current_statement = Ral_ExecuteStatement(
+			state,
+			current_statement,
+			&state->global_variables,
+			Ral_TRUE,
+			&return_object
+		);
 	}
+
+	return return_object;
 }
 
 
@@ -27,8 +38,39 @@ Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
 	const Ral_Statement* const statement,
 	Ral_List* const scope_variables,
+	const Ral_Bool global,
 	Ral_Object** const return_object
 )
 {
-	return NULL;
+	printf(" - Executing statement -\n");
+
+	switch (statement->type)
+	{
+
+
+
+	case Ral_STATEMENTTYPE_EXPRESSION:
+	{
+		Ral_Token* first_token = &statement->tokens[0];
+		if (!first_token) break;
+		Ral_Type* first_token_type = Ral_GetType(state, first_token->string);
+		if (first_token_type)
+		{
+			// Expression begins with a type
+			// Expression is a declaration
+			
+		}
+	}
+		break;
+
+
+
+	default:
+		printf("Invalid statement type\n");
+		return NULL;
+		break;
+	}
+
+	if (statement->index + 1 >= statement->parentsource->numstatements) return NULL; // Reached end of sourceunit
+	return &statement->parentsource->statements[statement->index + 1];
 }

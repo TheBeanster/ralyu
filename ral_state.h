@@ -11,6 +11,7 @@ typedef struct Ral_State
 {
 	Ral_List sourceunits;
 
+	Ral_List global_types;
 	Ral_List global_variables;
 } Ral_State;
 
