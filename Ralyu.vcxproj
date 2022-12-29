@@ -148,12 +148,14 @@
     <ClCompile Include="ralu_string.c" />
     <ClCompile Include="ralyu_testmain.c" />
     <ClCompile Include="ral_execute.c" />
+    <ClCompile Include="ral_expression.c" />
     <ClCompile Include="ral_lexer.c" />
     <ClCompile Include="ral_lexer_keys.c" />
     <ClCompile Include="ral_lexer_statement.c" />
     <ClCompile Include="ral_lexer_token.c" />
     <ClCompile Include="ral_object.c" />
     <ClCompile Include="ral_object_type.c" />
+    <ClCompile Include="ral_object_variable.c" />
     <ClCompile Include="ral_sourceunit.c" />
     <ClCompile Include="ral_state.c" />
   </ItemGroup>
@@ -162,6 +164,7 @@
     <ClInclude Include="ralu_memory.h" />
     <ClInclude Include="ralu_string.h" />
     <ClInclude Include="ral_execute.h" />
+    <ClInclude Include="ral_expression.h" />
     <ClInclude Include="ral_function.h" />
     <ClInclude Include="ral_lexer.h" />
     <ClInclude Include="ral_logging.h" />

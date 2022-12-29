@@ -52,13 +52,31 @@ Ral_Statement* Ral_ExecuteStatement(
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
 		Ral_Token* first_token = &statement->tokens[0];
-		if (!first_token) break;
-		Ral_Type* first_token_type = Ral_GetType(state, first_token->string);
+
+		Ral_Type* first_token_type = Ral_GetTypeS(state, first_token->string);
 		if (first_token_type)
 		{
 			// Expression begins with a type
 			// Expression is a declaration
-			
+
+			int identifierid = 0;
+			for (int i = 1; i < statement->numtokens; i++)
+			{
+				if (statement->tokens[i].type == Ral_TOKENTYPE_IDENTIFIER)
+				{
+					identifierid = i;
+					break;
+				}
+			}
+			Ral_Type* type = Ral_GetTypeT(state, statement->tokens, 0, identifierid);
+			if (!type) break;
+
+			Ral_Object* var = Ral_DeclareVariable(scope_variables, type, statement->tokens[identifierid].string);
+
+			*return_object = var;
+		} else
+		{
+
 		}
 	}
 		break;
