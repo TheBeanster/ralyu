@@ -9,32 +9,18 @@
 
 
 
-typedef enum
+static Ral_CharType check_chartype(const char c)
 {
-	CHARTYPE_NULL,			// Default type or any char not recognised
-	CHARTYPE_ALPHA,			// Letter or underscore
-	CHARTYPE_NUMBER,
-	CHARTYPE_POINT,
-	CHARTYPE_OPERATOR,
-	CHARTYPE_SEPARATOR,
-	CHARTYPE_SPACER,		// Space or tab
-	CHARTYPE_ENDLINE,
-	CHARTYPE_QUOTE,			// Double quotation marks for strings
-	CHARTYPE_COMMENT,		// Comments start with # and end with an endline
-} chartype;
-
-static chartype check_chartype(const char c)
-{
-	if (isalpha(c) || c == '_') return CHARTYPE_ALPHA;
-	if (isdigit(c))				return CHARTYPE_NUMBER;
-	if (c == '.')				return CHARTYPE_POINT;
-	if (strchr("+-/*=<>!", c))	return CHARTYPE_OPERATOR;
-	if (strchr(",:()[]{}", c))	return CHARTYPE_SEPARATOR;
-	if (isblank(c))				return CHARTYPE_SPACER;
-	if (c == '\n' || c == ';')	return CHARTYPE_ENDLINE; // Semicolon acts the same as endline
-	if (c == '\"' || c == '\'')	return CHARTYPE_QUOTE;
-	if (c == '#')				return CHARTYPE_COMMENT;
-	return CHARTYPE_NULL;
+	if (isalpha(c) || c == '_') return Ral_CHARTYPE_ALPHA;
+	if (isdigit(c))				return Ral_CHARTYPE_NUMBER;
+	if (c == '.')				return Ral_CHARTYPE_POINT;
+	if (strchr("+-/*=<>!", c))	return Ral_CHARTYPE_OPERATOR;
+	if (strchr(",:()[]{}", c))	return Ral_CHARTYPE_SEPARATOR;
+	if (isblank(c))				return Ral_CHARTYPE_SPACER;
+	if (c == '\n' || c == ';')	return Ral_CHARTYPE_ENDLINE; // Semicolon acts the same as endline
+	if (c == '\"' || c == '\'')	return Ral_CHARTYPE_QUOTE;
+	if (c == '#')				return Ral_CHARTYPE_COMMENT;
+	return Ral_CHARTYPE_NULL;
 }
 
 
@@ -69,7 +55,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 	// The type of the current token being read. 
 	// This determines how it will check for token endings.
-	chartype	curtoken_type = CHARTYPE_SPACER; // Starts as spacer since that will check for new tokens every char.
+	Ral_CharType	curtoken_type = Ral_CHARTYPE_SPACER; // Starts as spacer since that will check for new tokens every char.
 
 	Ral_Bool tokenchange = Ral_FALSE;
 
@@ -87,9 +73,9 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 		// Looping over ever char in the sourcecode one by one
 
 		char		cur_char = source[i];
-		chartype	cur_chartype = check_chartype(cur_char);
+		Ral_CharType	cur_chartype = check_chartype(cur_char);
 
-		if (cur_chartype == CHARTYPE_ENDLINE) curlinenum++;
+		if (cur_chartype == Ral_CHARTYPE_ENDLINE) curlinenum++;
 
 		tokenchange = Ral_FALSE;
 
@@ -97,8 +83,8 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 		switch (curtoken_type)
 		{
-		case CHARTYPE_ALPHA:
-			if (!(cur_chartype == CHARTYPE_ALPHA || cur_chartype == CHARTYPE_NUMBER))
+		case Ral_CHARTYPE_ALPHA:
+			if (!(cur_chartype == Ral_CHARTYPE_ALPHA || cur_chartype == Ral_CHARTYPE_NUMBER))
 			{
 				// Text token ends when a character that isn't alpha or number appears
 				curtoken_end = i;
@@ -109,10 +95,10 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_NUMBER:
+		case Ral_CHARTYPE_NUMBER:
 			if (numberliteral_decimal)
 			{
-				if (cur_chartype == CHARTYPE_POINT)
+				if (cur_chartype == Ral_CHARTYPE_POINT)
 				{
 					// Two decimal points in one number error
 					Ral_LOG_SYNTAXERROR(curlinenum, "Two decimal points in one number!");
@@ -120,13 +106,13 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 				}
 			} else
 			{
-				if (cur_chartype == CHARTYPE_POINT)
+				if (cur_chartype == Ral_CHARTYPE_POINT)
 					numberliteral_decimal = Ral_TRUE;
 			}
 
-			if (!(cur_chartype == CHARTYPE_NUMBER || cur_chartype == CHARTYPE_POINT))
+			if (!(cur_chartype == Ral_CHARTYPE_NUMBER || cur_chartype == Ral_CHARTYPE_POINT))
 			{
-				if (cur_chartype == CHARTYPE_ALPHA)
+				if (cur_chartype == Ral_CHARTYPE_ALPHA)
 				{
 					// A letter or underscore directly after number
 					Ral_LOG_SYNTAXERROR(curlinenum, "A letter or underscore directly after number!");
@@ -141,13 +127,13 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 			}
 			break;
 
-		case CHARTYPE_POINT:
-			if (curtoken_type == CHARTYPE_NUMBER)
+		case Ral_CHARTYPE_POINT:
+			if (curtoken_type == Ral_CHARTYPE_NUMBER)
 			{
-				curtoken_type = CHARTYPE_NUMBER;
+				curtoken_type = Ral_CHARTYPE_NUMBER;
 			} else
 			{
-				curtoken_type = CHARTYPE_OPERATOR;
+				curtoken_type = Ral_CHARTYPE_OPERATOR;
 				curtoken_end = i;
 				PUSH_TOKEN;
 				tokenchange = Ral_TRUE;
@@ -156,8 +142,8 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_OPERATOR:
-			if (cur_chartype == CHARTYPE_OPERATOR)
+		case Ral_CHARTYPE_OPERATOR:
+			if (cur_chartype == Ral_CHARTYPE_OPERATOR)
 			{
 
 			} else
@@ -171,7 +157,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_SEPARATOR:
+		case Ral_CHARTYPE_SEPARATOR:
 			// Separators are always 1 character so push it immedietly
 			curtoken_end = i;
 			PUSH_TOKEN;
@@ -180,15 +166,15 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_QUOTE:
-			if (cur_chartype == CHARTYPE_ENDLINE)
+		case Ral_CHARTYPE_QUOTE:
+			if (cur_chartype == Ral_CHARTYPE_ENDLINE)
 			{
 				Ral_LOG_SYNTAXERROR(curlinenum - 1, "String doesn't have closing quotes!");
 				numerrors++;
 				goto push_string_literal;
 			}
 			// String literals end when another double quote is found
-			if (cur_chartype == CHARTYPE_QUOTE)
+			if (cur_chartype == Ral_CHARTYPE_QUOTE)
 			{
 			push_string_literal:
 				curtoken_end = i + 1; // Plus 1 to include closing "
@@ -199,9 +185,9 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_COMMENT:
+		case Ral_CHARTYPE_COMMENT:
 			// Comments end with endlines
-			if (cur_chartype == CHARTYPE_ENDLINE)
+			if (cur_chartype == Ral_CHARTYPE_ENDLINE)
 			{
 				curtoken_end = i;
 				// Don't push it to the list
@@ -211,7 +197,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 
-		case CHARTYPE_ENDLINE:
+		case Ral_CHARTYPE_ENDLINE:
 			// Endlines are always 1 character so push it immedietly
 			curtoken_end = i;
 			PUSH_TOKEN;
@@ -223,8 +209,8 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 			// Default is error, it should be considered spacer
 		default:
 			// TODO Add warning about invalid characters
-		case CHARTYPE_SPACER:
-			if (cur_chartype == CHARTYPE_SPACER)
+		case Ral_CHARTYPE_SPACER:
+			if (cur_chartype == Ral_CHARTYPE_SPACER)
 			{
 				// Only blank characters so far
 			} else
@@ -240,12 +226,12 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 		{
 			// After a token end, this will determine what the new token is.
 
-			if ((curtoken_type == CHARTYPE_QUOTE) || (curtoken_type == CHARTYPE_COMMENT))
+			if ((curtoken_type == Ral_CHARTYPE_QUOTE) || (curtoken_type == Ral_CHARTYPE_COMMENT))
 			{
 				// Special cases for string and comment since they both stop at specific characters.
 				// A double quotation mark for strings and endline for comments.
 				// Set the curtoken_type as a spacer so the next type will be read properly.
-				curtoken_type = CHARTYPE_SPACER;
+				curtoken_type = Ral_CHARTYPE_SPACER;
 			} else
 			{
 				// Set the new tokens start position as the current iterator position.
@@ -261,7 +247,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 
 
 	// Check if the current type is a string literal
-	if (curtoken_type == CHARTYPE_QUOTE)
+	if (curtoken_type == Ral_CHARTYPE_QUOTE)
 	{
 		Ral_LOG_SYNTAXERROR(curlinenum, "String doesn't have closing quotes!");
 		numerrors++;
@@ -274,7 +260,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 	// Add an endline token at the end to make sure parsing works
 	Ral_PushBackList(
 		tokens,
-		(Ral_ListNode*)Ral_CreateToken("\n", 0, 1, curlinenum, CHARTYPE_ENDLINE)
+		(Ral_ListNode*)Ral_CreateToken(NULL, 0, 0, curlinenum, Ral_CHARTYPE_ENDLINE)
 	);
 
 
@@ -301,7 +287,7 @@ static int determine_token_types(Ral_List* const tokens)
 	{
 		switch (iterator->type)
 		{
-		case CHARTYPE_ALPHA:
+		case Ral_CHARTYPE_ALPHA:
 			iterator->keywordid = Ral_CheckKeyword(iterator->string);
 			if (iterator->keywordid < 0) // NOT_KEYWORD is -1
 				iterator->type = Ral_TOKENTYPE_IDENTIFIER;
@@ -309,7 +295,7 @@ static int determine_token_types(Ral_List* const tokens)
 				iterator->type = Ral_TOKENTYPE_KEYWORD;
 			break;
 
-		case CHARTYPE_OPERATOR:
+		case Ral_CHARTYPE_OPERATOR:
 			iterator->operatorid = Ral_CheckOperator(iterator->string);
 			if (iterator->operatorid < 0) // NOT_OPERATOR is -1
 			{
@@ -329,7 +315,7 @@ static int determine_token_types(Ral_List* const tokens)
 			iterator->type = Ral_TOKENTYPE_OPERATOR;
 			break;
 
-		case CHARTYPE_SEPARATOR:
+		case Ral_CHARTYPE_SEPARATOR:
 			iterator->separatorid = Ral_CheckSeparator(iterator->string[0]);
 			if (iterator->separatorid < 0) // NOT_SEPARATOR is -1
 			{
@@ -340,18 +326,18 @@ static int determine_token_types(Ral_List* const tokens)
 			iterator->type = Ral_TOKENTYPE_SEPARATOR;
 			break;
 
-		case CHARTYPE_NUMBER:
+		case Ral_CHARTYPE_NUMBER:
 			if (strchr(iterator->string, '.')) // If number contins a decimal point then treat as float
 				iterator->type = Ral_TOKENTYPE_FLOATLITERAL;
 			else
 				iterator->type = Ral_TOKENTYPE_INTLITERAL;
 			break;
 
-		case CHARTYPE_QUOTE:
+		case Ral_CHARTYPE_QUOTE:
 			iterator->type = Ral_TOKENTYPE_STRINGLITERAL;
 			break;
 
-		case CHARTYPE_ENDLINE:
+		case Ral_CHARTYPE_ENDLINE:
 			iterator->type = Ral_TOKENTYPE_ENDLINE;
 			break;
 

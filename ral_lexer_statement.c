@@ -55,12 +55,6 @@ Ral_Statement* Ral_CreateStatement(
 	{
 		if (iterator->type == Ral_TOKENTYPE_ENDLINE) // Skip endline tokens
 		{
-			Ral_FREE(iterator->string); // Free endline tokens' strings here 
-			// since they wont be refrenced again when the lists get emptied.
-			// The lists get emptied using FREE which doesn't remove the string since the string
-			// moves to the array.
-			// This is probably bad practice and might need refactoring in the future.
-			// But it is just barely okay.
 			iterator = iterator->next;
 			continue;
 		}

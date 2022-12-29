@@ -63,6 +63,9 @@
     <ClCompile Include="ral_object.c">
       <Filter>Source Files\Interpreter\Object</Filter>
     </ClCompile>
+    <ClCompile Include="ral_execute.c">
+      <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">
@@ -93,6 +96,9 @@
       <Filter>Source Files\Interpreter\Object</Filter>
     </ClInclude>
     <ClInclude Include="ral_function.h">
+      <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_execute.h">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClInclude>
   </ItemGroup>

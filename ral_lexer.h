@@ -16,6 +16,22 @@
 
 typedef enum
 {
+	Ral_CHARTYPE_NULL,			// Default type or any char not recognised
+	Ral_CHARTYPE_ALPHA,			// Letter or underscore
+	Ral_CHARTYPE_NUMBER,
+	Ral_CHARTYPE_POINT,
+	Ral_CHARTYPE_OPERATOR,
+	Ral_CHARTYPE_SEPARATOR,
+	Ral_CHARTYPE_SPACER,		// Space or tab
+	Ral_CHARTYPE_ENDLINE,
+	Ral_CHARTYPE_QUOTE,			// Double quotation marks for strings
+	Ral_CHARTYPE_COMMENT,		// Comments start with # and end with an endline
+} Ral_CharType;
+
+
+
+typedef enum
+{
 	Ral_KEYWORD_IF,
 	Ral_KEYWORD_THEN,
 	Ral_KEYWORD_ELSE,

@@ -37,8 +37,10 @@ int main(int argc, char** argv)
 		Ral_DestroySourceUnit(source);
 	}*/
 
+	system("pause");
+
 	Ral_State* state = Ral_CreateState();
-	Ral_SourceUnit* source = Ral_LoadSourceString(state, "int a = 0\nif a == 0 then\nprint(\"hi\")\nend");
+	Ral_SourceUnit* source = Ral_LoadSourceString(state, "int a = 0\nint a = 0\n\nend");
 	if (!source)
 	{
 		Ral_DestroyState(state);
@@ -48,4 +50,7 @@ int main(int argc, char** argv)
 	Ral_PrintSourceUnit(source);
 
 	Ral_DestroyState(state);
+
+	system("pause");
+
 }

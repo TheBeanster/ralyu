@@ -17,6 +17,10 @@ typedef struct Ral_SourceUnit
 
 
 
+Ral_SourceUnit* Ral_CreateSourceUnit(
+	const Ral_List* const statements
+);
+
 void Ral_DestroySourceUnit(
 	Ral_SourceUnit* const sourceunit
 );

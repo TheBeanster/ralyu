@@ -16,7 +16,8 @@ Ral_Token* Ral_CreateToken(
 )
 {
 	Ral_Token* token = Ral_ALLOC_TYPE(Ral_Token);
-	token->string = Ral_CreateCutString(string, start, end - start);
+	if (type != Ral_CHARTYPE_ENDLINE)
+		token->string = Ral_CreateCutString(string, start, end - start);
 	token->position = start;
 	token->linenum = linenum;
 	token->type = type;

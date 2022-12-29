@@ -18,13 +18,9 @@ Ral_State* Ral_CreateState()
 
 void Ral_DestroyState(Ral_State* const state)
 {
-	Ral_SourceUnit* su_iterator = state->sourceunits.begin;
-	while (su_iterator)
-	{
-		
-
-		su_iterator = su_iterator->next;
-	}
+	Ral_ClearList(&state->sourceunits, &Ral_DestroySourceUnit);
+	//Ral_ClearList(&state->global_variables, &Ral_DestroyObject);
+	Ral_FREE(state);
 }
 
 
@@ -34,6 +30,8 @@ Ral_SourceUnit* Ral_LoadSourceString(
 	const char* const string
 )
 {
+	printf("Loading source string into a sourceunit.\n");
+
 	Ral_List statements = { 0 };
 	if (!Ral_ReadSourceStatements(&statements, string))
 	{
@@ -41,5 +39,16 @@ Ral_SourceUnit* Ral_LoadSourceString(
 		return NULL;
 	}
 
-	return NULL;
+	Ral_SourceUnit* source = Ral_CreateSourceUnit(&statements);
+	Ral_ClearList(&statements, NULL);
+
+	if (!source)
+	{
+		printf("Could not create the sourceunit!\n");
+		return NULL;
+	}
+
+	Ral_PushBackList(&state->sourceunits, source);
+
+	return source;
 }
