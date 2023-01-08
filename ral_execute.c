@@ -11,10 +11,10 @@ Ral_Object* Ral_ExecuteGlobalSourceUnit(
 	const Ral_SourceUnit* const source
 )
 {
-	if (!state) return;
-	if (!source) return;
-	if (source->numstatements <= 0) return;
-	if (!source->statements) return;
+	if (!state) return NULL;
+	if (!source) return NULL;
+	if (source->numstatements <= 0) return NULL;
+	if (!source->statements) return NULL;
 
 	Ral_Statement* current_statement = &source->statements[0];
 	Ral_Object* return_object = NULL;
@@ -52,35 +52,7 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
-		Ral_Token* first_token = &statement->tokens[0];
-
-		Ral_Type* first_token_type = Ral_GetTypeS(state, first_token->string);
-		if (first_token_type)
-		{
-			// Expression begins with a type
-			// Expression is a declaration
-
-			int identifierid = 0;
-			for (int i = 1; i < statement->numtokens; i++)
-			{
-				if (statement->tokens[i].type == Ral_TOKENTYPE_IDENTIFIER)
-				{
-					identifierid = i;
-					break;
-				}
-			}
-			Ral_Type* type = Ral_GetTypeT(state, statement->tokens, 0, identifierid);
-			if (!type) break;
-
-			Ral_Object* var = Ral_DeclareVariable(scope_variables, type, statement->tokens[identifierid].string);
-
-			Ral_EvaluateExpression(state, statement->tokens, identifierid, statement->numtokens);
-
-			*return_object = var;
-		} else
-		{
-
-		}
+		
 	}
 		break;
 

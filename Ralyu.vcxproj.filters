@@ -66,12 +66,6 @@
     <ClCompile Include="ral_execute.c">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClCompile>
-    <ClCompile Include="ral_object_type.c">
-      <Filter>Source Files\Interpreter\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="ral_object_variable.c">
-      <Filter>Source Files\Interpreter\Object</Filter>
-    </ClCompile>
     <ClCompile Include="ral_expression.c">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClCompile>

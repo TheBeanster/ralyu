@@ -9,14 +9,12 @@
 
 
 
-Ral_Object* get_token_value(
+Ral_Object* Ral_GetTokenValue(
 	const Ral_State* const state,
 	const Ral_Token* const token
 )
 {
-	if (token->type == Ral_TOKENTYPE_INTLITERAL) return Ral_CreateIntObject(atoi(token->string));
-	if (token->type == Ral_TOKENTYPE_FLOATLITERAL) return Ral_CreateFloatObject(atof(token->string));
-
+	return NULL;
 }
 
 
@@ -50,7 +48,7 @@ Ral_Object* Ral_EvaluateExpression(
 	else if (numtokens == 1)
 	{
 		// Expression is only one token
-		return get_token_value(state, &tokens[begin]);
+		return Ral_GetTokenValue(state, &tokens[begin]);
 	}
 
 	// Get the operators and arguments
@@ -84,7 +82,7 @@ Ral_Object* Ral_EvaluateExpression(
 			tok->prev = NULL;
 			tok->next = NULL;
 			Ral_PushBackList(&l_tokens, tok);
-			tok->expr_value = get_token_value(state, tok);
+			tok->expr_value = Ral_GetTokenValue(state, tok);
 		}
 		else if (tok->separatorid == Ral_SEPARATOR_LPAREN)
 		{
