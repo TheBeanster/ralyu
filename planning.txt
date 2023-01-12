@@ -71,7 +71,7 @@ function ringparticle()
 	spawn_particle(rand(), rand())
 end
 
-for i = 0, i < 1000, i+=1 do
+for i = 0, 1000 do
 	ringparticle()
 end
 

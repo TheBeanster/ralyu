@@ -14,9 +14,7 @@ Ral_Object* get_token_value(
 	const Ral_Token* const token
 )
 {
-	if (token->type == Ral_TOKENTYPE_INTLITERAL) return Ral_CreateIntObject(atoi(token->string));
-	if (token->type == Ral_TOKENTYPE_FLOATLITERAL) return Ral_CreateFloatObject(atof(token->string));
-
+	
 }
 
 

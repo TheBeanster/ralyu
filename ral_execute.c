@@ -6,7 +6,7 @@
 
 
 
-Ral_Object* Ral_ExecuteGlobalSourceUnit(
+Ral_Object* Ral_ExecuteSourceUnit(
 	Ral_State* const state,
 	const Ral_SourceUnit* const source
 )
@@ -43,7 +43,9 @@ Ral_Statement* Ral_ExecuteStatement(
 	Ral_Object** const return_object
 )
 {
-	printf(" - Executing statement -\n");
+	printf(" - Executing statement - : ");
+	Ral_PrintStatementString(statement);
+	putchar('\n');
 
 	switch (statement->type)
 	{
@@ -52,35 +54,7 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
-		Ral_Token* first_token = &statement->tokens[0];
-
-		Ral_Type* first_token_type = Ral_GetTypeS(state, first_token->string);
-		if (first_token_type)
-		{
-			// Expression begins with a type
-			// Expression is a declaration
-
-			int identifierid = 0;
-			for (int i = 1; i < statement->numtokens; i++)
-			{
-				if (statement->tokens[i].type == Ral_TOKENTYPE_IDENTIFIER)
-				{
-					identifierid = i;
-					break;
-				}
-			}
-			Ral_Type* type = Ral_GetTypeT(state, statement->tokens, 0, identifierid);
-			if (!type) break;
-
-			Ral_Object* var = Ral_DeclareVariable(scope_variables, type, statement->tokens[identifierid].string);
-
-			Ral_EvaluateExpression(state, statement->tokens, identifierid, statement->numtokens);
-
-			*return_object = var;
-		} else
-		{
-
-		}
+		
 	}
 		break;
 

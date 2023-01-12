@@ -4,6 +4,7 @@
 
 #include "ral_state.h"
 #include "ral_object.h"
+#include "ral_lexer.h"
 
 
 

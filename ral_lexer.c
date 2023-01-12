@@ -430,10 +430,6 @@ static int separate_source_statements(
 				expression_read_type = Ral_STATEMENTTYPE_RETURN; // But remember that it is for a return statement
 				break;
 
-			case Ral_KEYWORD_BOOL:
-			case Ral_KEYWORD_INT:
-			case Ral_KEYWORD_FLOAT:
-			case Ral_KEYWORD_STRING:
 			case Ral_KEYWORD_TRUE:
 			case Ral_KEYWORD_FALSE:
 				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
@@ -442,10 +438,6 @@ static int separate_source_statements(
 
 			case Ral_KEYWORD_FUNCTION:
 				cur_statementtype = Ral_STATEMENTTYPE_FUNCTION;
-				break;
-
-			case Ral_KEYWORD_STRUCT:
-				cur_statementtype = Ral_STATEMENTTYPE_STRUCT;
 				break;
 
 			case Ral_KEYWORD_END:
@@ -514,22 +506,6 @@ static int separate_source_statements(
 				);
 				cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			}
-			break;
-
-		case Ral_STATEMENTTYPE_GOTO:
-			// If reading a goto statement then it will finish by the next token, since the next token should be an identifier
-			if (iterator->type != Ral_TOKENTYPE_IDENTIFIER)
-			{
-				Ral_LOG_SYNTAXERROR(iterator->linenum, "Goto label \"%s\" is not an identifier!", iterator->string);
-				numerrors++;
-				cur_statementtype = Ral_STATEMENTTYPE_NULL;
-				break;
-			}
-			Ral_PushBackList(
-				statements,
-				Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_GOTO)
-			);
-			cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			break;
 
 

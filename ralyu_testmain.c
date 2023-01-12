@@ -5,10 +5,6 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "ralu_stdinclude.h"
-#include "ralu_list.h"
-#include "ralu_memory.h"
-#include "ralu_string.h"
 #include <stdio.h>
 
 #include "ral_state.h"
@@ -39,7 +35,7 @@ int main(int argc, char** argv)
 	}*/
 
 	Ral_State* state = Ral_CreateState();
-	Ral_SourceUnit* source = Ral_LoadSourceString(state, "int a = 0\na = 1\nend");
+	Ral_SourceUnit* source = Ral_LoadSourceString(state, "a = 0\na = 1\nend");
 	if (!source)
 	{
 		Ral_DestroyState(state);
@@ -48,8 +44,14 @@ int main(int argc, char** argv)
 
 	Ral_PrintSourceUnit(source);
 
-	Ral_ExecuteGlobalSourceUnit(state, source);
+	Ral_ExecuteSourceUnit(state, source);
 
 	Ral_DestroyState(state);
+
+	Ral_Object* obj = Ral_CreateNumberObject(10);
+	double num = 0;
+	if (Ral_GetObjectNumber(obj, &num))
+		printf("%f\n", num);
+	Ral_DestroyObject(obj);
 
 }

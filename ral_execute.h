@@ -8,16 +8,16 @@
 
 
 
-Ral_Object* Ral_ExecuteGlobalSourceUnit(
+Ral_Object* Ral_ExecuteSourceUnit(
 	Ral_State* const state,
 	const Ral_SourceUnit* const source
 );
 
 
 
-Ral_Statement* Ral_ExecuteStatement(
+struct Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
-	const Ral_Statement* const statement,
+	const struct Ral_Statement* const statement,
 	Ral_List* const scope_variables,
 	const Ral_Bool global,
 	Ral_Object** const return_object
