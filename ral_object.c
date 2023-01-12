@@ -7,7 +7,7 @@ Ral_Object* Ral_CreateNumberObject(const Ral_Number number)
 {
     Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
     obj->type = Ral_TYPE_NUMBER;
-    obj->value.number = number;
+    obj->val.number = number;
     return obj;
 }
 
@@ -15,8 +15,27 @@ Ral_Object* Ral_CreateStringObject(const char* const string)
 {
     Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
     obj->type = Ral_TYPE_STRING;
-    //obj->value.string = _strdup(string);
+    obj->val.string.chars = _strdup(string);
     return obj;
+}
+
+
+
+Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
+{
+    if (!obj) return NULL;
+
+    switch (obj->type)
+    {
+    case Ral_TYPE_NUMBER:
+        return Ral_CreateNumberObject(obj->val.number);
+        
+    case Ral_TYPE_STRING:
+        return Ral_CreateStringObject(obj->val.string.chars);
+
+    default:
+        break;
+    }
 }
 
 
@@ -41,8 +60,10 @@ void Ral_DestroyObject(Ral_Object* const obj)
 
 Ral_Bool Ral_GetObjectNumber(const Ral_Object* const obj, Ral_Number* const number)
 {
+    if (!(obj && number)) return Ral_FALSE;
+
     if (obj->type != Ral_TYPE_NUMBER) return Ral_FALSE;
-    *number = obj->value.number;
+    *number = obj->val.number;
     return Ral_TRUE;
 }
 

@@ -48,10 +48,11 @@ int main(int argc, char** argv)
 
 	Ral_DestroyState(state);
 
-	Ral_Object* obj = Ral_CreateNumberObject(10);
+	Ral_Object* s = Ral_CreateStructObject();
+	Ral_AddStructMember(s, "x", Ral_CreateNumberObject(10));
+	Ral_Object* m = Ral_GetStructMember(s, "x");
 	double num = 0;
-	if (Ral_GetObjectNumber(obj, &num))
-		printf("%f\n", num);
-	Ral_DestroyObject(obj);
-
+	if (Ral_GetObjectNumber(m, &num))
+		printf("x = %f\n", num);
+	Ral_DestroyObject(s);
 }

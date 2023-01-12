@@ -78,3 +78,18 @@ end
 This code should produce two sourceunits when loaded
 
 Executing code has two steps: loading and executing
+
+
+
+
+
+
+
+
+Standard library functions:
+
+evaluate()
+
+function test1() print("test1") end
+
+evaluate()

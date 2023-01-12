@@ -20,6 +20,8 @@ char* Ral_CreateCutString(
 
 typedef struct Ral_DynamicString
 {
+	char* chars;
 	int length;
+	int capacity;
 } Ral_DynamicString;
 

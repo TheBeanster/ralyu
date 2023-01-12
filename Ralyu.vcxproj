@@ -154,6 +154,8 @@
     <ClCompile Include="ral_lexer_statement.c" />
     <ClCompile Include="ral_lexer_token.c" />
     <ClCompile Include="ral_object.c" />
+    <ClCompile Include="ral_object_logic.c" />
+    <ClCompile Include="ral_object_struct.c" />
     <ClCompile Include="ral_object_variable.c" />
     <ClCompile Include="ral_sourceunit.c" />
     <ClCompile Include="ral_state.c" />
