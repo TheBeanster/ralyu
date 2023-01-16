@@ -20,6 +20,8 @@ typedef enum
 
 typedef struct Ral_Object
 {
+	Ral_LISTLINKS(Ral_Object);
+
 	// The type of the object determines how to interperet the 'value' union
 	Ral_Type type;
 

@@ -14,6 +14,10 @@ Ral_Bool Ral_ObjectIsTrue(const Ral_Object* const obj)
 		return obj->val.number != 0;
 		break;
 
+	case Ral_TYPE_BOOL:
+		return obj->val.boolean != Ral_FALSE;
+		break;
+
 	default:
 		return Ral_FALSE;
 		break;

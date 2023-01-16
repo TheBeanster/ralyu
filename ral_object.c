@@ -55,6 +55,8 @@ Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
 
 void Ral_DestroyObject(Ral_Object* const obj)
 {
+    if (!obj) return;
+
     switch (obj->type)
     {
     case Ral_TYPE_NUMBER:

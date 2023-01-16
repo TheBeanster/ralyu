@@ -1,0 +1,5 @@
+function func(a)
+	return a
+end
+
+func(10)

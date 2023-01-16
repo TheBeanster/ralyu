@@ -18,6 +18,7 @@ Ral_Object* Ral_ExecuteSourceUnit(
 struct Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
 	const struct Ral_Statement* const statement,
+	Ral_List* const stack,
 	Ral_List* const scope_variables,
 	const Ral_Bool global,
 	Ral_Object** const return_object

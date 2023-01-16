@@ -81,6 +81,9 @@
     <ClCompile Include="ral_function.c">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="ralu_file.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">
@@ -119,6 +122,9 @@
     <ClInclude Include="ral_expression.h">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="ralu_file.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="planning.txt">
@@ -127,5 +133,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="test.ral">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

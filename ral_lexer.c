@@ -510,6 +510,24 @@ static int separate_source_statements(
 
 
 
+		case Ral_STATEMENTTYPE_FUNCTION:
+			if (iterator->type == Ral_TOKENTYPE_ENDLINE)
+			{
+				if ((start_parenthesis_depth	>= parenthesis_depth) &&
+					(start_bracket_depth		>= bracket_depth) &&
+					(start_brace_depth			>= brace_depth))
+				{
+					Ral_PushBackList(
+						statements,
+						Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_FUNCTION)
+					);
+					cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				}
+			}
+			break;
+
+
+
 		case Ral_STATEMENTTYPE_EXPRESSION:
 			if (iterator->type == Ral_TOKENTYPE_ENDLINE)
 			{
@@ -517,7 +535,6 @@ static int separate_source_statements(
 					(start_bracket_depth		>= bracket_depth) &&
 					(start_brace_depth			>= brace_depth))
 				{
-				pushexpression:
 					// TODO It is probably possible to implement an error for statements that have too many parentheses or similar
 
 					Ral_PushBackList(

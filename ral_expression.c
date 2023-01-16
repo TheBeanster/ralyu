@@ -6,25 +6,67 @@
 #include "ralu_memory.h"
 
 #include "ral_lexer.h"
+#include "ral_function.h"
 
 
 
-Ral_Object* get_token_value(
+static Ral_Object* get_token_value(
 	const Ral_State* const state,
 	const Ral_Token* const token
 )
 {
-	if (token->type == Ral_TOKENTYPE_IDENTIFIER)
-	{
-		return Ral_CreateNumberObject(0);
-	} else if (token->type == Ral_TOKENTYPE_INTLITERAL)
+	if (token->type == Ral_TOKENTYPE_INTLITERAL)
 	{
 		return Ral_CreateNumberObject(atoi(token->string));
 	} else if (token->type == Ral_TOKENTYPE_FLOATLITERAL)
 	{
 		return Ral_CreateNumberObject(atof(token->string));
+	} else if (token->type == Ral_TOKENTYPE_KEYWORD)
+	{
+		if (token->keywordid == Ral_KEYWORD_TRUE)
+			return Ral_CreateBoolObject(Ral_TRUE);
+		else if (token->keywordid == Ral_KEYWORD_FALSE)
+			return Ral_CreateBoolObject(Ral_FALSE);
 	}
+	return NULL;
 }
+
+
+
+static int get_next_unnested_separator(
+	const Ral_Token* const tokens,
+	const Ral_SeparatorID separator,
+	const int begin,
+	const int end
+)
+{
+	int depth = 0;
+	for (int i = begin + 1; i < end; i++)
+	{
+		Ral_Token* tok = &tokens[i];
+		if ((depth == 0) && (tok->separatorid == separator)) return i;
+		if (depth < 0) return -1;
+
+		switch (tok->separatorid)
+		{
+		case Ral_SEPARATOR_LPAREN:
+		case Ral_SEPARATOR_LBRACE:
+		case Ral_SEPARATOR_LBRACKET:
+			depth++;
+			break;
+		case Ral_SEPARATOR_RPAREN:
+		case Ral_SEPARATOR_RBRACE:
+		case Ral_SEPARATOR_RBRACKET:
+			depth--;
+			break;
+		default:
+			break;
+		}
+	}
+	return -1;
+}
+
+
 
 
 
@@ -88,11 +130,63 @@ Ral_Object* Ral_EvaluateExpression(
 			Ral_PushBackList(&l_tokens, tok);
 
 		}
+		else if (tok->type == Ral_TOKENTYPE_IDENTIFIER)
+		{
+			// Get the token after this token
+			Ral_Token* nexttoken = NULL;
+			if(i + 1 < end)
+				nexttoken = &tokens[i + 1];
+
+			if (nexttoken->separatorid == Ral_SEPARATOR_LPAREN)
+			{
+				// If the token after an identifier is a left parenthesis then it is a function call
+				Ral_Function* func = Ral_GetFunction(state, tok->string);
+				if (!func)
+				{
+					printf("Function \"%s\" doesn't exist\n", tok->string);
+					goto free_and_exit;
+				}
+
+				Ral_List args = { 0 };
+				for (i = i + 1; i < end;) // j starts at (
+				{
+					// The index of the token of the end of the argument
+					int arg_end = get_next_unnested_separator(tokens, Ral_SEPARATOR_COMMA, i, end);
+					if (arg_end < 0)
+					{
+						// If no comma was found then get the end parenthesis
+						arg_end = get_next_unnested_separator(tokens, Ral_SEPARATOR_RPAREN, i, end);
+					}
+					
+					// Evaluate everything from j to the arg_end
+					Ral_Object* arg = Ral_EvaluateExpression(state, tokens, i + 1, arg_end);
+					Ral_PushBackList(&args, arg);
+					
+					i = arg_end + 1;
+					if (tokens[arg_end].separatorid != Ral_SEPARATOR_COMMA) break;
+				}
+				
+				Ral_Object* iter = args.begin;
+				while (iter)
+				{
+					Ral_PrintObjectValue(iter);
+					putchar('\n');
+					iter = iter->next;
+				}
+
+				Ral_Object* call_result = Ral_CallFunction(state, func, &args);
+
+				tok->prev = NULL;
+				tok->next = NULL;
+				tok->expr_value = call_result;
+				Ral_PushBackList(&l_tokens, tok);
+			}
+		}
 		else if (
-			tok->type == Ral_TOKENTYPE_IDENTIFIER || 
 			tok->type == Ral_TOKENTYPE_INTLITERAL ||
 			tok->type == Ral_TOKENTYPE_FLOATLITERAL ||
-			tok->type == Ral_TOKENTYPE_STRINGLITERAL)
+			tok->type == Ral_TOKENTYPE_STRINGLITERAL ||
+			tok->type == Ral_TOKENTYPE_KEYWORD)
 		{
 			// Insert the token in the l_tokens list
 			tok->prev = NULL;
@@ -119,6 +213,13 @@ Ral_Object* Ral_EvaluateExpression(
 			goto free_and_exit;
 		}
 
+	}
+
+	if (l_operators.itemcount == 0)
+	{
+		if (l_tokens.begin)
+			final_result = ((Ral_Token*)l_tokens.begin)->expr_value;
+		goto free_and_exit;
 	}
 
 	// Sort the l_operators list

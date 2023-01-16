@@ -1,8 +1,11 @@
 #include "ral_execute.h"
 
+#include "ralu_memory.h"
+
 #include "ral_logging.h"
 #include "ral_expression.h"
 #include "ral_lexer.h"
+#include "ral_function.h"
 
 
 
@@ -18,12 +21,14 @@ Ral_Object* Ral_ExecuteSourceUnit(
 
 	Ral_Statement* current_statement = &source->statements[0];
 	Ral_Object* return_object = NULL;
+	Ral_List stack = { 0 }; // Stack of statements?
 
 	while (current_statement)
 	{
 		current_statement = Ral_ExecuteStatement(
 			state,
 			current_statement,
+			&stack,
 			&state->global_variables,
 			Ral_TRUE,
 			&return_object
@@ -77,6 +82,7 @@ static Ral_Statement* find_next_statementtype_in_scope(
 Ral_Statement* Ral_ExecuteStatement(
 	Ral_State* const state,
 	const Ral_Statement* const statement,
+	Ral_List* const stack,
 	Ral_List* const scope_variables,
 	const Ral_Bool global,
 	Ral_Object** const return_object
@@ -93,7 +99,17 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
-		
+		Ral_Object* expr_result = Ral_EvaluateExpression(state, statement->tokens, 0, statement->numtokens);
+		Ral_DestroyObject(expr_result);
+	}
+		break;
+
+
+
+	case Ral_STATEMENTTYPE_RETURN:
+	{
+		*return_object = Ral_EvaluateExpression(state, statement->tokens, 1, statement->numtokens);
+		return NULL;
 	}
 		break;
 
@@ -106,6 +122,7 @@ Ral_Statement* Ral_ExecuteStatement(
 		if (Ral_ObjectIsTrue(expr_result))
 		{
 			// Expression was true
+			Ral_PushBackList(stack, statement);
 			break;
 		} else
 		{
@@ -129,6 +146,7 @@ Ral_Statement* Ral_ExecuteStatement(
 			{
 				// Else was found
 				// Jump to else
+				Ral_PushBackList(stack, elsestatement);
 				GO_NEXT_STATEMENT(elsestatement);
 			}
 		}
@@ -139,6 +157,27 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_ELSE:
 	{
+		Ral_Statement* topstatement = Ral_PopBackList(stack);
+		if (topstatement->type != Ral_STATEMENTTYPE_IF)
+		{
+			state->errormsg = "Else found without if statement";
+			return NULL;
+		}
+
+		Ral_Statement* endstatement = find_next_statementtype_in_scope(statement, Ral_STATEMENTTYPE_END);
+		if (!endstatement)
+		{
+			state->errormsg = "No 'end' found for if statement";
+			return NULL;
+		}
+		GO_NEXT_STATEMENT(endstatement);
+	}
+		break;
+
+
+
+	case Ral_STATEMENTTYPE_END:
+	{
 
 	}
 		break;
@@ -147,10 +186,87 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_FUNCTION:
 	{
+		Ral_SourceUnit* source = statement->parentsource;
+
+		if (statement->numtokens <= 1) return NULL; // No function name
 		Ral_Token* funcname = &statement->tokens[1];
 		if (!funcname) return NULL;
 
+		// Make sure there is a parenthesis
+		if (statement->numtokens <= 2) return NULL; // No token
+		if (statement->tokens[2].separatorid != Ral_SEPARATOR_LPAREN) return NULL; // Not a parenthesis
+
+		// Find start and end of function body
+		if (statement->index + 1 >= source->numstatements) return NULL; // No next statement
+		Ral_Statement* endstatement = find_next_statementtype_in_scope(statement, Ral_STATEMENTTYPE_END);
+		if (!endstatement) return NULL; // No end for function
+
+		Ral_Statement* bodystart = NULL;
+		Ral_Statement* bodyend = NULL;
+		if (endstatement->index == statement->index + 1)
+		{
+			// Function has no body
+		} else
+		{
+			Ral_Statement* bodystart = &source->statements[statement->index + 1];
+			Ral_Statement* bodyend = endstatement;
+		}
 		
+		// Read arguments
+		if (statement->numtokens <= 3) return NULL; // No closing parenthesis
+		Ral_List arguments = { 0 };
+		Ral_Bool* expect_identifier = Ral_TRUE; // Expect identifiers after first parenthesis and after commas
+		for (int i = 3; i < statement->numtokens; i++)
+		{
+			Ral_Token* tok = &statement->tokens[i];
+
+			if (expect_identifier && (tok->type == Ral_TOKENTYPE_IDENTIFIER))
+			{
+				Ral_FunctionArgument* arg = Ral_ALLOC_TYPE(Ral_FunctionArgument);
+				arg->name = _strdup(tok->string);
+				Ral_PushBackList(&arguments, arg);
+				expect_identifier = Ral_FALSE;
+			} else if ((!expect_identifier) && (tok->separatorid == Ral_SEPARATOR_COMMA))
+				expect_identifier = Ral_TRUE;
+			else if ((!expect_identifier) && (tok->separatorid == Ral_SEPARATOR_RPAREN))
+				break;
+			else
+			{
+				// Invalid token
+				printf("AAAA INVALID TOKEN!!!\n");
+				// Free the arguments list
+				Ral_FunctionArgument* iter = arguments.begin;
+				while (iter)
+				{
+					Ral_FunctionArgument* del = iter;
+					iter = iter->next;
+					Ral_FREE(del->name);
+					Ral_FREE(del);
+				}
+			}
+		}
+
+
+
+		Ral_Function* func = Ral_CreateFunction(
+			bodystart,
+			bodyend,
+			funcname->string,
+			&arguments
+		);
+		Ral_DeclareFunction(state, func);
+
+		// Free the arguments list
+		Ral_FunctionArgument* iter = arguments.begin;
+		while (iter)
+		{
+			Ral_FunctionArgument* del = iter;
+			iter = iter->next;
+			Ral_FREE(del->name);
+			Ral_FREE(del);
+		}
+
+		GO_NEXT_STATEMENT(endstatement);
 	}
 		break;
 
