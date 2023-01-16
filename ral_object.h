@@ -12,6 +12,7 @@ typedef enum
 {
 	Ral_TYPE_NULL,
 	Ral_TYPE_NUMBER,
+	Ral_TYPE_BOOL,
 	Ral_TYPE_STRING,
 	Ral_TYPE_ARRAY,
 	Ral_TYPE_STRUCT,
@@ -25,6 +26,7 @@ typedef struct Ral_Object
 	union
 	{
 		Ral_Number number;
+		Ral_Bool boolean;
 		Ral_DynamicString string;
 		//Ral_Vector arr;
 		struct
@@ -50,6 +52,11 @@ typedef struct Ral_StructMember
 /// @param number Value to initialize the object
 /// @return A pointer to the object
 Ral_Object* Ral_CreateNumberObject(const Ral_Number number);
+
+/// @brief Creates a new object of type 'bool'
+/// @param boolean Value to initialize the object
+/// @return A pointer to the object
+Ral_Object* Ral_CreateBoolObject(const Ral_Bool boolean);
 
 /// @brief Creates a new object of type 'string' 
 /// @param string Pointer to string to initialize the object. The string will be copied!
@@ -94,7 +101,17 @@ void Ral_RemoveStructMember(Ral_Object* const obj, Ral_StructMember* const membe
 
 
 
+Ral_Bool Ral_ObjectIsTrue(const Ral_Object* const obj);
+
+Ral_Object* Ral_ObjectOperator(enum Ral_OperatorID op, const Ral_Object* const a, const Ral_Object* b);
+
 Ral_Object* Ral_ObjectAdd(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectSub(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectMul(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectDiv(const Ral_Object* const a, const Ral_Object* const b);
+
+Ral_Object* Ral_ObjectEqual(const Ral_Object* const a, const Ral_Object* const b);
+
+
+
+void Ral_PrintObjectValue(const Ral_Object* const obj);

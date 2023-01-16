@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 	}*/
 
 	Ral_State* state = Ral_CreateState();
-	Ral_SourceUnit* source = Ral_LoadSourceString(state, "a = 0\na = 1\nend");
+	Ral_SourceUnit* source = Ral_LoadSourceString(state, "a = 0\n if 5 == 6 then\na = 1\nelse\na = 2\nend");
 	if (!source)
 	{
 		Ral_DestroyState(state);

@@ -149,6 +149,7 @@
     <ClCompile Include="ralyu_testmain.c" />
     <ClCompile Include="ral_execute.c" />
     <ClCompile Include="ral_expression.c" />
+    <ClCompile Include="ral_function.c" />
     <ClCompile Include="ral_lexer.c" />
     <ClCompile Include="ral_lexer_keys.c" />
     <ClCompile Include="ral_lexer_statement.c" />

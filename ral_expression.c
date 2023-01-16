@@ -14,7 +14,16 @@ Ral_Object* get_token_value(
 	const Ral_Token* const token
 )
 {
-	
+	if (token->type == Ral_TOKENTYPE_IDENTIFIER)
+	{
+		return Ral_CreateNumberObject(0);
+	} else if (token->type == Ral_TOKENTYPE_INTLITERAL)
+	{
+		return Ral_CreateNumberObject(atoi(token->string));
+	} else if (token->type == Ral_TOKENTYPE_FLOATLITERAL)
+	{
+		return Ral_CreateNumberObject(atof(token->string));
+	}
 }
 
 
@@ -36,6 +45,13 @@ Ral_Object* Ral_EvaluateExpression(
 )
 {
 	printf("Evaluating expression\n");
+
+	// Print all tokens in the expression
+	for (int i = begin; i < end; i++)
+	{
+		printf("%s ", tokens[i].string);
+	}
+	putchar('\n');
 
 	Ral_Object* final_result = NULL;
 
@@ -132,25 +148,42 @@ Ral_Object* Ral_EvaluateExpression(
 
 
 	expr_list_elem* iterator = l_operators.begin;
-	while (iterator)
+	while (1)
 	{
-		Ral_Token* left_token = iterator->token->prev;
-		Ral_Token* right_token = iterator->token->next;
+		Ral_OperatorID op = iterator->token->operatorid;
 
-		printf("Op %s, Left %s, Right %s\n", iterator->token->string, left_token->string, right_token->string);
+		if (Ral_IS_UNARY_OPERATOR(op))
+		{
+			Ral_UnlinkFromList(&l_operators, iterator);
+		} else
+		{
+			// Operator is binary
+			Ral_Object* left = get_token_value(state, iterator->token->prev);
+			Ral_Object* right = get_token_value(state, iterator->token->next);
 
-		iterator = iterator->next;
+			switch (op)
+			{
+			case Ral_OPERATOR_ADDITION: iterator->token->expr_value = Ral_ObjectAdd(left, right); break;
+
+			case Ral_OPERATOR_EQUALITY: iterator->token->expr_value = Ral_ObjectEqual(left, right); break;
+			default:
+				break;
+			}
+
+			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
+			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+		}
+
+		if (!iterator->next)
+		{
+			// End of list
+			final_result = iterator->token->expr_value;
+			break;
+		} else
+			iterator = iterator->next;
 	}
 
 
-
-	// Print the linked list
-	/*iterator = l_operators.begin;
-	while (iterator)
-	{
-	printf("Precedence = %i, Op = %s\n", iterator->precedence, iterator->token->string);
-	iterator = iterator->next;
-	}*/
 
 free_and_exit:
 
@@ -161,6 +194,10 @@ free_and_exit:
 		iterator = iterator->next;
 		Ral_FREE(del);
 	}
+	
+	printf("Expression result = ");
+	Ral_PrintObjectValue(final_result);
+	putchar('\n');
 
 	return final_result;
 }

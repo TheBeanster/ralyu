@@ -77,19 +77,27 @@ end
 
 This code should produce two sourceunits when loaded
 
+
+
 Executing code has two steps: loading and executing
 
+Loading first lexes and parses the source code by dividing it into statements.
+Statements have an array of tokens.
 
+Example:
 
+a = 0
 
+function test()
+	print("test")
+end
 
+a += 1
+print(a)
+test()
 
+Executing this code will add the variable a and the function test to the global scope and print
+> 1
+> test
+to the screen
 
-
-Standard library functions:
-
-evaluate()
-
-function test1() print("test1") end
-
-evaluate()

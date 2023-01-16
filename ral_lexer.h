@@ -90,7 +90,7 @@ extern const char* const const ral_operator_strings[];
 Ral_OperatorID Ral_CheckOperator(const char* const str);
 
 #define Ral_IS_ASSIGNMENT_OPERATOR(op) ((op >= 0 && op <= 4) ? Ral_TRUE : Ral_FALSE)
-#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 7) ? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 6) ? Ral_TRUE : Ral_FALSE)
 
 extern const int ral_operator_precedence[];
 #define Ral_EXPRESSION_NESTING_PRECEDENCE_SHIFT 4
