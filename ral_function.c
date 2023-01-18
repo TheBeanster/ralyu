@@ -89,7 +89,8 @@ Ral_Object* Ral_CallFunction(
 	const Ral_List* const arguments
 )
 {
-	if (!function->bodystart) return;
+	// Function body is emtpy
+	if (!function->bodystart) return NULL;
 	
 	Ral_Statement* current_statement = function->bodystart;
 	Ral_Object* return_object = NULL;
@@ -102,7 +103,7 @@ Ral_Object* Ral_CallFunction(
 			state,
 			current_statement,
 			&stack,
-			&state->global_variables,
+			&local_variables,
 			Ral_TRUE,
 			&return_object
 		);

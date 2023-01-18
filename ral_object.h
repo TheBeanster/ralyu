@@ -107,13 +107,18 @@ Ral_Bool Ral_ObjectIsTrue(const Ral_Object* const obj);
 
 Ral_Object* Ral_ObjectOperator(enum Ral_OperatorID op, const Ral_Object* const a, const Ral_Object* b);
 
+Ral_Object* Ral_ObjectAssign(Ral_Object* const a, const Ral_Object* const b);
+
 Ral_Object* Ral_ObjectAdd(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectSub(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectMul(const Ral_Object* const a, const Ral_Object* const b);
 Ral_Object* Ral_ObjectDiv(const Ral_Object* const a, const Ral_Object* const b);
 
 Ral_Object* Ral_ObjectEqual(const Ral_Object* const a, const Ral_Object* const b);
-
-
+Ral_Object* Ral_ObjectNotEqual(const Ral_Object* const a, const Ral_Object* const b);
+Ral_Object* Ral_ObjectLessThan(const Ral_Object* const a, const Ral_Object* const b);
+Ral_Object* Ral_ObjectMoreThan(const Ral_Object* const a, const Ral_Object* const b);
+Ral_Object* Ral_ObjectLessEquals(const Ral_Object* const a, const Ral_Object* const b);
+Ral_Object* Ral_ObjectMoreEquals(const Ral_Object* const a, const Ral_Object* const b);
 
 void Ral_PrintObjectValue(const Ral_Object* const obj);

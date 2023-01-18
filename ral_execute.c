@@ -99,7 +99,7 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_EXPRESSION:
 	{
-		Ral_Object* expr_result = Ral_EvaluateExpression(state, statement->tokens, 0, statement->numtokens);
+		Ral_Object* expr_result = Ral_EvaluateExpression(state, scope_variables, statement->tokens, 0, statement->numtokens);
 		Ral_DestroyObject(expr_result);
 	}
 		break;
@@ -108,7 +108,7 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_RETURN:
 	{
-		*return_object = Ral_EvaluateExpression(state, statement->tokens, 1, statement->numtokens);
+		*return_object = Ral_EvaluateExpression(state, scope_variables, statement->tokens, 1, statement->numtokens);
 		return NULL;
 	}
 		break;
@@ -117,7 +117,7 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_IF:
 	{
-		Ral_Object* expr_result = Ral_EvaluateExpression(state, statement->tokens, 1, statement->numtokens - 1);
+		Ral_Object* expr_result = Ral_EvaluateExpression(state, scope_variables, statement->tokens, 1, statement->numtokens - 1);
 		
 		if (Ral_ObjectIsTrue(expr_result))
 		{
@@ -208,8 +208,8 @@ Ral_Statement* Ral_ExecuteStatement(
 			// Function has no body
 		} else
 		{
-			Ral_Statement* bodystart = &source->statements[statement->index + 1];
-			Ral_Statement* bodyend = endstatement;
+			bodystart = &source->statements[statement->index + 1];
+			bodyend = endstatement;
 		}
 		
 		// Read arguments

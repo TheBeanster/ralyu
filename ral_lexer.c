@@ -70,7 +70,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 	int i = 0;
 	while(1)
 	{
-		// Looping over ever char in the sourcecode one by one
+		// Looping over every char in the sourcecode one by one
 
 		char		cur_char = source[i];
 		Ral_CharType	cur_chartype = check_chartype(cur_char);

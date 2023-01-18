@@ -161,6 +161,7 @@
     <ClCompile Include="ral_object_variable.c" />
     <ClCompile Include="ral_sourceunit.c" />
     <ClCompile Include="ral_state.c" />
+    <ClCompile Include="ral_variable.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_file.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ral_sourceunit.h" />
     <ClInclude Include="ralu_stdinclude.h" />
     <ClInclude Include="ral_state.h" />
+    <ClInclude Include="ral_variable.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="planning.txt" />

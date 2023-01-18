@@ -84,6 +84,9 @@
     <ClCompile Include="ralu_file.c">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="ral_variable.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="ralu_file.h">
       <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_variable.h">
+      <Filter>Source Files\Interpreter\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

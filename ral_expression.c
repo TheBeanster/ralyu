@@ -7,6 +7,7 @@
 
 #include "ral_lexer.h"
 #include "ral_function.h"
+#include "ral_variable.h"
 
 
 
@@ -15,6 +16,10 @@ static Ral_Object* get_token_value(
 	const Ral_Token* const token
 )
 {
+	if (token->expr_value)
+	{
+		return token->expr_value;
+	}
 	if (token->type == Ral_TOKENTYPE_INTLITERAL)
 	{
 		return Ral_CreateNumberObject(atoi(token->string));
@@ -81,6 +86,7 @@ typedef struct expr_list_elem
 
 Ral_Object* Ral_EvaluateExpression(
 	Ral_State* const state,
+	Ral_List* const local_variables,
 	const Ral_Token* const tokens,
 	const int begin,
 	const int end
@@ -137,7 +143,7 @@ Ral_Object* Ral_EvaluateExpression(
 			if(i + 1 < end)
 				nexttoken = &tokens[i + 1];
 
-			if (nexttoken->separatorid == Ral_SEPARATOR_LPAREN)
+			if (nexttoken && nexttoken->separatorid == Ral_SEPARATOR_LPAREN)
 			{
 				// If the token after an identifier is a left parenthesis then it is a function call
 				Ral_Function* func = Ral_GetFunction(state, tok->string);
@@ -159,7 +165,7 @@ Ral_Object* Ral_EvaluateExpression(
 					}
 					
 					// Evaluate everything from j to the arg_end
-					Ral_Object* arg = Ral_EvaluateExpression(state, tokens, i + 1, arg_end);
+					Ral_Object* arg = Ral_EvaluateExpression(state, local_variables, tokens, i + 1, arg_end);
 					Ral_PushBackList(&args, arg);
 					
 					i = arg_end + 1;
@@ -179,6 +185,16 @@ Ral_Object* Ral_EvaluateExpression(
 				tok->prev = NULL;
 				tok->next = NULL;
 				tok->expr_value = call_result;
+				Ral_PushBackList(&l_tokens, tok);
+			} else
+			{
+				// Identifier should be seen as variable
+				Ral_Variable* var = Ral_GetVariable(state, local_variables, tok->string);
+				if (!var)
+				{
+					goto free_and_exit;
+				}
+				tok->expr_value = var->obj;
 				Ral_PushBackList(&l_tokens, tok);
 			}
 		}
@@ -264,9 +280,18 @@ Ral_Object* Ral_EvaluateExpression(
 
 			switch (op)
 			{
-			case Ral_OPERATOR_ADDITION: iterator->token->expr_value = Ral_ObjectAdd(left, right); break;
+			case Ral_OPERATOR_ASSIGN:			iterator->token->expr_value = Ral_CopyObject(Ral_ObjectAssign(left, right)); break;
 
-			case Ral_OPERATOR_EQUALITY: iterator->token->expr_value = Ral_ObjectEqual(left, right); break;
+			case Ral_OPERATOR_ADDITION:			iterator->token->expr_value = Ral_ObjectAdd(left, right); break;
+			case Ral_OPERATOR_SUBTRACTION:		iterator->token->expr_value = Ral_ObjectSub(left, right); break;
+
+			case Ral_OPERATOR_EQUALITY:			iterator->token->expr_value = Ral_ObjectEqual(left, right); break;
+			case Ral_OPERATOR_INEQUALITY:		iterator->token->expr_value = Ral_ObjectNotEqual(left, right); break;
+			case Ral_OPERATOR_LESS:				iterator->token->expr_value = Ral_ObjectLessThan(left, right); break;
+			case Ral_OPERATOR_GREATER:			iterator->token->expr_value = Ral_ObjectMoreThan(left, right); break;
+			case Ral_OPERATOR_LESSOREQUAL:		iterator->token->expr_value = Ral_ObjectLessEquals(left, right); break;
+			case Ral_OPERATOR_GREATEROREQUAL:	iterator->token->expr_value = Ral_ObjectMoreEquals(left, right); break;
+
 			default:
 				break;
 			}
@@ -294,6 +319,18 @@ free_and_exit:
 		expr_list_elem* del = iterator;
 		iterator = iterator->next;
 		Ral_FREE(del);
+	}
+
+	Ral_Token* tokiter = l_tokens.begin;
+	while (tokiter)
+	{
+		Ral_Object* del = tokiter->expr_value;
+		if (del != final_result)
+		{
+			tokiter->expr_value = NULL;
+			Ral_DestroyObject(del);
+		}
+		tokiter = tokiter->next;
 	}
 	
 	printf("Expression result = ");
