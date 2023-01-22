@@ -14,14 +14,14 @@ char* Ral_CreateCutString(
 
 
 
-#define Ral_STR_COMMA_LEN(str) str, strlen(str)
-
-
-
-typedef struct Ral_DynamicString
+// Vector string
+typedef struct Ral_VString
 {
 	char* chars;
 	int length;
 	int capacity;
-} Ral_DynamicString;
+} Ral_VString;
 
+void Ral_VStringInit(Ral_VString* const vstring, const char* const str);
+
+void Ral_VStringAppend(Ral_VString* const vstring, const char* const str);

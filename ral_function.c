@@ -28,7 +28,6 @@ Ral_Function* Ral_CreateFunction(
 	Ral_FunctionArgument* iterator = arguments->begin;
 	for (int i = 0; i < arguments->itemcount; i++)
 	{
-		printf("Function arg: \"%s\"\n", iterator->name);
 		function->argumentnames[i] = _strdup(iterator->name);
 		iterator = iterator->next;
 	}
@@ -129,7 +128,7 @@ Ral_Object* Ral_CallFunction(
 
 
 
-Ral_Function* Ral_LinkCFunction(
+Ral_Function* Ral_DeclareCFunction(
 	Ral_State* const state,
 	Ral_CFunction* const cfunction,
 	const char* const name

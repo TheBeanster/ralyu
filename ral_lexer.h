@@ -3,8 +3,6 @@
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
 
-#include "ral_object.h"
-
 
 
 // Include the Ral_ prefix in serialized enum names
@@ -91,8 +89,10 @@ extern const char* const const ral_operator_strings[];
 
 Ral_OperatorID Ral_CheckOperator(const char* const str);
 
-#define Ral_IS_ASSIGNMENT_OPERATOR(op) ((op >= 0 && op <= 4) ? Ral_TRUE : Ral_FALSE)
-#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 6) ? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_ASSIGNMENT_OPERATOR(op) ((op >= Ral_OPERATOR_ASSIGN		&& op <= Ral_OPERATOR_ASSIGNDIVISION)	? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_ARITHEMTIC_OPERATOR(op) ((op >= Ral_OPERATOR_ADDITION	&& op <= Ral_OPERATOR_DIVISION)			? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_RELATIONAL_OPERATOR(op) ((op >= Ral_OPERATOR_EQUALITY	&& op <= Ral_OPERATOR_GREATEROREQUAL)	? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_UNARY_OPERATOR(op) ((op >= Ral_OPERATOR_NOT && op <= Ral_OPERATOR_NEGATIVE) ? Ral_TRUE : Ral_FALSE)
 
 extern const int ral_operator_precedence[];
 #define Ral_EXPRESSION_NESTING_PRECEDENCE_SHIFT 4
@@ -151,7 +151,7 @@ typedef struct Ral_Token
 	Ral_OperatorID	operatorid;
 	Ral_SeparatorID	separatorid;
 
-	Ral_Object* expr_value;
+	struct Ral_Object* expr_value;
 } Ral_Token;
 
 Ral_Token* Ral_CreateToken(

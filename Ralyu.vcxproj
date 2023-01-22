@@ -147,6 +147,7 @@
     <ClCompile Include="ralu_list.c" />
     <ClCompile Include="ralu_memory.c" />
     <ClCompile Include="ralu_string.c" />
+    <ClCompile Include="ralu_vector.c" />
     <ClCompile Include="ralyu_testmain.c" />
     <ClCompile Include="ral_execute.c" />
     <ClCompile Include="ral_expression.c" />
@@ -168,6 +169,7 @@
     <ClInclude Include="ralu_list.h" />
     <ClInclude Include="ralu_memory.h" />
     <ClInclude Include="ralu_string.h" />
+    <ClInclude Include="ralu_vector.h" />
     <ClInclude Include="ral_execute.h" />
     <ClInclude Include="ral_expression.h" />
     <ClInclude Include="ral_function.h" />

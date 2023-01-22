@@ -3,6 +3,10 @@
 #include "ralu_stdinclude.h"
 #include "ralu_list.h"
 #include "ralu_string.h"
+#include "ralu_vector.h"
+
+#include "ral_state.h"
+#include "ral_lexer.h"
 
 
 
@@ -29,8 +33,8 @@ typedef struct Ral_Object
 	{
 		Ral_Number number;
 		Ral_Bool boolean;
-		Ral_DynamicString string;
-		//Ral_Vector arr;
+		Ral_VString string;
+		Ral_Vector arr;
 		struct
 		{
 			Ral_List members; // List of Ral_StructMember
@@ -98,27 +102,40 @@ Ral_Bool Ral_GetObjectString(const Ral_Object* const obj, char** const string);
 
 Ral_Bool Ral_AddStructMember(Ral_Object* const obj, const char* const name, const Ral_Object* const val);
 Ral_StructMember* Ral_GetStructMemberNode(const Ral_Object* const obj, const char* const name);
-Ral_Object* Ral_GetStructMember(const Ral_Object* const obj, const char* const name);
+Ral_Object* Ral_GetStructMemberValue(const Ral_Object* const obj, const char* const name);
 void Ral_RemoveStructMember(Ral_Object* const obj, Ral_StructMember* const member);
 
 
 
 Ral_Bool Ral_ObjectIsTrue(const Ral_Object* const obj);
 
-Ral_Object* Ral_ObjectOperator(enum Ral_OperatorID op, const Ral_Object* const a, const Ral_Object* b);
 
-Ral_Object* Ral_ObjectAssign(Ral_Object* const a, const Ral_Object* const b);
 
-Ral_Object* Ral_ObjectAdd(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectSub(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectMul(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectDiv(const Ral_Object* const a, const Ral_Object* const b);
+char* Ral_ObjectToString(const Ral_Object* const obj);
 
-Ral_Object* Ral_ObjectEqual(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectNotEqual(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectLessThan(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectMoreThan(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectLessEquals(const Ral_Object* const a, const Ral_Object* const b);
-Ral_Object* Ral_ObjectMoreEquals(const Ral_Object* const a, const Ral_Object* const b);
+
+
+Ral_Object* Ral_ObjectAssigmentOperator(
+	Ral_State* const state,
+	const enum Ral_OperatorID op,
+	Ral_Object** assignobj,
+	const Ral_Object* const valueobj
+);
+
+Ral_Object* Ral_ObjectArithmeticOperator(
+	Ral_State* const state,
+	const enum Ral_OperatorID op,
+	const Ral_Object* const a,
+	const Ral_Object* const b
+);
+
+Ral_Bool Ral_ObjectRelationalOperator(
+	Ral_State* const state,
+	const enum Ral_OperatorID op,
+	const Ral_Object* const a,
+	const Ral_Object* const b
+);
+
+
 
 void Ral_PrintObjectValue(const Ral_Object* const obj);

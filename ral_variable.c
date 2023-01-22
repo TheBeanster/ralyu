@@ -31,12 +31,18 @@ Ral_Variable* Ral_GetVariable(
 	const char* const name
 )
 {
-	Ral_Variable* iterator = local_variables->begin;
-	while (iterator)
+	
+	Ral_Variable* iterator = NULL;
+
+	if (local_variables)
 	{
-		if (strcmp(iterator->name, name) == 0)
-			return iterator;
-		iterator = iterator->next;
+		iterator = local_variables->begin;
+		while (iterator)
+		{
+			if (strcmp(iterator->name, name) == 0)
+				return iterator;
+			iterator = iterator->next;
+		}
 	}
 
 	iterator = state->global_variables.begin;
@@ -47,9 +53,45 @@ Ral_Variable* Ral_GetVariable(
 		iterator = iterator->next;
 	}
 
-	Ral_Variable* var = Ral_CreateVariable(name, Ral_CreateNumberObject(0));
+	return NULL;
+}
+
+
+
+Ral_Variable* Ral_GetOrDeclareVariable(
+	Ral_State* const state,
+	Ral_List* const local_variables,
+	const char* const name
+)
+{
+	Ral_Variable* var = Ral_GetVariable(state, local_variables, name);
+	if (var) return var;
+
+	// If the variable doesn't exist then declare it
+	var = Ral_CreateVariable(name, NULL);
 	if (local_variables)
 		return Ral_DeclareVariable(local_variables, var);
 	else
 		return Ral_DeclareVariable(&state->global_variables, var);
+}
+
+
+
+
+
+Ral_Object* Ral_GetGlobal(Ral_State* const state, const char* const name)
+{
+	Ral_Variable* var = Ral_GetVariable(state, NULL, name);
+	if (!var) return NULL;
+	return var->obj;
+}
+
+
+
+Ral_Variable* Ral_SetGlobal(Ral_State* const state, const char* const name, const Ral_Object* const obj)
+{
+	Ral_Variable* var = Ral_GetOrDeclareVariable(state, NULL, name);
+	Ral_DestroyObject(var->obj);
+	var->obj = obj;
+	return var;
 }

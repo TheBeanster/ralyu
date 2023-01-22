@@ -67,10 +67,10 @@ Ral_Object* Ral_CallFunction(
 
 
 
-Ral_Function* Ral_LinkCFunction(
+Ral_Function* Ral_DeclareCFunction(
 	Ral_State* const state,
 	Ral_CFunction* const cfunction,
 	const char* const name
 );
 
-#define Ral_LINKCFUNCTION(state, function) Ral_LinkCFunction(state, &function, #function)
+#define Ral_AddCFunction(state, function) Ral_DeclareCFunction(state, &function, #function)

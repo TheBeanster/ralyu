@@ -3,8 +3,6 @@ This file is here to test if Ralyu has compiled and is running correctly.
 To embedd Ralyu in a program, simply delete this file and setup Ralyu in that program.
 */
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 
 #include "ralu_file.h"
@@ -13,6 +11,7 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 #include "ral_sourceunit.h"
 #include "ral_execute.h"
 #include "ral_function.h"
+#include "ral_variable.h"
 
 
 
@@ -31,7 +30,7 @@ Ral_Object* TestFunction(Ral_State* state, Ral_List* arguments)
 		return NULL;
 	}*/
 
-	printf("%f\n", str->val.number);
+	printf("TestFunction > %f\n", str->val.number);
 
 	return NULL;
 }
@@ -74,7 +73,8 @@ int main(int argc, char** argv)
 
 	Ral_PrintSourceUnit(source);
 
-	Ral_LINKCFUNCTION(state, TestFunction);
+	Ral_AddCFunction(state, TestFunction);
+	Ral_SetGlobalNumber(state, "blip", 69);
 
 	Ral_ExecuteSourceUnit(state, source);
 

@@ -44,7 +44,7 @@ Ral_StructMember* Ral_GetStructMemberNode(const Ral_Object* const obj, const cha
 
 
 
-Ral_Object* Ral_GetStructMember(const Ral_Object* const obj, const char* const name)
+Ral_Object* Ral_GetStructMemberValue(const Ral_Object* const obj, const char* const name)
 {
 	if (!(obj && name)) return NULL;
 

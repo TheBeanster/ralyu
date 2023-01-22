@@ -6,6 +6,8 @@
 #include <stdio.h>
 
 #include "ral_logging.h"
+#include "ral_object.h"
+
 
 
 

@@ -2,6 +2,8 @@
 
 #include "ralu_memory.h"
 #include <stdio.h>
+#include <math.h>
+
 
 
 Ral_Object* Ral_CreateNumberObject(const Ral_Number number)
@@ -90,6 +92,42 @@ Ral_Bool Ral_GetObjectString(const Ral_Object* const obj, char** const string)
 }
 
 
+
+
+
+char* Ral_ObjectToString(const Ral_Object* const obj)
+{
+    if (!obj) return NULL;
+    
+    switch (obj->type)
+    {
+    case Ral_TYPE_BOOL:
+        if (obj->val.boolean)
+            return _strdup("true");
+        else
+            return _strdup("false");
+
+    case Ral_TYPE_NUMBER:
+    {
+        char str[200];
+        if (floor(obj->val.number) == obj->val.number)
+        {
+            // Number is whole
+            snprintf(str, 200, "%ll", (long long)obj->val.number);
+        } else
+        {
+            // Number has fractional part
+            snprintf(str, 200, "%f", obj->val.number);
+        }
+        
+        return _strdup(str);
+    }
+
+    default:
+        break;
+    }
+    return NULL;
+}
 
 
 

@@ -32,3 +32,18 @@ Ral_Variable* Ral_GetVariable(
 	Ral_List* const local_variables,
 	const char* const name
 );
+
+Ral_Variable* Ral_GetOrDeclareVariable(
+	Ral_State* const state,
+	Ral_List* const local_variables,
+	const char* const name
+);
+
+
+
+Ral_Object* Ral_GetGlobal(Ral_State* const state, const char* const name);
+
+Ral_Variable* Ral_SetGlobal(Ral_State* const state, const char* const name, const Ral_Object* const obj);
+
+#define Ral_SetGlobalBool(state, name, boolean) Ral_SetGlobal(state, name, Ral_CreateBoolObject(boolean))
+#define Ral_SetGlobalNumber(state, name, number) Ral_SetGlobal(state, name, Ral_CreateNumberObject(number))

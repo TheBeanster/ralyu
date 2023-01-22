@@ -12,13 +12,16 @@
 
 
 static Ral_Object* get_token_value(
-	const Ral_State* const state,
-	const Ral_Token* const token
+	Ral_State* const state,
+	const Ral_List* const local_variables,
+	Ral_Token* const token
 )
 {
 	if (token->expr_value)
 	{
-		return token->expr_value;
+		Ral_Object* obj = token->expr_value;
+		token->expr_value = NULL;
+		return obj;
 	}
 	if (token->type == Ral_TOKENTYPE_INTLITERAL)
 	{
@@ -32,6 +35,15 @@ static Ral_Object* get_token_value(
 			return Ral_CreateBoolObject(Ral_TRUE);
 		else if (token->keywordid == Ral_KEYWORD_FALSE)
 			return Ral_CreateBoolObject(Ral_FALSE);
+	} else if (token->type == Ral_TOKENTYPE_IDENTIFIER)
+	{
+		Ral_Variable* var = Ral_GetOrDeclareVariable(state, local_variables, token->string);
+		if (!var)
+		{
+			state->errormsg = "Missing variable";
+			return NULL;
+		}
+		return var->obj;
 	}
 	return NULL;
 }
@@ -121,7 +133,7 @@ Ral_Object* Ral_EvaluateExpression(
 	else if (numtokens == 1)
 	{
 		// Expression is only one token
-		return get_token_value(state, &tokens[begin]);
+		return get_token_value(state, local_variables, &tokens[begin]);
 	}
 
 	// Get the operators and arguments
@@ -200,7 +212,7 @@ Ral_Object* Ral_EvaluateExpression(
 			} else
 			{
 				// Identifier should be seen as variable
-				Ral_Variable* var = Ral_GetVariable(state, local_variables, tok->string);
+				Ral_Variable* var = Ral_GetOrDeclareVariable(state, local_variables, tok->string);
 				if (!var)
 				{
 					goto free_and_exit;
@@ -219,7 +231,7 @@ Ral_Object* Ral_EvaluateExpression(
 			tok->prev = NULL;
 			tok->next = NULL;
 			Ral_PushBackList(&l_tokens, tok);
-			tok->expr_value = get_token_value(state, tok);
+			tok->expr_value = get_token_value(state, local_variables, tok);
 		}
 		else if (tok->separatorid == Ral_SEPARATOR_LPAREN)
 		{
@@ -283,29 +295,42 @@ Ral_Object* Ral_EvaluateExpression(
 		if (Ral_IS_UNARY_OPERATOR(op))
 		{
 			Ral_UnlinkFromList(&l_operators, iterator);
-		} else
+		} else if (Ral_IS_ARITHEMTIC_OPERATOR(op))
 		{
-			// Operator is binary
-			Ral_Object* left = get_token_value(state, iterator->token->prev);
-			Ral_Object* right = get_token_value(state, iterator->token->next);
-
-			switch (op)
+			Ral_Object* left	= get_token_value(state, local_variables, iterator->token->prev);
+			Ral_Object* right	= get_token_value(state, local_variables, iterator->token->next);
+			if ((left && right) == 0)
 			{
-			case Ral_OPERATOR_ASSIGN:			iterator->token->expr_value = Ral_CopyObject(Ral_ObjectAssign(left, right)); break;
-
-			case Ral_OPERATOR_ADDITION:			iterator->token->expr_value = Ral_ObjectAdd(left, right); break;
-			case Ral_OPERATOR_SUBTRACTION:		iterator->token->expr_value = Ral_ObjectSub(left, right); break;
-
-			case Ral_OPERATOR_EQUALITY:			iterator->token->expr_value = Ral_ObjectEqual(left, right); break;
-			case Ral_OPERATOR_INEQUALITY:		iterator->token->expr_value = Ral_ObjectNotEqual(left, right); break;
-			case Ral_OPERATOR_LESS:				iterator->token->expr_value = Ral_ObjectLessThan(left, right); break;
-			case Ral_OPERATOR_GREATER:			iterator->token->expr_value = Ral_ObjectMoreThan(left, right); break;
-			case Ral_OPERATOR_LESSOREQUAL:		iterator->token->expr_value = Ral_ObjectLessEquals(left, right); break;
-			case Ral_OPERATOR_GREATEROREQUAL:	iterator->token->expr_value = Ral_ObjectMoreEquals(left, right); break;
-
-			default:
-				break;
+				state->errormsg == "Null operand";
+				goto free_and_exit;
 			}
+
+			iterator->token->expr_value = Ral_ObjectArithmeticOperator(state, op, left, right);
+
+			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
+			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+		} else if (Ral_IS_ASSIGNMENT_OPERATOR(op))
+		{
+			if (iterator->token->prev->type != Ral_TOKENTYPE_IDENTIFIER)
+			{
+				state->errormsg = "Cannot assign to non-variable";
+				goto free_and_exit;
+			}
+			Ral_Variable* var = Ral_GetOrDeclareVariable(state, local_variables, iterator->token->prev->string);
+			iterator->token->expr_value = Ral_ObjectAssigmentOperator(
+				state,
+				op,
+				&var->obj,
+				get_token_value(state, local_variables, iterator->token->next)
+			);
+			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
+			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+		} else if (Ral_IS_RELATIONAL_OPERATOR(op))
+		{
+			Ral_Object* left	= get_token_value(state, local_variables, iterator->token->prev);
+			Ral_Object* right	= get_token_value(state, local_variables, iterator->token->next);
+
+			iterator->token->expr_value = Ral_CreateBoolObject(Ral_ObjectRelationalOperator(state, op, left, right));
 
 			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
 			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
