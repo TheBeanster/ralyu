@@ -8,7 +8,7 @@
 
 
 
-typedef Ral_Object(*Ral_CFunction)(Ral_State*, Ral_List*);
+typedef Ral_Object(*(Ral_CFunction)(Ral_State*, Ral_List*));
 
 
 
@@ -64,3 +64,13 @@ Ral_Object* Ral_CallFunction(
 	const Ral_Function* const function,
 	const Ral_List* const arguments
 );
+
+
+
+Ral_Function* Ral_LinkCFunction(
+	Ral_State* const state,
+	Ral_CFunction* const cfunction,
+	const char* const name
+);
+
+#define Ral_LINKCFUNCTION(state, function) Ral_LinkCFunction(state, &function, #function)

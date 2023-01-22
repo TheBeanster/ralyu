@@ -74,6 +74,13 @@ static int get_next_unnested_separator(
 
 
 
+#ifdef Ral_USE_DEBUG_PRINT
+#define DEBUG_PRINT(format, ...) printf(format, __VA_ARGS__)
+#else
+#define DEBUG_PRINT(format, ...) void
+#endif
+
+
 
 typedef struct expr_list_elem
 {
@@ -92,14 +99,16 @@ Ral_Object* Ral_EvaluateExpression(
 	const int end
 )
 {
-	printf("Evaluating expression\n");
+	DEBUG_PRINT("Evaluating expression\n");
 
+#ifdef Ral_USE_DEBUG_PRINT
 	// Print all tokens in the expression
 	for (int i = begin; i < end; i++)
 	{
 		printf("%s ", tokens[i].string);
 	}
 	putchar('\n');
+#endif
 
 	Ral_Object* final_result = NULL;
 
@@ -154,7 +163,7 @@ Ral_Object* Ral_EvaluateExpression(
 				}
 
 				Ral_List args = { 0 };
-				for (i = i + 1; i < end;) // j starts at (
+				for (i = i + 1; i < end;) // i starts at (
 				{
 					// The index of the token of the end of the argument
 					int arg_end = get_next_unnested_separator(tokens, Ral_SEPARATOR_COMMA, i, end);
@@ -168,10 +177,11 @@ Ral_Object* Ral_EvaluateExpression(
 					Ral_Object* arg = Ral_EvaluateExpression(state, local_variables, tokens, i + 1, arg_end);
 					Ral_PushBackList(&args, arg);
 					
-					i = arg_end + 1;
+					i = arg_end;
 					if (tokens[arg_end].separatorid != Ral_SEPARATOR_COMMA) break;
 				}
 				
+			#ifdef Ral_USE_DEBUG_PRINT
 				Ral_Object* iter = args.begin;
 				while (iter)
 				{
@@ -179,6 +189,7 @@ Ral_Object* Ral_EvaluateExpression(
 					putchar('\n');
 					iter = iter->next;
 				}
+			#endif
 
 				Ral_Object* call_result = Ral_CallFunction(state, func, &args);
 
@@ -333,9 +344,11 @@ free_and_exit:
 		tokiter = tokiter->next;
 	}
 	
+#ifdef Ral_USE_DEBUG_PRINT
 	printf("Expression result = ");
 	Ral_PrintObjectValue(final_result);
 	putchar('\n');
+#endif
 
 	return final_result;
 }

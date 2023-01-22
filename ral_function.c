@@ -6,6 +6,7 @@
 
 #include "ral_lexer.h"
 #include "ral_execute.h"
+#include "ral_variable.h"
 
 
 
@@ -89,13 +90,25 @@ Ral_Object* Ral_CallFunction(
 	const Ral_List* const arguments
 )
 {
-	// Function body is emtpy
-	if (!function->bodystart) return NULL;
+	if (!function->bodystart)
+	{
+		// Function body is emtpy
+		// This is a C function
+
+		return (function->cfunction)(state, arguments);
+	}
 	
 	Ral_Statement* current_statement = function->bodystart;
 	Ral_Object* return_object = NULL;
 	Ral_List stack = { 0 }; // Stack of statements?
 	Ral_List local_variables = { 0 };
+
+	Ral_Object* iterator = arguments->begin;
+	for (int i = 0; i < arguments->itemcount; i++)
+	{
+		Ral_DeclareVariable(&local_variables, Ral_CreateVariable(function->argumentnames[i], iterator));
+		iterator = iterator->next;
+	}
 
 	while (current_statement)
 	{
@@ -110,4 +123,26 @@ Ral_Object* Ral_CallFunction(
 	}
 
 	return return_object;
+}
+
+
+
+
+
+Ral_Function* Ral_LinkCFunction(
+	Ral_State* const state,
+	Ral_CFunction* const cfunction,
+	const char* const name
+)
+{
+	printf("Linking C function: \"%s\"\n", name);
+	Ral_Function* function = Ral_ALLOC_TYPE(Ral_Function);
+
+	function->name = _strdup(name);
+	function->bodystart = NULL;
+	function->bodyend = NULL;
+	function->cfunction = cfunction;
+
+	Ral_DeclareFunction(state, function);
+	return function;
 }

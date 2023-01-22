@@ -12,6 +12,31 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 #include "ral_state.h"
 #include "ral_sourceunit.h"
 #include "ral_execute.h"
+#include "ral_function.h"
+
+
+
+Ral_Object* TestFunction(Ral_State* state, Ral_List* arguments)
+{
+	if (arguments->itemcount != 1)
+	{
+		state->errormsg = "Invalid arguments for print";
+		return NULL;
+	}
+	Ral_Object* str = arguments->begin;
+
+	/*if (str->type != Ral_TYPE_STRING)
+	{
+		state->errormsg = "Print expects a string";
+		return NULL;
+	}*/
+
+	printf("%f\n", str->val.number);
+
+	return NULL;
+}
+
+
 
 
 
@@ -48,6 +73,8 @@ int main(int argc, char** argv)
 	}
 
 	Ral_PrintSourceUnit(source);
+
+	Ral_LINKCFUNCTION(state, TestFunction);
 
 	Ral_ExecuteSourceUnit(state, source);
 

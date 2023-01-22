@@ -2,4 +2,4 @@ function add(a, b)
 	return a + b
 end
 
-glob = 1 + add(2, 2)
+TestFunction(add(2, 2) + 1)
