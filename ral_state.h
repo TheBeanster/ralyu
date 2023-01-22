@@ -11,8 +11,11 @@ typedef struct Ral_State
 {
 	Ral_List sourceunits;
 
-	Ral_List global_types;
 	Ral_List global_variables;
+	Ral_List functions;
+
+	// Pointer to a string literal with an error message
+	const char* errormsg;
 } Ral_State;
 
 

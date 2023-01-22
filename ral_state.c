@@ -11,6 +11,7 @@
 Ral_State* Ral_CreateState()
 {
 	Ral_State* state = Ral_ALLOC_TYPE(Ral_State);
+	state->errormsg = "";
 	return state;
 }
 

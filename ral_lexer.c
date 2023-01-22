@@ -70,7 +70,7 @@ static int separate_tokens(Ral_List* const tokens, const char* const source)
 	int i = 0;
 	while(1)
 	{
-		// Looping over ever char in the sourcecode one by one
+		// Looping over every char in the sourcecode one by one
 
 		char		cur_char = source[i];
 		Ral_CharType	cur_chartype = check_chartype(cur_char);
@@ -430,10 +430,6 @@ static int separate_source_statements(
 				expression_read_type = Ral_STATEMENTTYPE_RETURN; // But remember that it is for a return statement
 				break;
 
-			case Ral_KEYWORD_BOOL:
-			case Ral_KEYWORD_INT:
-			case Ral_KEYWORD_FLOAT:
-			case Ral_KEYWORD_STRING:
 			case Ral_KEYWORD_TRUE:
 			case Ral_KEYWORD_FALSE:
 				cur_statementtype = Ral_STATEMENTTYPE_EXPRESSION;
@@ -442,10 +438,6 @@ static int separate_source_statements(
 
 			case Ral_KEYWORD_FUNCTION:
 				cur_statementtype = Ral_STATEMENTTYPE_FUNCTION;
-				break;
-
-			case Ral_KEYWORD_STRUCT:
-				cur_statementtype = Ral_STATEMENTTYPE_STRUCT;
 				break;
 
 			case Ral_KEYWORD_END:
@@ -516,20 +508,22 @@ static int separate_source_statements(
 			}
 			break;
 
-		case Ral_STATEMENTTYPE_GOTO:
-			// If reading a goto statement then it will finish by the next token, since the next token should be an identifier
-			if (iterator->type != Ral_TOKENTYPE_IDENTIFIER)
+
+
+		case Ral_STATEMENTTYPE_FUNCTION:
+			if (iterator->type == Ral_TOKENTYPE_ENDLINE)
 			{
-				Ral_LOG_SYNTAXERROR(iterator->linenum, "Goto label \"%s\" is not an identifier!", iterator->string);
-				numerrors++;
-				cur_statementtype = Ral_STATEMENTTYPE_NULL;
-				break;
+				if ((start_parenthesis_depth	>= parenthesis_depth) &&
+					(start_bracket_depth		>= bracket_depth) &&
+					(start_brace_depth			>= brace_depth))
+				{
+					Ral_PushBackList(
+						statements,
+						Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_FUNCTION)
+					);
+					cur_statementtype = Ral_STATEMENTTYPE_NULL;
+				}
 			}
-			Ral_PushBackList(
-				statements,
-				Ral_CreateStatement(cur_statementstart, iterator, Ral_STATEMENTTYPE_GOTO)
-			);
-			cur_statementtype = Ral_STATEMENTTYPE_NULL;
 			break;
 
 
@@ -541,7 +535,6 @@ static int separate_source_statements(
 					(start_bracket_depth		>= bracket_depth) &&
 					(start_brace_depth			>= brace_depth))
 				{
-				pushexpression:
 					// TODO It is probably possible to implement an error for statements that have too many parentheses or similar
 
 					Ral_PushBackList(

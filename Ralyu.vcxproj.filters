@@ -66,8 +66,26 @@
     <ClCompile Include="ral_execute.c">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="ral_object_variable.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
     <ClCompile Include="ral_expression.c">
       <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_object_logic.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_object_struct.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_function.c">
+      <Filter>Source Files\Interpreter\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="ralu_file.c">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_variable.c">
+      <Filter>Source Files\Interpreter\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +125,12 @@
     <ClInclude Include="ral_expression.h">
       <Filter>Source Files\Interpreter\Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="ralu_file.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_variable.h">
+      <Filter>Source Files\Interpreter\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="planning.txt">
@@ -115,5 +139,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="test.ral">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

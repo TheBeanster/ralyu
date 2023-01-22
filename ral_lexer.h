@@ -40,15 +40,8 @@ typedef enum
 	Ral_KEYWORD_FOR,
 	Ral_KEYWORD_WHILE,
 	Ral_KEYWORD_DO,
-	Ral_KEYWORD_GOTO,
 	Ral_KEYWORD_FUNCTION,
 	Ral_KEYWORD_RETURN,
-	Ral_KEYWORD_STRUCT,
-	Ral_KEYWORD_VOID,
-	Ral_KEYWORD_BOOL,
-	Ral_KEYWORD_INT,
-	Ral_KEYWORD_FLOAT,
-	Ral_KEYWORD_STRING,
 	Ral_KEYWORD_FALSE,
 	Ral_KEYWORD_TRUE,
 	Ral_KEYWORD_END,
@@ -99,7 +92,7 @@ extern const char* const const ral_operator_strings[];
 Ral_OperatorID Ral_CheckOperator(const char* const str);
 
 #define Ral_IS_ASSIGNMENT_OPERATOR(op) ((op >= 0 && op <= 4) ? Ral_TRUE : Ral_FALSE)
-#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 7) ? Ral_TRUE : Ral_FALSE)
+#define Ral_IS_UNARY_OPERATOR(op) ((op >= 5 && op <= 6) ? Ral_TRUE : Ral_FALSE)
 
 extern const int ral_operator_precedence[];
 #define Ral_EXPRESSION_NESTING_PRECEDENCE_SHIFT 4
@@ -183,14 +176,12 @@ typedef enum
 {
 	Ral_STATEMENTTYPE_NULL,
 	Ral_STATEMENTTYPE_EXPRESSION,
-	Ral_STATEMENTTYPE_STRUCT,
 	Ral_STATEMENTTYPE_FUNCTION,
 	Ral_STATEMENTTYPE_RETURN,
 	Ral_STATEMENTTYPE_IF,
 	Ral_STATEMENTTYPE_ELSE,
 	Ral_STATEMENTTYPE_FOR,
 	Ral_STATEMENTTYPE_WHILE,
-	Ral_STATEMENTTYPE_GOTO,
 	Ral_STATEMENTTYPE_END,
 
 	Ral_NUM_STATEMENTTYPES,
