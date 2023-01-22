@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Interpreter\Object">
       <UniqueIdentifier>{14249742-c28e-4dee-a029-b3c2caa77f94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter\Library">
+      <UniqueIdentifier>{edfe1b3c-21f2-4224-a7a7-508a2f0fa2f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ralu_memory.c">
@@ -90,6 +93,15 @@
     <ClCompile Include="ralu_vector.c">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="ral_library.c">
+      <Filter>Source Files\Interpreter\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_library_io.c">
+      <Filter>Source Files\Interpreter\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="ral_library_math.c">
+      <Filter>Source Files\Interpreter\Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ralu_list.h">
@@ -136,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="ralu_vector.h">
       <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_library.h">
+      <Filter>Source Files\Interpreter\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="ral_stdlibrary.h">
+      <Filter>Source Files\Interpreter\Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,9 @@ To embedd Ralyu in a program, simply delete this file and setup Ralyu in that pr
 #include "ral_execute.h"
 #include "ral_function.h"
 #include "ral_variable.h"
+#include "ral_library.h"
+
+#include "ral_stdlibrary.h"
 
 
 
@@ -36,6 +39,11 @@ Ral_Object* TestFunction(Ral_State* state, Ral_List* arguments)
 }
 
 
+
+Ral_Library(testlib,
+	Ral_LibFunction(,TestFunction)
+	Ral_LibNumber("blip", 69)
+);
 
 
 
@@ -73,8 +81,10 @@ int main(int argc, char** argv)
 
 	Ral_PrintSourceUnit(source);
 
-	Ral_AddCFunction(state, TestFunction);
-	Ral_SetGlobalNumber(state, "blip", 69);
+	Ral_LoadLib_STDIO(state);
+	Ral_LoadLib_STDMath(state);
+
+	Ral_LoadLib(state, testlib);
 
 	Ral_ExecuteSourceUnit(state, source);
 

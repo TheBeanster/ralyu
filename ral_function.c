@@ -134,7 +134,7 @@ Ral_Function* Ral_DeclareCFunction(
 	const char* const name
 )
 {
-	printf("Linking C function: \"%s\"\n", name);
+	//printf("Linking C function: \"%s\"\n", name);
 	Ral_Function* function = Ral_ALLOC_TYPE(Ral_Function);
 
 	function->name = _strdup(name);

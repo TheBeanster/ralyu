@@ -156,6 +156,9 @@
     <ClCompile Include="ral_lexer_keys.c" />
     <ClCompile Include="ral_lexer_statement.c" />
     <ClCompile Include="ral_lexer_token.c" />
+    <ClCompile Include="ral_library.c" />
+    <ClCompile Include="ral_library_io.c" />
+    <ClCompile Include="ral_library_math.c" />
     <ClCompile Include="ral_object.c" />
     <ClCompile Include="ral_object_logic.c" />
     <ClCompile Include="ral_object_struct.c" />
@@ -174,6 +177,8 @@
     <ClInclude Include="ral_expression.h" />
     <ClInclude Include="ral_function.h" />
     <ClInclude Include="ral_lexer.h" />
+    <ClInclude Include="ral_library.h" />
+    <ClInclude Include="ral_stdlibrary.h" />
     <ClInclude Include="ral_logging.h" />
     <ClInclude Include="ral_object.h" />
     <ClInclude Include="ral_sourceunit.h" />
