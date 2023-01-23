@@ -1,1 +1,4 @@
-print(random())
+a = -500
+b = 10
+
+print(random(a, b))

@@ -191,7 +191,8 @@ Ral_Object* Ral_EvaluateExpression(
 					{
 						// Evaluate everything from j to the arg_end
 						Ral_Object* arg = Ral_EvaluateExpression(state, local_variables, tokens, i + 1, arg_end);
-						Ral_PushBackList(&args, arg);
+						if (arg)
+							Ral_PushBackList(&args, arg);
 					}
 
 					i = arg_end;
