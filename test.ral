@@ -1,3 +1,1 @@
-print( PI / 2 )
-
-print("first" = "no")
+print(sin(PI / 2))
