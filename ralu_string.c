@@ -20,3 +20,21 @@ char* Ral_CreateCutString(
 	str[length] = '\0';
 	return str;
 }
+
+
+
+void Ral_RStringInitEmpty(Ral_RString* const vstring)
+{
+	vstring->chars = "\0\0\0";
+	vstring->length = 0;
+	vstring->capacity = 4;
+}
+
+
+
+void Ral_RStringInit(Ral_RString* const vstring, const char* const str)
+{
+	int length = strlen(str);
+	vstring->capacity = length + 4
+	vstring->chars = Ral_MALLOC(length)
+}

@@ -33,7 +33,7 @@ typedef struct Ral_Object
 	{
 		Ral_Number number;
 		Ral_Bool boolean;
-		Ral_VString string;
+		Ral_RString string;
 		Ral_Vector arr;
 		struct
 		{

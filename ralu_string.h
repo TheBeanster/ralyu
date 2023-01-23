@@ -14,14 +14,14 @@ char* Ral_CreateCutString(
 
 
 
-// Vector string
-typedef struct Ral_VString
+typedef struct Ral_RString
 {
 	char* chars;
 	int length;
-	int capacity;
-} Ral_VString;
+} Ral_RString;
 
-void Ral_VStringInit(Ral_VString* const vstring, const char* const str);
+void Ral_RStringInitEmpty(Ral_RString* const vstring);
 
-void Ral_VStringAppend(Ral_VString* const vstring, const char* const str);
+void Ral_RStringInit(Ral_RString* const vstring, const char* const str);
+
+void Ral_RStringAppend(Ral_RString* const vstring, const char* const str);

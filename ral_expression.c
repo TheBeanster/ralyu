@@ -17,6 +17,8 @@ static Ral_Object* get_token_value(
 	Ral_Token* const token
 )
 {
+	if (!token) return NULL;
+
 	if (token->expr_value)
 	{
 		Ral_Object* obj = token->expr_value;
