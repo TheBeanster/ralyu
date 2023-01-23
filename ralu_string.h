@@ -20,8 +20,8 @@ typedef struct Ral_RString
 	int length;
 } Ral_RString;
 
-void Ral_RStringInitEmpty(Ral_RString* const vstring);
+void Ral_RStringInitEmpty(Ral_RString* const rstring);
 
-void Ral_RStringInit(Ral_RString* const vstring, const char* const str);
+void Ral_RStringInit(Ral_RString* const rstring, const char* const str);
 
-void Ral_RStringAppend(Ral_RString* const vstring, const char* const str);
+void Ral_RStringAppend(Ral_RString* const rstring, const char* const str);

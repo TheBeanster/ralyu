@@ -23,18 +23,16 @@ char* Ral_CreateCutString(
 
 
 
-void Ral_RStringInitEmpty(Ral_RString* const vstring)
+void Ral_RStringInitEmpty(Ral_RString* const rstring)
 {
-	vstring->chars = "\0\0\0";
-	vstring->length = 0;
-	vstring->capacity = 4;
+	rstring->chars = "\0\0\0";
+	rstring->length = 0;
 }
 
 
 
-void Ral_RStringInit(Ral_RString* const vstring, const char* const str)
+void Ral_RStringInit(Ral_RString* const rstring, const char* const str)
 {
 	int length = strlen(str);
-	vstring->capacity = length + 4
-	vstring->chars = Ral_MALLOC(length)
+	rstring->chars = Ral_MALLOC(length);
 }
