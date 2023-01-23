@@ -1,0 +1,103 @@
+
+
+
+Returning NULL is the same as returning void.
+
+A token cannot contain a space unless it is a string literal.
+
+
+
+A sourceunit is a block of code that can be executed in isolation or as a function call from another execution.
+A Ralyu state keeps track of all sourceunits
+A function has a pointer to a sourceunit.
+
+There are two types of sourceunits
+GLOBAL and FUNCTION
+
+Global sourceunits store all their variable and function declarations in the state as globals.
+Function sourceunits store their variable and function declarations locally and are discarded when the sourceunit exits.
+Function sourceunits can also have arguments and a return value that can be used by both Ralyu and C.
+
+To run code, you first load a sourceunit and then you run it.
+Loading it only turns the source code into statements and tokens by the lexer which can be executed.
+You should not load the same source code twice.
+Loading doesn't do anything to the state other than appending it and its functions to the sourceunits list.
+
+Running sourceunits executes its statements.
+Running a global sourceunit
+
+
+
+example source unit:
+
+int a = 0
+a += 10
+print(a)
+
+function add(int a, int b)
+	return a + b
+end
+
+int b = add(a, a)
+print(b)
+
+*end of file*
+
+When this piece of code is read, it will generate two sourceunits and two global variables in the state
+
+
+
+Calling Ralyu code from C:
+
+The base function for calling code is:
+Ral_Object* Ral_CallFunction(Ral_State* state, Ral_Function* function, Ral_List* arguments)
+
+
+
+Dream for running Ralyu:
+
+Ral_State* state = Ral_CreateState();
+Ral_ExecuteString(state, "int a = 0");
+file_t* mainsource = loadfile("test.ral");
+Ral_LoadSourceString(state, mainsource->buffer);
+
+
+
+
+
+system.ral:
+
+function ringparticle()
+	spawn_particle(rand(), rand())
+end
+
+for i = 0, 1000 do
+	ringparticle()
+end
+
+This code should produce two sourceunits when loaded
+
+
+
+Executing code has two steps: loading and executing
+
+Loading first lexes and parses the source code by dividing it into statements.
+Statements have an array of tokens.
+
+Example:
+
+a = 0
+
+function test()
+	print("test")
+end
+
+a += 1
+print(a)
+test()
+
+Executing this code will add the variable a and the function test to the global scope and print
+> 1
+> test
+to the screen
+
