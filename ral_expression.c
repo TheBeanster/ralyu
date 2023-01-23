@@ -187,10 +187,13 @@ Ral_Object* Ral_EvaluateExpression(
 						arg_end = get_next_unnested_separator(tokens, Ral_SEPARATOR_RPAREN, i, end);
 					}
 					
-					// Evaluate everything from j to the arg_end
-					Ral_Object* arg = Ral_EvaluateExpression(state, local_variables, tokens, i + 1, arg_end);
-					Ral_PushBackList(&args, arg);
-					
+					if (i + 1 < arg_end)
+					{
+						// Evaluate everything from j to the arg_end
+						Ral_Object* arg = Ral_EvaluateExpression(state, local_variables, tokens, i + 1, arg_end);
+						Ral_PushBackList(&args, arg);
+					}
+
 					i = arg_end;
 					if (tokens[arg_end].separatorid != Ral_SEPARATOR_COMMA) break;
 				}

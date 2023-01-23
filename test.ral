@@ -1,1 +1,1 @@
-print(sin(PI / 2))
+print(random())

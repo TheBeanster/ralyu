@@ -140,6 +140,8 @@ Ral_Library(stdmath,
 	Ral_LibFunction(stdmath_, mod)
 	Ral_LibFunction(stdmath_, hypot)
 
+	Ral_LibFunction(stdmath_, random)
+
 	Ral_LibNumber("PI", M_PI)
 	Ral_LibNumber("TAU", M_PI * 2)
 	Ral_LibNumber("E", M_E)
