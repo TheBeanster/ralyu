@@ -87,15 +87,6 @@ static int get_next_unnested_separator(
 
 
 
-
-#ifdef Ral_USE_DEBUG_PRINT
-#define DEBUG_PRINT(format, ...) printf(format, __VA_ARGS__)
-#else
-#define DEBUG_PRINT(format, ...) void
-#endif
-
-
-
 typedef struct expr_list_elem
 {
 	Ral_LISTLINKS(expr_list_elem);

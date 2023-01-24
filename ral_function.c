@@ -29,6 +29,7 @@ Ral_Function* Ral_CreateFunction(
 	for (int i = 0; i < arguments->itemcount; i++)
 	{
 		function->argumentnames[i] = _strdup(iterator->name);
+		printf("arg: \"%s\"\n", iterator->name);
 		iterator = iterator->next;
 	}
 	function->cfunction = NULL;

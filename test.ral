@@ -1,5 +1,5 @@
-function googaa(a, b)
-	return a + sin(b)
+i = 1
+while i <= 10000 do
+	print(i)
+	i += 1
 end
-
-print(googaa(1, PI/2))

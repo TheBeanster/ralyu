@@ -90,9 +90,11 @@ Ral_Statement* Ral_ExecuteStatement(
 	Ral_Object** const return_object
 )
 {
+#ifdef Ral_USE_DEBUG_PRINT
 	printf(" - Executing statement - : ");
 	Ral_PrintStatementString(statement);
 	putchar('\n');
+#endif
 
 	switch (statement->type)
 	{
@@ -180,7 +182,53 @@ Ral_Statement* Ral_ExecuteStatement(
 
 	case Ral_STATEMENTTYPE_END:
 	{
+		Ral_Statement* topstatement = Ral_PopBackList(stack);
 
+		if (!topstatement)
+		{
+			return NULL;
+		}
+
+		switch (topstatement->type)
+		{
+		case Ral_STATEMENTTYPE_WHILE:
+			return topstatement;
+			break;
+
+		case Ral_STATEMENTTYPE_IF:
+			break;
+
+		default:
+			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA NOT IMPLEMENTED END!!\n");
+			break;
+		}
+	}
+		break;
+
+
+
+	case Ral_STATEMENTTYPE_WHILE:
+	{
+		Ral_Object* expr_result = Ral_EvaluateExpression(state, scope_variables, statement->tokens, 1, statement->numtokens);
+		if (Ral_ObjectIsTrue(expr_result))
+		{
+			// Expression was true
+			Ral_PushBackList(stack, statement);
+			// ENTER DA LOOP
+			break;
+		} else
+		{
+			// Jump to 'end'
+			Ral_Statement* endstatement = find_next_statementtype_in_scope(statement, Ral_STATEMENTTYPE_END);
+			if (!endstatement)
+			{
+				// No end statement for if
+				state->errormsg = "No 'end' found for if statement.";
+				return NULL;
+			}
+
+			GO_NEXT_STATEMENT(endstatement);
+		}
 	}
 		break;
 
@@ -217,7 +265,7 @@ Ral_Statement* Ral_ExecuteStatement(
 		// Read arguments
 		if (statement->numtokens <= 3) return NULL; // No closing parenthesis
 		Ral_List arguments = { 0 };
-		Ral_Bool* expect_identifier = Ral_TRUE; // Expect identifiers after first parenthesis and after commas
+		Ral_Bool* expect_identifier = Ral_TRUE;
 		for (int i = 3; i < statement->numtokens; i++)
 		{
 			Ral_Token* tok = &statement->tokens[i];
@@ -229,8 +277,12 @@ Ral_Statement* Ral_ExecuteStatement(
 				Ral_PushBackList(&arguments, arg);
 				expect_identifier = Ral_FALSE;
 			} else if ((!expect_identifier) && (tok->separatorid == Ral_SEPARATOR_COMMA))
+			{
 				expect_identifier = Ral_TRUE;
-			else if ((!expect_identifier) && (tok->separatorid == Ral_SEPARATOR_RPAREN))
+			}
+			else if (
+				((tok->separatorid == Ral_SEPARATOR_RPAREN) && (!expect_identifier)) || 
+				((tok->separatorid == Ral_SEPARATOR_RPAREN) && (i == 3)))
 				break;
 			else
 			{
@@ -245,10 +297,11 @@ Ral_Statement* Ral_ExecuteStatement(
 					Ral_FREE(del->name);
 					Ral_FREE(del);
 				}
+				return NULL;
 			}
 		}
 
-
+		
 
 		Ral_Function* func = Ral_CreateFunction(
 			bodystart,

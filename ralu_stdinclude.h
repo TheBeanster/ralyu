@@ -15,3 +15,11 @@ typedef enum Ral_Bool
 } Ral_Bool;
 
 #define Ral_STRINGIFY(str) #str
+
+
+
+#ifdef Ral_USE_DEBUG_PRINT
+#define DEBUG_PRINT(format, ...) printf(format, __VA_ARGS__)
+#else
+#define DEBUG_PRINT(format, ...) void
+#endif
