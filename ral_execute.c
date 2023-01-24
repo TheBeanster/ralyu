@@ -70,6 +70,8 @@ static Ral_Statement* find_next_statementtype_in_scope(
 			break;
 		}
 	}
+
+	return NULL;
 }
 
 

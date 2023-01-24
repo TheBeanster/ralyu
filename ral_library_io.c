@@ -20,9 +20,26 @@ static Ral_Object* stdio_print(Ral_State* const state, Ral_List* const arguments
 
 
 
+static Ral_Object* stdio_input(Ral_State* const state, Ral_List* const arguments)
+{
+	if (arguments->itemcount != 0) return NULL;
+
+	int inp = 0;
+	scanf("%i", inp);
+
+	return Ral_CreateNumberObject(inp);
+}
+
+
+
+
+
 Ral_Library(stdio,
 	Ral_LibFunction(stdio_, print)
+	Ral_LibFunction(stdio_, input)
 );
+
+
 
 
 

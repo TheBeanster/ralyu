@@ -36,6 +36,8 @@ Ral_Object* Ral_ObjectAssigmentOperator(
 	const Ral_Object* const valueobj
 )
 {
+	if (!(assignobj && valueobj)) return NULL;
+
 	switch (op)
 	{
 	case Ral_OPERATOR_ASSIGN:

@@ -49,6 +49,7 @@ Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
         return Ral_CreateStringObject(obj->val.string.chars);
 
     default:
+        return NULL;
         break;
     }
 }
