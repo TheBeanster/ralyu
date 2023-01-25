@@ -37,14 +37,13 @@ Ral_Object* Ral_ObjectAssigmentOperator(
 )
 {
 	if (!(assignobj && valueobj)) return NULL;
-
+	
 	switch (op)
 	{
 	case Ral_OPERATOR_ASSIGN:
-		Ral_DestroyObject(*assignobj);
-		Ral_Object* newobj = Ral_CopyObject(valueobj);
-		*assignobj = newobj;
-		return Ral_CopyObject(valueobj);
+		Ral_ClearObject(*assignobj);
+		*assignobj = valueobj;
+		return valueobj;
 
 	default:
 	{

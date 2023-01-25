@@ -80,6 +80,10 @@ Ral_Object* Ral_CreateStructObject();
 /// @return A pointer to the copy object
 Ral_Object* Ral_CopyObject(const Ral_Object* const obj);
 
+/// @brief Clears all memory an object uses except for the object struct and zeroes out the object's data
+/// @param obj The object to clear
+void Ral_ClearObject(Ral_Object* const obj);
+
 /// @brief Frees an object's memory and all data it uses
 /// @param obj Object to free
 void Ral_DestroyObject(Ral_Object* const obj);

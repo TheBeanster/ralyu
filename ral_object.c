@@ -56,21 +56,26 @@ Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
 
 
 
-void Ral_DestroyObject(Ral_Object* const obj)
+void Ral_ClearObject(Ral_Object* const obj)
 {
     if (!obj) return;
 
     switch (obj->type)
     {
-    case Ral_TYPE_NUMBER:
-        break;
-    case Ral_TYPE_STRING:
-        
+    case Ral_TYPE_STRUCT:
+
         break;
     default:
         break;
     }
+}
 
+
+
+void Ral_DestroyObject(Ral_Object* const obj)
+{
+    if (!obj) return;
+    Ral_ClearObject(obj);
     Ral_FREE(obj);
 }
 
@@ -150,7 +155,10 @@ void Ral_PrintObjectValue(const Ral_Object* const obj)
         break;
 
     case Ral_TYPE_NUMBER:
-        printf("%f", obj->val.number);
+        if (floor(obj->val.number) == obj->val.number)
+            printf("%d", (int)obj->val.number);
+        else
+            printf("%f", obj->val.number);
         break;
 
     default:
