@@ -31,15 +31,15 @@ typedef struct Ral_Object
 
 	union
 	{
-		Ral_Number number;
-		Ral_Bool boolean;
-		Ral_RString string;
-		Ral_Vector arr;
+		Ral_Number vnumber;
+		Ral_Bool vboolean;
+		Ral_RString vstring;
+		Ral_Vector varray;
 		struct
 		{
 			Ral_List members; // List of Ral_StructMember
-		} struc;
-	} val;
+		} vstruct;
+	};
 } Ral_Object;
 
 

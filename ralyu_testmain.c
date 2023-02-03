@@ -33,7 +33,7 @@ Ral_Object* TestFunction(Ral_State* state, Ral_List* arguments)
 		return NULL;
 	}*/
 
-	printf("TestFunction > %f\n", str->val.number);
+	printf("TestFunction > %f\n", str->vnumber);
 
 	return NULL;
 }

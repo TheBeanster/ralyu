@@ -18,7 +18,7 @@
 		if (!arg) return NULL;																\
 		if (arg->type != Ral_TYPE_NUMBER) return NULL;										\
 																							\
-		return Ral_CreateNumberObject(base_c_function(arg->val.number));					\
+		return Ral_CreateNumberObject(base_c_function(arg->vnumber));					\
 	}
 
 
@@ -35,7 +35,7 @@
 		if (!arg2) return NULL;																\
 		if (arg2->type != Ral_TYPE_NUMBER) return NULL;										\
 																							\
-		return Ral_CreateNumberObject(base_c_function(arg1->val.number, arg2->val.number));	\
+		return Ral_CreateNumberObject(base_c_function(arg1->vnumber, arg2->vnumber));	\
 	}
 
 
@@ -86,7 +86,7 @@ static Ral_Object* stdmath_random(Ral_State* const state, Ral_List* const argume
 		Ral_Object* arg = arguments->begin;
 		if (!arg) return NULL;
 		if (arg->type != Ral_TYPE_NUMBER) return NULL;
-		Ral_Number r = ((Ral_Number)rand() / RAND_MAX) * arg->val.number;
+		Ral_Number r = ((Ral_Number)rand() / RAND_MAX) * arg->vnumber;
 		return Ral_CreateNumberObject(r);
 	} else if (arguments->itemcount == 2)
 	{
@@ -97,7 +97,7 @@ static Ral_Object* stdmath_random(Ral_State* const state, Ral_List* const argume
 		Ral_Object* arg2 = arguments->begin->next;
 		if (!arg2) return NULL;
 		if (arg2->type != Ral_TYPE_NUMBER) return NULL;
-		Ral_Number r = ((Ral_Number)rand() / RAND_MAX) * (arg2->val.number - arg1->val.number) + arg1->val.number;
+		Ral_Number r = ((Ral_Number)rand() / RAND_MAX) * (arg2->vnumber - arg1->vnumber) + arg1->vnumber;
 		return Ral_CreateNumberObject(r);
 	} else
 	{

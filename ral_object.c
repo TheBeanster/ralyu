@@ -10,7 +10,7 @@ Ral_Object* Ral_CreateNumberObject(const Ral_Number number)
 {
     Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
     obj->type = Ral_TYPE_NUMBER;
-    obj->val.number = number;
+    obj->vnumber = number;
     return obj;
 }
 
@@ -20,7 +20,7 @@ Ral_Object* Ral_CreateBoolObject(const Ral_Bool boolean)
 {
     Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
     obj->type = Ral_TYPE_BOOL;
-    obj->val.boolean = boolean;
+    obj->vboolean = boolean;
     return obj;
 }
 
@@ -30,7 +30,7 @@ Ral_Object* Ral_CreateStringObject(const char* const string)
 {
     Ral_Object* obj = Ral_ALLOC_TYPE(Ral_Object);
     obj->type = Ral_TYPE_STRING;
-    obj->val.string.chars = _strdup(string);
+    obj->vstring.chars = _strdup(string);
     return obj;
 }
 
@@ -43,10 +43,10 @@ Ral_Object* Ral_CopyObject(const Ral_Object* const obj)
     switch (obj->type)
     {
     case Ral_TYPE_NUMBER:
-        return Ral_CreateNumberObject(obj->val.number);
+        return Ral_CreateNumberObject(obj->vnumber);
         
     case Ral_TYPE_STRING:
-        return Ral_CreateStringObject(obj->val.string.chars);
+        return Ral_CreateStringObject(obj->vstring.chars);
 
     default:
         return NULL;
@@ -86,7 +86,7 @@ Ral_Bool Ral_GetObjectNumber(const Ral_Object* const obj, Ral_Number* const numb
     if (!(obj && number)) return Ral_FALSE;
 
     if (obj->type != Ral_TYPE_NUMBER) return Ral_FALSE;
-    *number = obj->val.number;
+    *number = obj->vnumber;
     return Ral_TRUE;
 }
 
@@ -108,7 +108,7 @@ char* Ral_ObjectToString(const Ral_Object* const obj)
     switch (obj->type)
     {
     case Ral_TYPE_BOOL:
-        if (obj->val.boolean)
+        if (obj->vboolean)
             return _strdup("true");
         else
             return _strdup("false");
@@ -116,14 +116,14 @@ char* Ral_ObjectToString(const Ral_Object* const obj)
     case Ral_TYPE_NUMBER:
     {
         char str[200];
-        if (floor(obj->val.number) == obj->val.number)
+        if (floor(obj->vnumber) == obj->vnumber)
         {
             // Number is whole
-            snprintf(str, 200, "%ll", (long long)obj->val.number);
+            snprintf(str, 200, "%ll", (long long)obj->vnumber);
         } else
         {
             // Number has fractional part
-            snprintf(str, 200, "%f", obj->val.number);
+            snprintf(str, 200, "%f", obj->vnumber);
         }
         
         return _strdup(str);
@@ -148,17 +148,17 @@ void Ral_PrintObjectValue(const Ral_Object* const obj)
     switch (obj->type)
     {
     case Ral_TYPE_BOOL:
-        if (obj->val.boolean)
+        if (obj->vboolean)
             printf("true");
         else
             printf("false");
         break;
 
     case Ral_TYPE_NUMBER:
-        if (floor(obj->val.number) == obj->val.number)
-            printf("%d", (int)obj->val.number);
+        if (floor(obj->vnumber) == obj->vnumber)
+            printf("%d", (int)obj->vnumber);
         else
-            printf("%f", obj->val.number);
+            printf("%f", obj->vnumber);
         break;
 
     default:

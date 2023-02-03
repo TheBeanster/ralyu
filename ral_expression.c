@@ -22,7 +22,6 @@ static Ral_Object* get_token_value(
 	if (token->expr_value)
 	{
 		Ral_Object* obj = token->expr_value;
-		token->expr_value = NULL;
 		return obj;
 	}
 	if (token->type == Ral_TOKENTYPE_INTLITERAL)
@@ -40,12 +39,7 @@ static Ral_Object* get_token_value(
 	} else if (token->type == Ral_TOKENTYPE_IDENTIFIER)
 	{
 		Ral_Variable* var = Ral_GetOrDeclareVariable(state, local_variables, token->string);
-		if (!var)
-		{
-			state->errormsg = "Missing variable";
-			return NULL;
-		}
-		return var->obj;
+		return Ral_CopyObject(var->obj);
 	}
 	return NULL;
 }
@@ -313,12 +307,13 @@ Ral_Object* Ral_EvaluateExpression(
 				state->errormsg = "Cannot assign to non-variable";
 				goto free_and_exit;
 			}
+			Ral_Object* val = get_token_value(state, local_variables, iterator->token->next);
 			Ral_Variable* var = Ral_GetOrDeclareVariable(state, local_variables, iterator->token->prev->string);
 			iterator->token->expr_value = Ral_ObjectAssigmentOperator(
 				state,
 				op,
 				&var->obj,
-				get_token_value(state, local_variables, iterator->token->next)
+				val
 			);
 			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
 			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
@@ -331,6 +326,8 @@ Ral_Object* Ral_EvaluateExpression(
 
 			Ral_UnlinkFromList(&l_tokens, iterator->token->prev);
 			Ral_UnlinkFromList(&l_tokens, iterator->token->next);
+			Ral_DestroyObject(left);
+			Ral_DestroyObject(right);
 		}
 
 		if (!iterator->next)

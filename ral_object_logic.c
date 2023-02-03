@@ -11,11 +11,11 @@ Ral_Bool Ral_ObjectIsTrue(const Ral_Object* const obj)
 	switch (obj->type)
 	{
 	case Ral_TYPE_NUMBER:
-		return obj->val.number != 0;
+		return obj->vnumber != 0;
 		break;
 
 	case Ral_TYPE_BOOL:
-		return obj->val.boolean != Ral_FALSE;
+		return obj->vboolean != Ral_FALSE;
 		break;
 
 	default:
@@ -69,8 +69,8 @@ Ral_Object* Ral_ObjectAssigmentOperator(
 
 static Ral_Number object_to_number(const Ral_Object* const obj)
 {
-	if (obj->type == Ral_TYPE_BOOL) return obj->val.boolean;
-	return obj->val.number;
+	if (obj->type == Ral_TYPE_BOOL) return obj->vboolean;
+	return obj->vnumber;
 }
 
 
@@ -120,7 +120,7 @@ Ral_Object* Ral_ObjectArithmeticOperator(
 
 static Ral_Bool struct_equals(const Ral_Object* const a, const Ral_Object* const b)
 {
-	Ral_StructMember* iterator = a->val.struc.members.begin;
+	Ral_StructMember* iterator = a->vstruct.members.begin;
 	while (iterator)
 	{
 		// Member in b with same name as a
@@ -141,14 +141,14 @@ static Ral_Bool object_equals(const Ral_Object* const a, const Ral_Object* const
 	switch (a->type)
 	{
 	case Ral_TYPE_BOOL:
-		return a->val.boolean == a->val.boolean;
+		return a->vboolean == a->vboolean;
 
 	case Ral_TYPE_NUMBER:
-		return a->val.number == b->val.number;
+		return a->vnumber == b->vnumber;
 
 	case Ral_TYPE_STRING:
-		if (a->val.string.length != b->val.string.length) return Ral_FALSE;
-		return strcmp(a->val.string.chars, b->val.string.chars) == 0;
+		if (a->vstring.length != b->vstring.length) return Ral_FALSE;
+		return strcmp(a->vstring.chars, b->vstring.chars) == 0;
 
 	case Ral_TYPE_ARRAY:
 		return Ral_FALSE;
@@ -190,10 +190,10 @@ Ral_Bool Ral_ObjectRelationalOperator(
 
 		switch (op)
 		{
-		case Ral_OPERATOR_LESS: return a->val.number < b->val.number; break;
-		case Ral_OPERATOR_GREATER: return a->val.number > b->val.number; break;
-		case Ral_OPERATOR_LESSOREQUAL: return a->val.number <= b->val.number; break;
-		case Ral_OPERATOR_GREATEROREQUAL: return a->val.number >= b->val.number; break;
+		case Ral_OPERATOR_LESS: return a->vnumber < b->vnumber; break;
+		case Ral_OPERATOR_GREATER: return a->vnumber > b->vnumber; break;
+		case Ral_OPERATOR_LESSOREQUAL: return a->vnumber <= b->vnumber; break;
+		case Ral_OPERATOR_GREATEROREQUAL: return a->vnumber >= b->vnumber; break;
 		}
 	}
 	return Ral_FALSE;
